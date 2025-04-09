@@ -807,20 +807,22 @@
             
             animateHero();
         }
-        
-        function animateHero() {
-            requestAnimationFrame(animateHero);
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let i = 0; i < squares.length; i++) {
-                let square = squares[i];
-                
-                // Calcular distancia al ratón
-                let dx = mouseX - square.x;
-                let dy = mouseY - square.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                
-                // Si está cerca del ratón, cambiar color
-                if (distance < 150) {
-                    square.color = colors[Math.floor(Math.random() * colors.length)];
+            function animateHero() {
+        requestAnimationFrame(animateHero);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < squares.length; i++) {
+            let square = squares[i];
+
+            // Calcular distancia al ratón
+            let dx = mouseX - square.x;
+            let dy = mouseY - square.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            // Si está cerca del ratón, cambiar color
+            if (distance < 150) {
+                square.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+        }
+    }
