@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewLifeRun Club - Tegucigalpa</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+        }
+        
+        .overlay {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            height: 50px;
+            border-radius: 50%;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero {
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 30px;
+            color: #34495e;
+        }
+        
+        .features {
+            padding: 50px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .routes-section {
+            padding: 50px 5%;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+        
+        .routes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .route-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .route-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .route-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .route-info {
+            padding: 15px;
+        }
+        
+        .route-info h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .route-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .donation-section {
+            padding: 50px 5%;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        
+        .donation-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .vision-section {
+            padding: 50px 5%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .vision-content {
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .store-section {
+            padding: 50px 5%;
+            background-color: #f9f9f9;
+        }
+        
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-info h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px 5%;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: #3498db;
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            nav ul {
+                margin: 15px 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Estilos para el botón del modo admin */
+        .admin-mode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 5;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-mode:hover {
+            background-color: #2c3e50;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <header class="overlay">
+        <div class="logo">
+            <img src="/api/placeholder/50/50" alt="NewLifeRun Club Logo">
+            <h1>NewLife<span>Run</span> Club</h1>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#rutas">Rutas</a></li>
+                <li><a href="#vision">Visión</a></li>
+                <li><a href="#tienda">Tienda</a></li>
+                <li><a href="#donaciones">Donaciones</a></li>
+            </ul>
+        </nav>
+        
+        <div class="auth-buttons">
+            <button class="btn btn-secondary" onclick="openModal('loginModal')">Iniciar Sesión</button>
+            <button class="btn btn-primary" onclick="openModal('registerModal')">Registrarse</button>
+        </div>
+    </header>
+    
+    <section class="hero overlay" id="inicio">
+        <h2>Corre, Vive, Inspira</h2>
+        <p>Somos más que un club de corredores. Somos una comunidad que busca transformar vidas a través del running en Tegucigalpa, promoviendo un estilo de vida saludable y ayudando a quienes más lo necesitan.</p>
+        <div class="auth-buttons">
+            <button class="btn btn-primary">Únete Ahora</button>
+            <button class="btn btn-secondary">Conoce Más</button>
+        </div>
+    </section>
+    
+    <section class="features overlay">
+        <div class="feature-card">
+            <div class="feature-icon">🏃</div>
+            <h3>Rutas Seguras</h3>
+            <p>Hemos mapeado las mejores y más seguras rutas para correr en Tegucigalpa, categorizadas por distancia y dificultad.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">👕</div>
+            <h3>Merchandise Exclusivo</h3>
+            <p>Viste con nuestros productos exclusivos y apoya nuestra misión de ayudar a personas sin hogar.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">❤️</div>
+            <h3>Impacto Social</h3>
+            <p>Parte de nuestros ingresos van directamente a programas de ayuda para personas sin hogar en nuestra ciudad.</p>
+        </div>
+    </section>
+    
+    <section class="routes-section overlay" id="rutas">
+        <h2 class="section-title">Nuestras Rutas</h2>
+        
+        <div class="routes-container">
+            <div class="route-card">
+                <div class="route-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="route-info">
+                    <h3>Parque La Leona</h3>
+                    <div class="route-meta">
+                        <span>5 km</span>
+                        <span>Dificultad: Baja</span>
+                    </div>
+                    <p>Una ruta corta y segura ideal para principiantes, con vistas panorámicas de la ciudad.</p>
+                    <button class="btn btn-primary">Ver Detalles</button>
+                </div>
+            </div>
+            
+            <div class="route-card">
+                <div class="route-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="route-info">
+                    <h3>Circuito El Hatillo</h3>
+                    <div class="route-meta">
+                        <span>10 km</span>
+                        <span>Dificultad: Media</span>
+                    </div>
+                    <p>Ruta de distancia media con terreno variado y excelentes medidas de seguridad.</p>
+                    <button class="btn btn-primary">Ver Detalles</button>
+                </div>
+            </div>
+            
+            <div class="route-card">
+                <div class="route-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="route-info">
+                    <h3>Valle de Ángeles</h3>
+                    <div class="route-meta">
+                        <span>21 km</span>
+                        <span>Dificultad: Alta</span>
+                    </div>
+                    <p>Para corredores experimentados, una ruta larga con hermosos paisajes naturales.</p>
+                    <button class="btn btn-primary">Ver Detalles</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="vision-section overlay" id="vision">
+        <div class="vision-content">
+            <h2 class="section-title">Nuestra Visión</h2>
+            <p>En NewLifeRun Club creemos que el running no es solo un deporte, sino una herramienta de transformación personal y social. Nuestra visión es crear una comunidad vibrante de corredores en Tegucigalpa que promueva la salud física y mental, mientras contribuimos activamente a resolver problemas sociales en nuestra ciudad.</p>
+            <br>
+            <p>Nos comprometemos a proporcionar rutas seguras y accesibles para todos los niveles, fomentar la camaradería entre corredores, y destinar parte de nuestros recursos a ayudar a las personas sin hogar, demostrando que cada paso que damos puede generar un impacto positivo en nuestra sociedad.</p>
+        </div>
+    </section>
+    
+    <section class="store-section overlay" id="tienda">
+        <h2 class="section-title">Nuestra Tienda</h2>
+        
+        <div class="products-container">
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('/api/placeholder/200/200')"></div>
+                <div class="product-info">
+                    <h3>Camiseta NewLifeRun</h3>
+                    <p class="product-price">L. 450</p>
+                    <p>Camiseta deportiva con tecnología dri-fit y nuestro logo exclusivo.</p>
+                    <button class="btn btn-primary">Añadir al Carrito</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('/api/placeholder/200/200')"></div>
+                <div class="product-info">
+                    <h3>Botella Térmica</h3>
+                    <p class="product-price">L. 350</p>
+                    <p>Mantén tu hidratación con nuestra botella térmica de acero inoxidable.</p>
+                    <button class="btn btn-primary">Añadir al Carrito</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('/api/placeholder/200/200')"></div>
+                <div class="product-info">
+                    <h3>Gorra Running</h3>
+                    <p class="product-price">L. 250</p>
+                    <p>Gorra transpirable perfecta para tus entrenamientos bajo el sol.</p>
+                    <button class="btn btn-primary">Añadir al Carrito</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('/api/placeholder/200/200')"></div>
+                <div class="product-info">
+                    <h3>Pulsera Deportiva</h3>
+                    <p class="product-price">L. 150</p>
+                    <p>Pulsera de silicona con nuestro lema "Corre, Vive, Inspira".</p>
+                    <button class="btn btn-primary">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="donation-section overlay" id="donaciones">
+        <div class="donation-content">
+            <h2 class="section-title">Haz una Donación</h2>
+            <p>Tu generosidad puede cambiar vidas. El 100% de las donaciones se destina a programas de ayuda para personas sin hogar en Tegucigalpa, proporcionándoles alimentos, ropa y oportunidades de desarrollo.</p>
+            <br>
+            <form id="donation-form">
+                <div class="form-group">
+                    <label for="donation-amount">Cantidad a donar (Lempiras)</label>
+                    <input type="number" id="donation-amount" min="10" placeholder="Ingrese la cantidad" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Donar Ahora</button>
+            </form>
+        </div>
+    </section>
+    
+    <footer class="overlay">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>NewLifeRun Club</h3>
+                <p>Unidos por el running, inspirados por el cambio social en Tegucigalpa.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#rutas">Rutas</a></li>
+                    <li><a href="#vision">Visión</a></li>
+                    <li><a href="#tienda">Tienda</a></li>
+                    <li><a href="#donaciones">Donaciones</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contacto</h3>
+                <ul>
+                    <li>Email: info@newliferun.hn</li>
+                    <li>Teléfono: +504 2235-4789</li>
+                    <li>Dirección: Blvd. Morazán, Tegucigalpa</li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Síguenos</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Twitter</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2025 NewLifeRun Club. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+    <!-- Modal de Inicio de Sesión -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Correo Electrónico</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            </form>
+            <p style="margin-top: 15px; text-align: center;">¿No tienes cuenta? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Regístrate</a></p>
+        </div>
+    </div>
+    
+    <!-- Modal de Registro -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Crear Cuenta</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Nombre Completo</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Correo Electrónico</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Contraseña</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password-confirm">Confirmar Contraseña</label>
+                    <input type="password" id="register-password-confirm" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </form>
+            <p style="margin-top: 15px; text-align: center;">¿Ya tienes cuenta? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Inicia Sesión</a></p>
+        </div>
+    </div>
+    
+    <!-- Botón de modo administrador (para modificar la página) -->
+    <div class="admin-mode" onclick="toggleAdminMode()">
+        Modo Editor
+    </div>
+
+    <script>
+        // Three.js para el efecto 3D en el fondo
+        let scene, camera, renderer;
+        let particles;
+        
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            // Crear partículas para efecto 3D
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1000;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.005,
+                color: '#3498db'
+            });
+            
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            camera.position.z = 2;
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particles.rotation.x += 0.0005;
+            particles.rotation.y += 0.0005;
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Adaptar el tamaño al redimensionar la ventana
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Funciones para los modales
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function switchModal(closeModalId, openModalId) {
+            closeModal(closeModalId);
+            openModal(openModalId);
+        }
+        
+        // Simular envío de formularios
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aquí iría la lógica para autenticar al usuario
+            alert('La funcionalidad de inicio de sesión se implementará en la versión backend.');
+        });
+        
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aquí iría la lógica para registrar al usuario
+            alert('La funcionalidad de registro se implementará en la versión backend.');
+        });
+        
+        document.getElementById('donation-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aquí iría la lógica para procesar la donación
+            const amount = document.getElementById('donation-amount').value;
+            alert(`¡Gracias por tu donación de L. ${amount}! La integración con el procesador de pagos se implementará próximamente.`);
+        });
+        
+        // Función para el modo administrador (simulado)
+        function toggleAdminMode() {
+            alert('El modo editor permitirá modificar el contenido de la página, añadir/quitar secciones y personalizar el diseño. Se implementará en la versión completa.');
+        }
+        
+        // Iniciar Three.js cuando se cargue la página
+        window.onload = function() {
+            initThree();
+        };
+    </script>
+</body>
+</html>
