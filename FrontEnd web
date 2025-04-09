@@ -823,4 +823,4 @@
                 
                 // Si está cerca del ratón, cambiar color
                 if (distance < 150) {
-                    square.color = colors[Math.floor(Math.random
+                    square.color = colors[Math.floor(Math.random() * colors.length)];
