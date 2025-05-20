@@ -1,2 +1,4 @@
 # NewLifeClub
-Only a proposal for NewLife team.
+Official NewLifeRun Club website.
+
+Project made by JJ.
