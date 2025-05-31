@@ -215,6 +215,72 @@
 
 /* Media Queries para responsive */
 @media (max-width: 992px) {
+  /* Reorganizar elementos solo en móvil */
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    position: relative;
+  }
+
+  /* Hamburger a la izquierda */
+  .nav-left {
+    order: 1;
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .menu-toggle {
+    display: flex;
+    margin-left: 0;
+  }
+
+  /* Logo centrado */
+  .nav-logo {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.4rem;
+    z-index: 1;
+  }
+
+  /* Botones a la derecha */
+  .nav-right {
+    order: 3;
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* OCULTAR el botón de registrarse en móvil */
+  #register-btn {
+    display: none !important;
+  }
+
+  /* Cambiar texto del botón de login en móvil */
+  #login-btn::before {
+    content: "Cuenta";
+  }
+
+  #login-btn {
+    font-size: 0;
+    padding: 6px 12px;
+  }
+
+  #login-btn::before {
+    font-size: 0.8rem;
+  }
+
+  /* Botones de usuario más compactos en móvil */
+  .user-button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
   .nav-center {
     position: fixed;
     top: 0;
@@ -234,11 +300,6 @@
 
   .nav-center.open {
     right: 0;
-  }
-
-  .menu-toggle {
-    display: flex;
-    margin-left: 20px;
   }
 
   .menu-toggle.active span:nth-child(1) {
@@ -262,35 +323,32 @@
     padding: 15px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-
-  /* Reorganizar los elementos en móvil */
-  .nav-container {
-    justify-content: space-between;
-  }
-
-  .nav-right {
-    display: flex;
-    gap: 10px;
-  }
-
-  .login-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
 }
 
 @media (max-width: 576px) {
-  .nav-logo {
-    font-size: 1.5rem;
+  .nav-left {
+    flex: 0 0 50px;
   }
 
   .nav-right {
-    gap: 8px;
+    flex: 0 0 50px;
   }
 
-  .login-button {
-    padding: 5px 10px;
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+
+  #login-btn {
+    padding: 5px 8px;
+  }
+
+  #login-btn::before {
     font-size: 0.75rem;
+  }
+
+  .user-button {
+    padding: 5px 8px;
+    font-size: 0.8rem;
   }
 }
 

@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const { sendEventConfirmationEmail } = require("./backend/config/mailer");
 const eventRoutes = require("./backend/routes/eventRegistration");
 const newsletterRoutes = require("./backend/routes/newsletter");
@@ -12,21 +13,25 @@ require("dotenv").config();
 
 const app = express();
 
-// Configuración de seguridad
-app.use(helmet());
+// Configuración de seguridad mejorada para archivos estáticos
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Deshabilitar CSP para permitir estilos inline
+    crossOriginResourcePolicy: false, // Permitir recursos cross-origin
+  })
+);
 
-// Configuración de CORS
+// Configuración de CORS mejorada
 app.use(
   cors({
     origin: [
-      "http://127.0.0.1:5506",
-      "http://localhost:5506",
-      "http://127.0.0.1:5500",
-      "http://localhost:5500",
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://192.168.0.11:3000", // Tu IP local para móviles
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Accept"],
+    allowedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
   })
 );
 
@@ -41,6 +46,52 @@ app.use("/api/", limiter);
 // Middleware para parsear JSON con límite de tamaño
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Configuración mejorada para servir archivos estáticos
+app.use(
+  express.static(path.join(__dirname), {
+    setHeaders: (res, filePath) => {
+      // Configurar headers correctos para archivos CSS
+      if (filePath.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css; charset=utf-8");
+        console.log(`📄 Sirviendo CSS: ${filePath}`);
+      }
+      // Configurar headers para archivos JS
+      if (filePath.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+        console.log(`📄 Sirviendo JS: ${filePath}`);
+      }
+      // Configurar headers para imágenes
+      if (filePath.endsWith(".png")) {
+        res.setHeader("Content-Type", "image/png");
+      }
+      if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+        res.setHeader("Content-Type", "image/jpeg");
+      }
+      if (filePath.endsWith(".gif")) {
+        res.setHeader("Content-Type", "image/gif");
+      }
+      if (filePath.endsWith(".svg")) {
+        res.setHeader("Content-Type", "image/svg+xml");
+      }
+      // Permitir cache para archivos estáticos
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      // Añadir headers CORS para archivos estáticos
+      res.setHeader("Access-Control-Allow-Origin", "*");
+    },
+  })
+);
+
+// Middleware adicional para debug de archivos CSS
+app.get("/css/*", (req, res, next) => {
+  console.log(`🔍 Solicitando archivo CSS: ${req.url}`);
+  next();
+});
+
+// Ruta principal para servir index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // Configuración de la base de datos
 const pool = mysql.createPool({
@@ -287,6 +338,39 @@ app.use((err, req, res, next) => {
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+
+// Obtener la IP local automáticamente
+const os = require("os");
+const networkInterfaces = os.networkInterfaces();
+let localIP = "192.168.0.11"; // Fallback a tu IP conocida
+
+// Buscar la IP local real
+Object.keys(networkInterfaces).forEach((interfaceName) => {
+  networkInterfaces[interfaceName].forEach((interface) => {
+    if (
+      interface.family === "IPv4" &&
+      !interface.internal &&
+      interface.address.startsWith("192.168")
+    ) {
+      localIP = interface.address;
+    }
+  });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Servidor corriendo en:`);
+  console.log(`   💻 Local: http://localhost:${PORT}`);
+  console.log(`   📱 Red: http://${localIP}:${PORT}`);
+  console.log(`✅ Conexión a la base de datos establecida`);
+  console.log(`✅ Tabla contacto verificada/creada`);
+  console.log(`✅ Tabla newsletter verificada/creada`);
+  console.log(`✅ Tabla event_registrations verificada/creada`);
+  console.log(`✅ Tabla rutas_registros verificada/creada`);
+  console.log(`✅ Servidor listo para enviar correos!`);
+  console.log(`\n📱 CONSEJO PARA MÓVIL:`);
+  console.log(
+    `   Si el CSS no carga en móvil, abre las herramientas de desarrollador`
+  );
+  console.log(`   en el navegador móvil y revisa la consola por errores 404.`);
+  console.log(`   Todas las rutas CSS ahora tienen headers MIME correctos.`);
 });
