@@ -502,15 +502,12 @@ body {
 
   /* MÓVILES - OPTIMIZACIÓN GALERÍA NEWLIFE COMMUNITY */
   .gallery-section {
-    padding: 50px 15px !important;
+    padding: 25px 15px !important;
     min-height: 550px !important;
   }
 
   .gallery-container {
-    max-width: 100% !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-    overflow: visible !important;
+    margin-bottom: 35px !important;
   }
 
   .gallery {
@@ -559,8 +556,8 @@ body {
   }
 
   .buttons-container {
-    margin-top: 20px !important;
-    gap: 15px !important;
+    margin-top: 0px !important;
+    position: relative !important;
   }
 
   .prev-btn,
@@ -619,24 +616,26 @@ body {
 
   /* GALERÍA NEWLIFE COMMUNITY - OPTIMIZACIÓN MÁXIMA */
   .gallery-section {
-    padding: 40px 10px !important;
-    min-height: 480px !important;
+    padding: 20px 10px !important;
+    min-height: 500px !important;
   }
 
   .gallery-title {
-    font-size: 1.8rem !important;
-    margin-bottom: 15px !important;
+    margin-bottom: 4px !important;
+    font-size: 1.9rem !important;
+  }
+
+  .gallery-subtitle {
+    margin-bottom: 8px !important;
   }
 
   .gallery-subtitle h1 {
     font-size: 1rem !important;
-    margin-bottom: 20px !important;
+    margin: 0 !important;
   }
 
   .gallery-container {
-    max-width: 100% !important;
-    padding: 0 !important;
-    overflow: visible !important;
+    margin-bottom: 30px !important;
   }
 
   .gallery {
@@ -690,8 +689,8 @@ body {
   }
 
   .buttons-container {
-    margin-top: 15px !important;
-    gap: 10px !important;
+    margin-top: 0px !important;
+    position: relative !important;
   }
 
   .prev-btn,
@@ -702,8 +701,7 @@ body {
   }
 
   .photo-counter {
-    font-size: 0.9rem !important;
-    margin-top: 15px !important;
+    display: none !important;
   }
 }
 
@@ -1015,17 +1013,17 @@ body {
 /* FUERZA BRUTA PARA MÓVIL - ASEGURAR VISIBILIDAD */
 @media (max-width: 768px) {
   .gallery-section {
-    padding: 35px 15px !important;
-    min-height: 520px !important;
+    padding: 25px 15px !important;
+    min-height: 550px !important;
   }
 
   .gallery-title {
-    margin-bottom: 10px !important;
+    margin-bottom: 6px !important;
     font-size: 2.2rem !important;
   }
 
   .gallery-subtitle {
-    margin-bottom: 25px !important;
+    margin-bottom: 12px !important;
   }
 
   .gallery-subtitle h1 {
@@ -1033,24 +1031,33 @@ body {
     margin: 0 !important;
   }
 
+  .gallery-container {
+    margin-bottom: 35px !important;
+  }
+
   .photo-counter {
     display: none !important;
+  }
+
+  .buttons-container {
+    margin-top: 0px !important;
+    position: relative !important;
   }
 }
 
 @media (max-width: 480px) {
   .gallery-section {
-    padding: 25px 10px !important;
-    min-height: 450px !important;
+    padding: 20px 10px !important;
+    min-height: 500px !important;
   }
 
   .gallery-title {
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
     font-size: 1.9rem !important;
   }
 
   .gallery-subtitle {
-    margin-bottom: 15px !important;
+    margin-bottom: 8px !important;
   }
 
   .gallery-subtitle h1 {
@@ -1058,8 +1065,17 @@ body {
     margin: 0 !important;
   }
 
+  .gallery-container {
+    margin-bottom: 30px !important;
+  }
+
   .photo-counter {
     display: none !important;
+  }
+
+  .buttons-container {
+    margin-top: 0px !important;
+    position: relative !important;
   }
 }
 
@@ -1535,21 +1551,21 @@ body {
   /* Este CSS SOLO se aplica en iOS Safari */
 
   .gallery-section {
-    padding: 30px 10px !important;
-    min-height: 500px !important;
+    padding: 20px 10px !important;
+    min-height: 550px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     align-items: center !important;
   }
 
   .gallery-title {
-    margin-bottom: 8px !important;
+    margin-bottom: 5px !important;
     font-size: 2rem !important;
   }
 
   .gallery-subtitle {
-    margin-bottom: 20px !important;
+    margin-bottom: 10px !important;
   }
 
   .gallery-subtitle h1 {
@@ -1557,14 +1573,19 @@ body {
     margin: 0 !important;
   }
 
+  .gallery-container {
+    margin-top: 0px !important;
+    margin-bottom: 40px !important;
+  }
+
   .photo-counter {
     display: none !important;
   }
 
   .buttons-container {
-    margin-top: 30px !important;
+    margin-top: 0px !important;
     padding: 15px !important;
     position: relative !important;
-    top: 20px !important;
+    top: 0px !important;
   }
 }
