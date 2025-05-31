@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NewLifeRun Club</title>
-    <link rel="stylesheet" href="css/tabInicio.css" />
+    <link rel="stylesheet" href="css/tabInicio.css?v=7.0" />
     <link rel="stylesheet" href="css/navbar.css" />
-    <link rel="stylesheet" href="css/barra-baja.css" />
+    <link rel="stylesheet" href="css/barra-baja.css?v=2.0" />
     <link rel="stylesheet" href="css/tabIniciar.css" />
     <link rel="stylesheet" href="css/carrito.css" />
     <link rel="stylesheet" href="css/search.css" />
@@ -2064,5 +2064,144 @@
       });
     </script>
     <script src="js/navbar-session.js"></script>
+
+    <!-- 🆕 FALLBACK PARA PATROCINADORES EN iPHONE -->
+    <script>
+      // Detectar si Font Awesome no carga y aplicar fallbacks
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log(
+          "🔍 Verificando carga de Font Awesome en patrocinadores..."
+        );
+
+        const isIPhone = /iPhone/.test(navigator.userAgent);
+        const isSafari =
+          /Safari/.test(navigator.userAgent) &&
+          !/Chrome/.test(navigator.userAgent);
+
+        console.log("📱 Es iPhone:", isIPhone);
+        console.log("🌐 Es Safari:", isSafari);
+
+        setTimeout(() => {
+          const sponsorIcons = document.querySelectorAll(".marquee-content i");
+          console.log(
+            "🏢 Total iconos de patrocinadores encontrados:",
+            sponsorIcons.length
+          );
+
+          if (sponsorIcons.length > 0) {
+            sponsorIcons.forEach((icon, index) => {
+              // Forzar visibilidad inmediata en iPhone
+              if (isIPhone || isSafari) {
+                icon.style.opacity = "1";
+                icon.style.transform = "translateY(0)";
+                icon.style.display = "inline-block";
+                icon.style.visibility = "visible";
+                icon.style.fontSize = "2.5rem";
+                icon.style.color = "#ffffff";
+                icon.style.transition = "all 0.3s ease";
+                icon.style.padding = "10px";
+                icon.style.borderRadius = "50%";
+                icon.style.background = "rgba(255, 105, 180, 0.1)";
+                icon.style.border = "1px solid rgba(255, 105, 180, 0.3)";
+                icon.classList.add("visible");
+
+                console.log(
+                  `✅ Icono ${index + 1} optimizado para iPhone:`,
+                  icon.className
+                );
+
+                // Agregar hover effect para móvil
+                icon.addEventListener("touchstart", function () {
+                  this.style.color = "#ff69b4";
+                  this.style.background = "rgba(255, 105, 180, 0.2)";
+                  this.style.transform = "scale(1.1)";
+                });
+
+                icon.addEventListener("touchend", function () {
+                  this.style.color = "#ffffff";
+                  this.style.background = "rgba(255, 105, 180, 0.1)";
+                  this.style.transform = "scale(1)";
+                });
+              }
+
+              // Verificar si el icono se renderizó correctamente
+              const computedStyle = window.getComputedStyle(icon);
+              const iconWidth = computedStyle.width;
+
+              console.log(
+                `📏 Icono ${index + 1} ancho:`,
+                iconWidth,
+                "clase:",
+                icon.className
+              );
+
+              // Si el icono es muy pequeño, probablemente no cargó Font Awesome
+              if (parseFloat(iconWidth) < 20) {
+                console.warn(
+                  `⚠️ Icono ${index + 1} posiblemente no cargó Font Awesome`
+                );
+
+                // Aplicar fallback específico
+                icon.style.width = "40px";
+                icon.style.height = "40px";
+                icon.style.display = "inline-flex";
+                icon.style.alignItems = "center";
+                icon.style.justifyContent = "center";
+                icon.style.backgroundColor = "#ff69b4";
+                icon.style.color = "#fff";
+                icon.style.fontWeight = "bold";
+                icon.style.fontSize = "12px";
+
+                // Mostrar texto en lugar del icono
+                const brandNames = [
+                  "A",
+                  "G",
+                  "D",
+                  "S",
+                  "F",
+                  "AM",
+                  "M",
+                  "T",
+                  "I",
+                  "L",
+                ];
+                icon.textContent = brandNames[index] || "?";
+              }
+            });
+
+            console.log(
+              "✅ Optimización de patrocinadores completada para iPhone"
+            );
+          } else {
+            console.warn("❌ No se encontraron iconos de patrocinadores");
+          }
+        }, 1000);
+
+        // Verificación adicional después de 3 segundos
+        setTimeout(() => {
+          const sponsorSection = document.querySelector(".patrocinadores");
+          if (sponsorSection && (isIPhone || isSafari)) {
+            console.log("🔄 Verificación adicional de patrocinadores...");
+            sponsorSection.style.minHeight = "200px";
+            sponsorSection.style.display = "block";
+            sponsorSection.style.visibility = "visible";
+
+            const marqueeContent =
+              sponsorSection.querySelector(".marquee-content");
+            if (marqueeContent) {
+              marqueeContent.style.display = "grid";
+              marqueeContent.style.gridTemplateColumns = "repeat(5, 1fr)";
+              marqueeContent.style.gridTemplateRows = "repeat(2, 1fr)";
+              marqueeContent.style.gap = "1rem";
+              marqueeContent.style.justifyItems = "center";
+              marqueeContent.style.maxWidth = "350px";
+              marqueeContent.style.margin = "0 auto";
+
+              console.log("✅ Layout de grid aplicado a patrocinadores");
+            }
+          }
+        }, 3000);
+      });
+    </script>
   </body>
 </html>

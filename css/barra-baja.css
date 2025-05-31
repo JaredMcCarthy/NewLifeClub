@@ -88,3 +88,201 @@
 .footer-final .contacto-lista a:hover {
   color: #ff5ab9;
 }
+
+/* 🆕 RESPONSIVE DESIGN PARA MÓVILES */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 768px) {
+  .footer-final {
+    padding: 2rem 1rem 1rem;
+  }
+
+  .footer-columns {
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 15px;
+  }
+
+  .footer-column {
+    padding: 0;
+    text-align: center;
+  }
+
+  .footer-final h2.logo {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .footer-final h3 {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .copyright {
+    padding-top: 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Móviles pequeños (iPhone, etc.) */
+@media (max-width: 480px) {
+  .footer-final {
+    padding: 1.5rem 0.8rem 1rem;
+  }
+
+  .footer-columns {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 10px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Primera fila: Solo NewLifeRun Club */
+  .footer-column:first-child {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+
+  /* Contenedor para las otras dos columnas lado a lado */
+  .footer-column:nth-child(2),
+  .footer-column:nth-child(3) {
+    width: 48%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    padding: 0 1%;
+  }
+
+  /* Crear un wrapper para las columnas 2 y 3 */
+  .footer-columns {
+    display: block;
+  }
+
+  .footer-columns::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .footer-column:nth-child(2) {
+    float: left;
+  }
+
+  .footer-column:nth-child(3) {
+    float: right;
+  }
+
+  .footer-final h2.logo {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #ff69b4;
+  }
+
+  .footer-final h3 {
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: #ff69b4;
+  }
+
+  .footer-final p {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    color: #ccc;
+  }
+
+  .footer-final ul {
+    text-align: center;
+  }
+
+  .footer-final ul li {
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .footer-final a {
+    font-size: 0.9rem;
+  }
+
+  .copyright {
+    padding-top: 15px;
+    font-size: 0.8rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    clear: both;
+  }
+}
+
+/* iPhone específico (para tu iPhone 14) */
+@media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+  .footer-final {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .footer-columns {
+    max-width: 350px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  /* Primera fila: NewLifeRun Club solo */
+  .footer-column:first-child {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 0;
+  }
+
+  /* Segunda fila: Enlaces y Contacto lado a lado */
+  .footer-column:nth-child(2),
+  .footer-column:nth-child(3) {
+    width: 48%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    padding: 0 1%;
+  }
+
+  .footer-column:nth-child(2) {
+    float: left;
+  }
+
+  .footer-column:nth-child(3) {
+    float: right;
+  }
+
+  .footer-columns::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .footer-final h2.logo {
+    font-size: 1.1rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .footer-final h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .footer-final p,
+  .footer-final ul li,
+  .footer-final a {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .copyright {
+    clear: both;
+    margin-top: 1rem;
+  }
+}

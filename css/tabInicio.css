@@ -519,23 +519,30 @@ body {
     flex-wrap: nowrap !important;
     overflow-x: visible !important;
     max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
   }
 
   .photo-card {
-    flex: 0 0 200px !important;
-    width: 200px !important;
-    height: 280px !important;
-    min-width: 200px !important;
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    height: 200px !important;
+    min-width: 140px !important;
     transform: scale(0.8) !important;
-    opacity: 0.6 !important;
+    opacity: 0.5 !important;
+    filter: blur(1px) !important;
   }
 
   .photo-card.active {
-    flex: 0 0 240px !important;
-    width: 240px !important;
-    height: 320px !important;
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    height: 300px !important;
     transform: scale(1) !important;
     opacity: 1 !important;
+    filter: blur(0px) !important;
   }
 
   .photo-card img {
@@ -635,23 +642,31 @@ body {
   .gallery {
     gap: 10px !important;
     padding: 20px 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
 
   .photo-card {
-    flex: 0 0 150px !important;
-    width: 150px !important;
-    height: 220px !important;
-    min-width: 150px !important;
-    transform: scale(0.75) !important;
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    height: 200px !important;
+    min-width: 140px !important;
+    transform: scale(0.8) !important;
     opacity: 0.5 !important;
+    filter: blur(1px) !important;
   }
 
   .photo-card.active {
-    flex: 0 0 180px !important;
-    width: 180px !important;
-    height: 260px !important;
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    height: 300px !important;
     transform: scale(1) !important;
     opacity: 1 !important;
+    filter: blur(0px) !important;
   }
 
   .photo-card img {
@@ -837,11 +852,11 @@ body {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  gap: 25px !important;
-  padding: 40px 0 !important;
+  gap: 20px !important;
+  padding: 20px 15px !important;
   margin: 0 auto !important;
   width: 100% !important;
-  max-width: 1200px !important;
+  max-width: 100vw !important;
   min-height: 450px !important;
   overflow: visible !important;
 
@@ -852,40 +867,28 @@ body {
 }
 
 .photo-card {
-  flex: 0 0 280px !important;
-  width: 280px !important;
-  height: 380px !important;
+  flex: 0 0 130px !important;
+  width: 130px !important;
+  height: 190px !important;
+  min-width: 130px !important;
+  transform: scale(0.8) !important;
+  opacity: 0.5 !important;
+  filter: blur(1px) !important;
   border-radius: 20px !important;
   overflow: hidden !important;
   position: relative !important;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
   transition: all 0.4s ease !important;
-
-  /* ESTILO ELEGANTE SIN DEBUGGING */
-  display: block !important;
-  visibility: visible !important;
-  opacity: 0.7 !important;
-  transform: scale(0.85) !important;
-  filter: blur(2px) grayscale(40%) !important;
-  z-index: 1 !important;
-
-  /* CENTRADO INTERNO */
-  margin: 0 auto !important;
 }
 
 .photo-card.active {
-  /* IMAGEN CENTRAL DESTACADA Y ELEGANTE */
-  flex: 0 0 340px !important;
-  width: 340px !important;
-  height: 420px !important;
-  filter: blur(0) grayscale(0%) !important;
+  flex: 0 0 210px !important;
+  width: 210px !important;
+  height: 290px !important;
   transform: scale(1) !important;
   opacity: 1 !important;
-  box-shadow: 0 20px 40px rgba(255, 20, 147, 0.3) !important;
-  z-index: 2 !important;
-
-  /* CENTRADO PERFECTO */
-  margin: 0 auto !important;
+  filter: blur(0px) !important;
+  box-shadow: 0 15px 40px rgba(255, 20, 147, 0.4) !important;
 }
 
 .photo-card img {
@@ -1024,23 +1027,30 @@ body {
     flex-wrap: nowrap !important;
     overflow-x: visible !important;
     max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
   }
 
   .photo-card {
-    flex: 0 0 200px !important;
-    width: 200px !important;
-    height: 280px !important;
-    min-width: 200px !important;
+    flex: 0 0 170px !important;
+    width: 170px !important;
+    height: 250px !important;
+    min-width: 170px !important;
     transform: scale(0.8) !important;
     opacity: 0.6 !important;
+    margin: 0 auto !important;
   }
 
   .photo-card.active {
-    flex: 0 0 240px !important;
-    width: 240px !important;
-    height: 320px !important;
+    flex: 0 0 210px !important;
+    width: 210px !important;
+    height: 290px !important;
     transform: scale(1) !important;
     opacity: 1 !important;
+    margin: 0 auto !important;
   }
 
   .photo-card img {
@@ -1066,23 +1076,31 @@ body {
   .gallery {
     gap: 10px !important;
     padding: 20px 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
 
   .photo-card {
-    flex: 0 0 150px !important;
-    width: 150px !important;
-    height: 220px !important;
-    min-width: 150px !important;
-    transform: scale(0.75) !important;
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    height: 200px !important;
+    min-width: 140px !important;
+    transform: scale(0.8) !important;
     opacity: 0.5 !important;
+    filter: blur(1px) !important;
   }
 
   .photo-card.active {
-    flex: 0 0 180px !important;
-    width: 180px !important;
-    height: 260px !important;
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    height: 300px !important;
     transform: scale(1) !important;
     opacity: 1 !important;
+    filter: blur(0px) !important;
   }
 
   .photo-card img {
@@ -1114,4 +1132,248 @@ body {
 .animate-in .photo-counter {
   opacity: 1 !important;
   transform: translateY(0) !important;
+}
+
+/* 🆕 OPTIMIZACIONES ESPECÍFICAS PARA iPHONE - PATROCINADORES */
+
+/* Forzar carga de Font Awesome en Safari Mobile */
+@supports (-webkit-touch-callout: none) {
+  .marquee-content i {
+    -webkit-font-feature-settings: "liga" 1;
+    font-feature-settings: "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    will-change: transform, opacity, color;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Asegurar que Font Awesome cargue correctamente */
+  .marquee-content {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", sans-serif !important;
+  }
+}
+
+/* Media query específico para iPhone */
+@media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+  /* 🔒 PATROCINADORES ESPECÍFICOS - NO AFECTAR GALERÍA */
+  .patrocinadores {
+    padding: 3rem 1rem;
+    min-height: 200px;
+  }
+
+  .patrocinadores h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .patrocinadores .marquee-content {
+    gap: 1.5rem;
+    row-gap: 2rem;
+    padding: 1.5rem 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .patrocinadores .marquee-content i {
+    font-size: 2.5rem !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1 !important;
+
+    /* Forzar visibilidad en Safari Mobile */
+    visibility: visible !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Fallback con texto si los iconos no cargan - SOLO PATROCINADORES */
+  .patrocinadores .marquee-content i::after {
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ccc;
+  }
+
+  .patrocinadores .marquee-content i.fa-apple::after {
+    content: "Apple";
+  }
+  .patrocinadores .marquee-content i.fa-google::after {
+    content: "Google";
+  }
+  .patrocinadores .marquee-content i.fa-discord::after {
+    content: "Discord";
+  }
+  .patrocinadores .marquee-content i.fa-slack::after {
+    content: "Slack";
+  }
+  .patrocinadores .marquee-content i.fa-facebook::after {
+    content: "Facebook";
+  }
+  .patrocinadores .marquee-content i.fa-amazon::after {
+    content: "Amazon";
+  }
+  .patrocinadores .marquee-content i.fa-microsoft::after {
+    content: "Microsoft";
+  }
+  .patrocinadores .marquee-content i.fa-twitter::after {
+    content: "Twitter";
+  }
+  .patrocinadores .marquee-content i.fa-instagram::after {
+    content: "Instagram";
+  }
+  .patrocinadores .marquee-content i.fa-linkedin::after {
+    content: "LinkedIn";
+  }
+
+  /* 🎯 GALERÍA - MANTENER DISEÑO ORIGINAL PARA iPHONE 14 */
+  .gallery-section {
+    padding: 50px 15px !important;
+    min-height: 550px !important;
+  }
+
+  .gallery-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .gallery {
+    gap: 15px !important;
+    padding: 30px 0 !important;
+    flex-wrap: nowrap !important;
+    overflow-x: visible !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  .gallery .photo-card {
+    flex: 0 0 180px !important;
+    width: 180px !important;
+    height: 260px !important;
+    min-width: 180px !important;
+    transform: scale(0.8) !important;
+    opacity: 0.6 !important;
+    margin: 0 auto !important;
+  }
+
+  .gallery .photo-card.active {
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    height: 300px !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+    margin: 0 auto !important;
+  }
+
+  .gallery .photo-card img {
+    height: 75% !important;
+  }
+}
+
+/* 🔒 PATROCINADORES MÓVILES iOS - SEPARADO DE GALERÍA */
+@media (max-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+  /* SOLO PATROCINADORES - NO AFECTAR GALERÍA */
+  .patrocinadores {
+    padding: 2.5rem 1rem;
+    background-color: #000;
+  }
+
+  .patrocinadores h1 {
+    font-size: 1.8rem;
+    color: #ff69b4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .patrocinadores .marquee {
+    overflow: visible;
+  }
+
+  .patrocinadores .marquee-content {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 2rem 1rem;
+    justify-items: center;
+    align-items: center;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+
+  .patrocinadores .marquee-content i {
+    font-size: 2rem !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: all 0.3s ease !important;
+    position: relative;
+
+    /* Asegurar visibilidad */
+    display: block !important;
+    visibility: visible !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 105, 180, 0.1) !important;
+    backdrop-filter: blur(5px) !important;
+    border: 1px solid rgba(255, 105, 180, 0.3) !important;
+  }
+
+  .patrocinadores .marquee-content i:hover,
+  .patrocinadores .marquee-content i:active {
+    color: #ff69b4 !important;
+    background: rgba(255, 105, 180, 0.2) !important;
+    transform: scale(1.1) !important;
+    border-color: #ff69b4 !important;
+  }
+
+  /* Animación suave para aparecer - SOLO PATROCINADORES */
+  .patrocinadores .marquee-content i:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .patrocinadores .marquee-content i:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .patrocinadores .marquee-content i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .patrocinadores .marquee-content i:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .patrocinadores .marquee-content i:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+  .patrocinadores .marquee-content i:nth-child(6) {
+    animation-delay: 0.6s;
+  }
+  .patrocinadores .marquee-content i:nth-child(7) {
+    animation-delay: 0.7s;
+  }
+  .patrocinadores .marquee-content i:nth-child(8) {
+    animation-delay: 0.8s;
+  }
+  .patrocinadores .marquee-content i:nth-child(9) {
+    animation-delay: 0.9s;
+  }
+  .patrocinadores .marquee-content i:nth-child(10) {
+    animation-delay: 1s;
+  }
 }
