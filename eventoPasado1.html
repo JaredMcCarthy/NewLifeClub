@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galería de Eventos Pasados</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1a1a1a 0%,
+          #2d2d2d 50%,
+          #1a1a1a 100%
+        );
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 1s ease-out;
+      }
+
+      .header h1 {
+        background: linear-gradient(45deg, #ff1493, #ff69b4, #ffffff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 15px;
+        text-shadow: 0 4px 8px rgba(255, 20, 147, 0.3);
+        letter-spacing: 2px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+      }
+
+      .photo-card {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(255, 20, 147, 0.3);
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease-out forwards;
+      }
+
+      .photo-card:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 25px 50px rgba(255, 20, 147, 0.4);
+        border-color: rgba(255, 20, 147, 0.8);
+      }
+
+      .photo-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .photo-card:hover .photo {
+        transform: scale(1.1);
+      }
+
+      .photo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(255, 20, 147, 0.3) 50%,
+          rgba(0, 0, 0, 0.9) 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .photo-card:hover .photo-overlay {
+        opacity: 1;
+      }
+
+      .photo-info {
+        padding: 20px;
+        color: white;
+      }
+
+      .photo-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .photo-description {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.5;
+      }
+
+      .photo-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(45deg, #ff1493, #ff69b4);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(8px);
+      }
+
+      .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90vw;
+        max-height: 90vh;
+        border-radius: 15px;
+        overflow: hidden;
+        animation: modalZoom 0.3s ease-out;
+      }
+
+      .modal img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #ff69b4;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1001;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+      }
+
+      .close:hover {
+        transform: scale(1.2);
+        color: #ff1493;
+      }
+
+      /* Animations */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes modalZoom {
+        from {
+          transform: translate(-50%, -50%) scale(0.7);
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header {
+          margin-bottom: 30px;
+        }
+
+        .header h1 {
+          font-size: 2.8rem;
+          line-height: 1.1;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .gallery {
+          grid-template-columns: 1fr;
+          gap: 15px;
+          padding: 10px 0;
+        }
+
+        .photo-container {
+          height: 220px;
+        }
+
+        .photo-info {
+          padding: 15px;
+        }
+
+        .photo-title {
+          font-size: 1rem;
+        }
+
+        .photo-description {
+          font-size: 0.85rem;
+        }
+
+        .modal-content {
+          max-width: 95vw;
+          max-height: 80vh;
+        }
+
+        .photo-card:hover {
+          transform: translateY(-6px) scale(1.01);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 8px;
+        }
+
+        .header h1 {
+          font-size: 2.2rem;
+          letter-spacing: 1px;
+        }
+
+        .header p {
+          font-size: 0.9rem;
+        }
+
+        .photo-container {
+          height: 200px;
+        }
+
+        .photo-info {
+          padding: 12px;
+        }
+
+        .photo-title {
+          font-size: 0.95rem;
+        }
+
+        .photo-description {
+          font-size: 0.8rem;
+        }
+
+        .close {
+          top: 10px;
+          right: 20px;
+          font-size: 30px;
+        }
+
+        .photo-badge {
+          padding: 6px 12px;
+          font-size: 0.7rem;
+          top: 10px;
+          right: 10px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .photo-container {
+          height: 180px;
+        }
+
+        .gallery {
+          gap: 12px;
+        }
+      }
+
+      /* Loading animation */
+      .loading {
+        opacity: 0.7;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>NEWLIFE CLUB MEMORIES</h1>
+        <p>Momentos especiales, récords y campeones</p>
+      </div>
+
+      <div class="gallery" id="gallery">
+        <!-- Las fotos se generarán dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <span class="close">&times;</span>
+      <div class="modal-content">
+        <img id="modal-img" src="" alt="" />
+      </div>
+    </div>
+
+    <script>
+      // Datos de las fotos del evento (Reemplaza con tus fotos reales)
+      const eventPhotos = [
+        {
+          src: "",
+          title: "Gran Final",
+          description:
+            "El momento culminante del evento con todos los participantes",
+          badge: "Destacado",
+        },
+        {
+          src: "",
+          title: "Nuevo Récord",
+          description:
+            "Se estableció un nuevo récord histórico en esta categoría",
+          badge: "Récord",
+        },
+        {
+          src: "",
+          title: "Campeón 2024",
+          description: "El momento de la victoria del campeón absoluto",
+          badge: "Campeón",
+        },
+        {
+          src: "",
+          title: "Preparación",
+          description: "Los atletas se preparan antes de la competencia",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Competencia Intensa",
+          description: "Momentos de máxima concentración durante el evento",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Celebración",
+          description: "La alegría después de una gran actuación",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Trabajo en Equipo",
+          description: "La importancia del trabajo conjunto",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Momento Decisivo",
+          description: "El punto de inflexión del evento",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Técnica Perfecta",
+          description: "Demostración de habilidad y técnica superior",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Reconocimientos",
+          description: "Entrega de premios y reconocimientos",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Ambiente Familiar",
+          description: "Las familias apoyando a los competidores",
+          badge: null,
+        },
+        {
+          src: "",
+          title: "Clausura",
+          description: "El final emotivo de un gran evento",
+          badge: null,
+        },
+      ];
+
+      // Generar la galería
+      function createGallery() {
+        const gallery = document.getElementById("gallery");
+
+        eventPhotos.forEach((photo, index) => {
+          const photoCard = document.createElement("div");
+          photoCard.className = "photo-card";
+          photoCard.style.animationDelay = `${index * 0.1}s`;
+
+          photoCard.innerHTML = `
+                    <div class="photo-container">
+                        <img class="photo loading" src="${photo.src}" alt="${
+            photo.title
+          }" loading="lazy">
+                        <div class="photo-overlay"></div>
+                        ${
+                          photo.badge
+                            ? `<div class="photo-badge">${photo.badge}</div>`
+                            : ""
+                        }
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-title">${photo.title}</div>
+                        <div class="photo-description">${
+                          photo.description
+                        }</div>
+                    </div>
+                `;
+
+          // Event listener para abrir modal
+          photoCard.addEventListener("click", () =>
+            openModal(photo.src, photo.title)
+          );
+
+          gallery.appendChild(photoCard);
+        });
+      }
+
+      // Modal functionality
+      const modal = document.getElementById("modal");
+      const modalImg = document.getElementById("modal-img");
+      const closeBtn = document.querySelector(".close");
+
+      function openModal(src, alt) {
+        modal.style.display = "block";
+        modalImg.src = src;
+        modalImg.alt = alt;
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      closeBtn.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      // Remover clase loading cuando la imagen carga
+      document.addEventListener("DOMContentLoaded", () => {
+        createGallery();
+
+        // Optimización para carga de imágenes
+        const images = document.querySelectorAll(".photo");
+        images.forEach((img) => {
+          img.addEventListener("load", () => {
+            img.classList.remove("loading");
+          });
+        });
+      });
+
+      // Smooth scrolling y performance
+      let ticking = false;
+
+      function updateAnimations() {
+        const cards = document.querySelectorAll(".photo-card");
+        const windowHeight = window.innerHeight;
+
+        cards.forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          const isVisible = rect.top < windowHeight && rect.bottom > 0;
+
+          if (isVisible && !card.classList.contains("visible")) {
+            card.classList.add("visible");
+          }
+        });
+
+        ticking = false;
+      }
+
+      window.addEventListener("scroll", () => {
+        if (!ticking) {
+          requestAnimationFrame(updateAnimations);
+          ticking = true;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+.footer-final {
+  background-color: #0a0a0a;
+  padding: 3rem 2rem 1rem;
+}
+
+.footer-final h2.logo {
+  color: #ff5ab9;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  text-transform: capitalize;
+  text-align: left;
+}
+
+.footer-final h3 {
+  color: #ff5ab9;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.footer-final p {
+  color: #888;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.footer-final ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-final ul li {
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.footer-final a {
+  color: #888;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-final a:hover {
+  color: #ff5ab9;
+}
+
+/* Específico para la lista de contacto */
+.footer-final .contacto-lista li,
+.footer-final .contacto-lista a {
+  color: #fff;
+}
+
+.footer-final .contacto-lista a:hover {
+  color: #ff5ab9;
+}
+
+/* Este codigo sirve para hacer las 3 columnas del footer */
+
+.footer-columns {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.footer-column {
+  flex: 1;
+  padding: 0 15px;
+}
+
+.copyright {
+  text-align: center;
+  color: #777;
+  padding-top: 30px;
+  border-top: 1px solid #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+}
+
+/* Específico para la lista de contacto */
+.footer-final .contacto-lista li,
+.footer-final .contacto-lista a {
+  color: #fff;
+}
+
+.footer-final .contacto-lista a:hover {
+  color: #ff5ab9;
+}
