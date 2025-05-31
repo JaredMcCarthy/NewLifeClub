@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Membresías - NewLifeRun Club</title>
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/barra-baja.css" />
+    <link rel="stylesheet" href="css/carrito.css" />
+    <link rel="stylesheet" href="css/search.css" />
+    <link rel="stylesheet" href="css/membresias.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav class="main-nav">
+      <div class="nav-container">
+        <div class="nav-left">
+          <a href="index.html" class="nav-logo">NewLifeRun Club</a>
+          <button class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <div class="nav-center">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="membresias.html" class="nav-link active">Membresías</a>
+          <a href="eventos.html" class="nav-link">Eventos</a>
+          <a href="tienda.html" class="nav-link">Tienda</a>
+          <a href="newlifepro.html" class="nav-link"
+            >NewLife <span class="pro-badge">PRO</span></a
+          >
+        </div>
+
+        <div class="nav-right">
+          <!-- Botones para invitados (login/registro) -->
+          <a href="#" class="login-button" id="register-btn">Registrarse</a>
+          <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
+
+          <!-- Botones para usuarios logueados (ocultos por defecto) -->
+          <div class="user-actions">
+            <button id="logout-btn" class="user-button">Cerrar sesion</button>
+            <button class="user-button" id="search-btn">🔍</button>
+            <!-- Menú de búsqueda -->
+            <div class="search-menu" id="searchMenu">
+              <div class="search-container">
+                <button class="mobile-close-btn" id="mobileCloseSearch">
+                  ×
+                </button>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar en el sitio..."
+                />
+                <div class="search-results" id="searchResults">
+                  <!-- Los resultados se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
+            <button class="user-button cart-button" id="cart-btn">
+              🛒<span id="cart-count" class="cart-count">0</span>
+            </button>
+            <a href="Userprofile.html" class="user-button" id="profile-btn"
+              >👤</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="overlay"></div>
+
+    <!-- Aqui estamos poniendo el Contenido que Claude nos recomendo por el fondo-->
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1>CLUB DE CORREDORES HONDURAS</h1>
+          <p>
+            Únete a la comunidad de corredores más apasionada de Honduras. Vive
+            la experiencia única de correr con nosotros.
+          </p>
+          <button class="cta-button" id="open-modal">HAZTE MIEMBRO</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios Section -->
+    <section class="beneficios">
+      <div class="container">
+        <h2 class="section-title">Beneficios Exclusivos</h2>
+        <div class="beneficios-grid">
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-medal"></i>
+            </div>
+            <h3>Acceso Prioritario</h3>
+            <p>
+              Inscripción preferencial en todas nuestras carreras y eventos
+              exclusivos para miembros del club.
+            </p>
+          </div>
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>Comunidad Elite</h3>
+            <p>
+              Forma parte de un grupo exclusivo de corredores con las mismas
+              pasiones y objetivos que tú.
+            </p>
+          </div>
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-percentage"></i>
+            </div>
+            <h3>Descuentos Especiales</h3>
+            <p>
+              Obtén hasta un 30% de descuento en tiendas deportivas asociadas y
+              en equipamiento de running.
+            </p>
+          </div>
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-running"></i>
+            </div>
+            <h3>Entrenamiento Personalizado</h3>
+            <p>
+              Acceso a planes de entrenamiento diseñados por profesionales y
+              coach personal disponible.
+            </p>
+          </div>
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>Evaluación Física</h3>
+            <p>
+              Evaluaciones físicas semestrales para monitorear tu rendimiento y
+              mejorar tus resultados.
+            </p>
+          </div>
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <i class="fas fa-tshirt"></i>
+            </div>
+            <h3>Kit Exclusivo</h3>
+            <p>
+              Recibe un kit de bienvenida con equipamiento oficial del club y
+              artículos exclusivos para miembros.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Planes de Membresía -->
+    <section class="planes">
+      <div class="container">
+        <h2 class="section-title">Nuestros Planes de Membresía</h2>
+        <div class="planes-container">
+          <div class="plan-card">
+            <h3>BÁSICO</h3>
+            <div class="plan-price">L.500 <span>/mes</span></div>
+            <ul class="plan-features">
+              <li>Acceso a entrenamientos grupales</li>
+              <li>10% descuento en eventos</li>
+              <li>Camiseta oficial del club</li>
+              <li>Acceso a la comunidad online</li>
+              <li>1 carrera gratuita al año</li>
+            </ul>
+            <button class="cta-button" id="add-basic-membership">
+              SELECCIONAR
+            </button>
+          </div>
+          <div class="plan-card">
+            <div class="plan-popular">POPULAR</div>
+            <h3>PREMIUM</h3>
+            <div class="plan-price">L.800 <span>/mes</span></div>
+            <ul class="plan-features">
+              <li>Todos los beneficios del plan Básico</li>
+              <li>20% descuento en eventos</li>
+              <li>Kit completo del club</li>
+              <li>Asesoría nutricional mensual</li>
+              <li>3 carreras gratuitas al año</li>
+            </ul>
+            <button class="cta-button" id="add-premium-membership">
+              SELECCIONAR
+            </button>
+          </div>
+          <div class="plan-card">
+            <h3>ÉLITE</h3>
+            <div class="plan-price">L.1,200 <span>/mes</span></div>
+            <ul class="plan-features">
+              <li>Todos los beneficios del plan Premium</li>
+              <li>30% descuento en eventos</li>
+              <li>Entrenamiento personalizado</li>
+              <li>Evaluación física trimestral</li>
+              <li>Acceso ilimitado a carreras del club</li>
+            </ul>
+            <button class="cta-button" id="add-elite-membership">
+              SELECCIONAR
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonios Section -->
+    <section class="testimonios">
+      <div class="container">
+        <h2 class="section-title">Lo Que Dicen Nuestros Miembros</h2>
+        <div class="testimonios-container">
+          <div class="testimonio active">
+            <div class="testimonio-avatar">
+              <img src="FotosMembresia/Profpic1.png" alt="Miembro" />
+            </div>
+            <p class="testimonio-texto">
+              "Unirme al Club de Corredores Honduras ha sido una de las mejores
+              decisiones que he tomado. He mejorado mi rendimiento, conocido
+              personas increíbles y disfrutado cada kilómetro del camino. Los
+              entrenadores son expertos y la comunidad es muy motivadora."
+            </p>
+            <div class="testimonio-autor">María Fernanda Ruiz</div>
+            <div class="testimonio-cargo">Miembro Premium - 2 años</div>
+          </div>
+          <div class="testimonio">
+            <div class="testimonio-avatar">
+              <img src="FotosMembresia/Profpic2.png" alt="Miembro" />
+            </div>
+            <p class="testimonio-texto">
+              "Como corredor amateur, nunca pensé que podría participar en un
+              maratón. Con el apoyo de los entrenadores del club y el plan
+              personalizado, logré completar mi primer maratón en menos de 4
+              horas. ¡Estoy eternamente agradecido!"
+            </p>
+            <div class="testimonio-autor">Carlos Mendoza</div>
+            <div class="testimonio-cargo">Miembro Élite - 1 año</div>
+          </div>
+          <div class="testimonio">
+            <div class="testimonio-avatar">
+              <img src="FotosMembresia/Profpic3.png" alt="Miembro" />
+            </div>
+            <p class="testimonio-texto">
+              "Los eventos exclusivos para miembros son increíbles. La
+              organización es impecable y la camaradería entre todos los
+              corredores es algo que no había experimentado en otros clubes.
+              Además, los descuentos en tiendas deportivas han sido muy útiles."
+            </p>
+            <div class="testimonio-autor">Andrea Flores</div>
+            <div class="testimonio-cargo">Miembro Básico - 6 meses</div>
+          </div>
+        </div>
+        <div class="testimonios-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proceso de Inscripción -->
+    <section class="proceso">
+      <div class="container">
+        <h2 class="section-title">Proceso de Inscripción</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot">1</div>
+            <div class="timeline-content">
+              <h3>Selección de Plan</h3>
+              <p>
+                Explora nuestros diferentes planes de membresía y elige el que
+                mejor se adapte a tus necesidades y objetivos como corredor.
+              </p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">2</div>
+            <div class="timeline-content">
+              <h3>Registro Online</h3>
+              <p>
+                Completa el formulario de registro con tus datos personales y
+                preferencias para personalizar tu experiencia en el club.
+              </p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">3</div>
+            <div class="timeline-content">
+              <h3>Evaluación Inicial</h3>
+              <p>
+                Realizamos una evaluación física inicial para conocer tu
+                condición actual y establecer objetivos realistas.
+              </p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">4</div>
+            <div class="timeline-content">
+              <h3>Pago de Membresía</h3>
+              <p>
+                Realiza el pago de tu membresía a través de nuestros métodos
+                seguros: tarjeta de crédito, transferencia bancaria o efectivo.
+              </p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">5</div>
+            <div class="timeline-content">
+              <h3>Bienvenida al Club</h3>
+              <p>
+                Recibe tu kit de bienvenida y asiste a tu primera sesión donde
+                conocerás a los entrenadores y otros miembros del club.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preguntas Frecuentes -->
+    <section class="faq">
+      <div class="container">
+        <h2 class="section-title">Preguntas Frecuentes</h2>
+        <div class="accordion">
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h3>¿Necesito experiencia previa en carreras?</h3>
+              <div class="accordion-icon">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                No, aceptamos corredores de todos los niveles. Nuestros
+                entrenadores diseñarán un plan personalizado según tu
+                experiencia y condición física actual. Lo importante es tu
+                entusiasmo y compromiso.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h3>¿Con qué frecuencia se realizan los entrenamientos?</h3>
+              <div class="accordion-icon">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                Ofrecemos entrenamientos grupales 5 días a la semana (lunes a
+                viernes) en diferentes horarios: 5:00 AM, 6:00 PM y 7:30 PM. Los
+                fines de semana organizamos carreras largas o eventos
+                especiales.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h3>¿Puedo cambiar de plan de membresía?</h3>
+              <div class="accordion-icon">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                Sí, puedes actualizar o cambiar tu plan en cualquier momento. El
+                cambio se hará efectivo al inicio del siguiente mes. Simplemente
+                contacta a nuestro equipo de atención al cliente para solicitar
+                el cambio.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h3>¿Hay una edad mínima para unirse al club?</h3>
+              <div class="accordion-icon">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                La edad mínima para ser miembro regular es de 18 años. Sin
+                embargo, tenemos un programa juvenil para corredores de 12 a 17
+                años con consentimiento de los padres y entrenamiento
+                especializado.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h3>¿Qué incluye el kit de bienvenida?</h3>
+              <div class="accordion-icon">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                El kit varía según el plan elegido. El kit básico incluye una
+                camiseta técnica oficial del club, una botella de agua y una
+                tarjeta de miembro. Los planes superiores incluyen más
+                equipamiento como chaquetas, pantalones, gorras y accesorios
+                exclusivos.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+      <div class="container">
+        <h2>Mantente Informado</h2>
+        <p>
+          Suscríbete a nuestro boletín y recibe las últimas noticias, consejos
+          de entrenamiento y ofertas exclusivas directamente en tu bandeja de
+          entrada.
+        </p>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input
+            type="email"
+            class="newsletter-input"
+            placeholder="Tu correo electrónico"
+            required
+          />
+          <button type="submit" class="newsletter-button">SUSCRIBIRME</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Modal de Inscripción -->
+    <div class="modal-overlay" id="membership-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Únete al Club de Corredores Honduras</h3>
+          <div class="modal-close" id="close-modal">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <form id="membership-form">
+            <div class="form-group">
+              <label for="name" class="form-label">Nombre Completo</label>
+              <input type="text" id="name" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Correo Electrónico</label>
+              <input type="email" id="email" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Teléfono</label>
+              <input type="tel" id="phone" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="plan" class="form-label">Plan de Membresía</label>
+              <select id="plan" class="form-input" required>
+                <option value="">Selecciona un plan</option>
+                <option value="basic">Básico - L.500/mes</option>
+                <option value="premium">Premium - L.800/mes</option>
+                <option value="elite">Élite - L.1,200/mes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="experience" class="form-label"
+                >Experiencia en Running</label
+              >
+              <select id="experience" class="form-input" required>
+                <option value="">Selecciona tu nivel</option>
+                <option value="beginner">Principiante (0-1 año)</option>
+                <option value="intermediate">Intermedio (1-3 años)</option>
+                <option value="advanced">Avanzado (3+ años)</option>
+              </select>
+            </div>
+            <button type="submit" class="form-submit">ENVIAR SOLICITUD</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel">
+      <div class="cart-header">
+        <h2 class="cart-title">Mi Carrito</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-indicator">
+        <div class="progress-steps">
+          <div class="progress-line">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="step active" data-step="1">1</div>
+          <div class="step" data-step="2">2</div>
+          <div class="step" data-step="3">3</div>
+          <div class="step" data-step="4">4</div>
+        </div>
+      </div>
+
+      <div class="cart-content">
+        <!-- Step 1: Cart Items -->
+        <div class="cart-step active" id="step1">
+          <h3>Tus Productos</h3>
+          <div id="cartItems" class="cart-items">
+            <!-- Los items del carrito se insertarán aquí dinámicamente -->
+          </div>
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Envío:</span>
+              <span id="shipping">$15.00</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Shipping Information -->
+        <div class="cart-step" id="step2">
+          <h3>Información de Envío</h3>
+          <form id="shippingForm" class="shipping-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-name">Nombre</label>
+                  <input
+                    type="text"
+                    id="shipping-name"
+                    placeholder="Tu nombre"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu nombre</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-lastname">Apellido</label>
+                  <input
+                    type="text"
+                    id="shipping-lastname"
+                    placeholder="Tu apellido"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu apellido</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-address">Dirección de Envío</label>
+              <input
+                type="text"
+                id="shipping-address"
+                placeholder="Calle, número, colonia"
+                required
+              />
+              <div class="error">Por favor ingresa una dirección válida</div>
+            </div>
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-city">Ciudad</label>
+                  <input
+                    type="text"
+                    id="shipping-city"
+                    placeholder="Tu ciudad"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu ciudad</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-zip">Código Postal</label>
+                  <input
+                    type="text"
+                    id="shipping-zip"
+                    placeholder="XXXXX"
+                    pattern="[0-9]{5}"
+                    required
+                  />
+                  <div class="error">
+                    Ingresa un código postal válido (5 dígitos)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-phone">Teléfono</label>
+              <input
+                type="tel"
+                id="shipping-phone"
+                placeholder="Número de teléfono"
+                pattern="[0-9]+"
+                minlength="8"
+                maxlength="15"
+                required
+              />
+              <div class="error">
+                Por favor ingresa un número de teléfono válido
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-email">Email</label>
+              <input
+                type="email"
+                id="shipping-email"
+                placeholder="tucorreo@ejemplo.com"
+                required
+              />
+              <div class="error">Ingresa un correo electrónico válido</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment Method -->
+        <div class="cart-step" id="step3">
+          <h3>Método de Pago</h3>
+          <div class="payment-methods">
+            <div class="payment-option" data-payment="card">
+              <div class="payment-icon">💳</div>
+              <div class="payment-info">
+                <h4>Tarjeta de Crédito/Débito</h4>
+                <p>Paga de forma segura con tu tarjeta</p>
+              </div>
+            </div>
+            <div id="cardForm" style="display: none">
+              <div class="form-group">
+                <label for="card-number">Número de Tarjeta</label>
+                <input
+                  type="text"
+                  id="card-number"
+                  maxlength="16"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-expiry">Fecha de Expiración</label>
+                    <input
+                      type="text"
+                      id="card-expiry"
+                      placeholder="MM/YY"
+                      maxlength="5"
+                    />
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input
+                      type="text"
+                      id="card-cvv"
+                      maxlength="4"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Order Confirmation -->
+        <div class="cart-step" id="step4">
+          <div class="success-animation">
+            <div class="success-icon">✓</div>
+            <h3>¡Pedido Confirmado!</h3>
+            <p>Número de Orden: <span id="orderNumber"></span></p>
+            <p>Se ha enviado un correo de confirmación a:</p>
+            <p id="confirmationEmail"></p>
+            <div class="order-summary" id="orderSummary">
+              <!-- Resumen del pedido se insertará aquí -->
+            </div>
+            <p class="final-amount">Total: <span id="finalAmount"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="cart-actions">
+        <button id="backBtn" class="btn btn-secondary" style="display: none">
+          Anterior
+        </button>
+        <button id="nextBtn" class="btn btn-primary">Continuar</button>
+      </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- Footer final del sitio web-->
+
+    <footer class="footer-final">
+      <div class="footer-columns">
+        <!-- Columna Izquierda -->
+        <div class="footer-column">
+          <h2 class="logo">NewLifeRun Club</h2>
+          <p>Transformando vidas a través del deporte.</p>
+        </div>
+
+        <!-- Columna Central -->
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="membresias.html">Membresías</a></li>
+            <li><a href="eventos.html">Eventos</a></li>
+            <li><a href="tienda.html">Tienda</a></li>
+            <li><a href="newlifepro.html">NewLife Pro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <ul class="contacto-lista">
+            <li>
+              <a href="mailto:info@newliferun.com">info@newliferun.com</a>
+            </li>
+            <li><a href="tel:+50433647133">+504 3364-7133</a></li>
+            <li>Tegucigalpa, Honduras</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="copyright">
+        <p>&copy; 2025 NewLifeRun Club. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="js/membresias.js"></script>
+    <script src="js/cart-handler.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/navbar-session.js"></script>
+
+    <!-- Script específico para agregar membresía básica al carrito -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const basicMembershipBtn = document.getElementById(
+          "add-basic-membership"
+        );
+
+        if (basicMembershipBtn) {
+          basicMembershipBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Datos de la membresía básica
+            const membershipData = {
+              id: "membership-basic",
+              name: "Membresía Básica",
+              price: 500,
+              size: "Mensual",
+              quantity: 1,
+              image: "FotosMembresia/basic-membership.png", // Imagen por defecto
+              type: "membership",
+            };
+
+            // Agregar al carrito usando la función existente
+            if (typeof addToCart === "function") {
+              addToCart(membershipData);
+
+              // Mostrar mensaje de confirmación
+              if (typeof showToast === "function") {
+                showToast("¡Membresía Básica agregada al carrito!");
+              } else {
+                alert("¡Membresía Básica agregada al carrito!");
+              }
+
+              // Opcional: abrir el carrito automáticamente
+              setTimeout(() => {
+                if (typeof openCart === "function") {
+                  openCart();
+                }
+              }, 1000);
+            } else {
+              console.error("La función addToCart no está disponible");
+              alert("Error al agregar la membresía al carrito");
+            }
+          });
+        }
+      });
+    </script>
+
+    <!-- Script específico para agregar membresía premium al carrito -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const premiumMembershipBtn = document.getElementById(
+          "add-premium-membership"
+        );
+
+        if (premiumMembershipBtn) {
+          premiumMembershipBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Datos de la membresía premium
+            const membershipData = {
+              id: "membership-premium",
+              name: "Membresía Premium",
+              price: 800,
+              size: "Mensual",
+              quantity: 1,
+              image: "FotosMembresia/premium-membership.png", // Imagen por defecto
+              type: "membership",
+            };
+
+            // Agregar al carrito usando la función existente
+            if (typeof addToCart === "function") {
+              addToCart(membershipData);
+
+              // Mostrar mensaje de confirmación
+              if (typeof showToast === "function") {
+                showToast("¡Membresía Premium agregada al carrito!");
+              } else {
+                alert("¡Membresía Premium agregada al carrito!");
+              }
+
+              // Opcional: abrir el carrito automáticamente
+              setTimeout(() => {
+                if (typeof openCart === "function") {
+                  openCart();
+                }
+              }, 1000);
+            } else {
+              console.error("La función addToCart no está disponible");
+              alert("Error al agregar la membresía al carrito");
+            }
+          });
+        }
+      });
+    </script>
+
+    <!-- Script específico para agregar membresía élite al carrito -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const eliteMembershipBtn = document.getElementById(
+          "add-elite-membership"
+        );
+
+        if (eliteMembershipBtn) {
+          eliteMembershipBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Datos de la membresía élite
+            const membershipData = {
+              id: "membership-elite",
+              name: "Membresía Élite",
+              price: 1200,
+              size: "Mensual",
+              quantity: 1,
+              image: "FotosMembresia/elite-membership.png", // Imagen por defecto
+              type: "membership",
+            };
+
+            // Agregar al carrito usando la función existente
+            if (typeof addToCart === "function") {
+              addToCart(membershipData);
+
+              // Mostrar mensaje de confirmación
+              if (typeof showToast === "function") {
+                showToast("¡Membresía Élite agregada al carrito!");
+              } else {
+                alert("¡Membresía Élite agregada al carrito!");
+              }
+
+              // Opcional: abrir el carrito automáticamente
+              setTimeout(() => {
+                if (typeof openCart === "function") {
+                  openCart();
+                }
+              }, 1000);
+            } else {
+              console.error("La función addToCart no está disponible");
+              alert("Error al agregar la membresía al carrito");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

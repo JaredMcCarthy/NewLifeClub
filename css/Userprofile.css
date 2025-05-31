@@ -1,0 +1,420 @@
+/* Estilos Generales */
+.profile-page {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #000; /* Negro */
+  color: #fff; /* Blanco para texto general */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinea al inicio para que no esté pegado al centro vertical */
+  min-height: 100vh;
+  box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+}
+
+.profile-tab {
+  background-color: #1a1a1a; /* Un negro un poco más claro para el fondo del perfil */
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  box-sizing: border-box;
+  border: 1px solid #5a005a; /* Borde morado sutil */
+  position: relative; /* Necesario para posicionar el botón de regreso */
+}
+
+/* Estilos para el botón de regresar al inicio */
+.back-to-home-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ff69b4; /* Rosado */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none; /* Quita el subrayado del enlace */
+  font-size: 1em;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.back-to-home-button:hover {
+  background-color: #ff00ff; /* Fucsia al pasar el ratón */
+  transform: translateX(-3px); /* Pequeño efecto al pasar el ratón */
+}
+
+/* Encabezado del Perfil */
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #5a005a; /* Línea divisoria morada */
+  margin-top: 40px; /* Para dar espacio al botón de regresar */
+}
+
+.profile-pic-container {
+  position: relative;
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border: 3px solid #ff00ff; /* Fucsia para el borde de la foto */
+  transition: transform 0.3s ease;
+}
+
+.profile-pic-container:hover {
+  transform: scale(1.05);
+}
+
+#profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.edit-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 0, 255, 0.7); /* Fucsia semitransparente */
+  color: #fff;
+  padding: 5px 0;
+  font-size: 0.9em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-pic-container:hover .edit-overlay {
+  opacity: 1;
+}
+
+.profile-header h2 {
+  color: #ff69b4; /* Rosado */
+  margin: 10px 0 5px;
+  font-size: 2.2em;
+}
+
+.profile-header p {
+  color: #dda0dd; /* Morado claro */
+  font-size: 1.1em;
+}
+
+/* Navegación */
+.profile-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 15px; /* Espacio entre botones */
+}
+
+.nav-button {
+  background-color: #5a005a; /* Morado */
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  flex-grow: 1; /* Permite que los botones crezcan para ocupar espacio */
+  text-align: center;
+}
+
+.nav-button:hover {
+  background-color: #7d007d; /* Morado más oscuro al pasar el ratón */
+  transform: translateY(-2px);
+}
+
+.nav-button.active {
+  background-color: #ff00ff; /* Fucsia para el botón activo */
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 0, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Contenido de las Secciones */
+.profile-content {
+  background-color: #2a2a2a; /* Negro un poco más claro para el contenido */
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.content-section {
+  display: none; /* Oculto por defecto */
+}
+
+.content-section.active {
+  display: block; /* Visible cuando está activo */
+}
+
+.content-section h3 {
+  color: #ff69b4; /* Rosado para los títulos de sección */
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  border-bottom: 1px solid #ff00ff; /* Fucsia para la línea del título */
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff; /* Blanco para las etiquetas */
+  font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.content-section textarea {
+  width: 100%; /* Ajustado a 100% para mejor responsividad */
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #5a005a; /* Borde morado */
+  background-color: #3a3a3a; /* Fondo oscuro para los inputs */
+  color: #fff;
+  font-size: 1.1em;
+  box-sizing: border-box; /* Crucial para que el padding no afecte el width */
+  transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.content-section textarea:focus {
+  border-color: #ff00ff; /* Fucsia al enfocar */
+  outline: none;
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+}
+
+.form-group input[readonly] {
+  background-color: #2a2a2a;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+textarea {
+  resize: vertical; /* Permite redimensionar verticalmente */
+  min-height: 100px;
+}
+
+.save-button {
+  background-color: #ff69b4; /* Rosado */
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-top: 15px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: auto; /* Permite que el botón se ajuste a su contenido */
+  display: inline-block; /* Para centrar si es necesario, o para que respete auto width */
+}
+
+.save-button:hover {
+  background-color: #ff00ff; /* Fucsia al pasar el ratón */
+  transform: translateY(-2px);
+}
+
+/* Estilos para Mis Compras */
+.purchase-item {
+  background-color: #3a3a3a; /* Un tono oscuro para cada item de compra */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column; /* Cambiado a columna para móviles */
+  justify-content: space-between;
+  align-items: flex-start; /* Alinea los ítems al inicio */
+  border: 1px solid #5a005a;
+  gap: 5px; /* Espacio entre los elementos de la compra */
+}
+
+.purchase-item span:first-child {
+  font-weight: bold;
+  color: #ff69b4; /* Rosado para el nombre del producto */
+  word-break: break-word; /* Rompe palabras largas para evitar desbordamiento */
+}
+
+.purchase-item span:nth-child(2) {
+  font-size: 0.9em;
+  color: #dda0dd; /* Morado claro para la fecha */
+}
+
+.purchase-item span:last-child {
+  font-weight: bold;
+  color: #ff00ff; /* Fucsia para el precio */
+  margin-top: 5px; /* Pequeño espacio para el precio en móvil */
+}
+
+.no-purchases {
+  text-align: center;
+  color: #dda0dd;
+  font-style: italic;
+  padding: 20px;
+  border: 1px dashed #5a005a;
+  border-radius: 8px;
+}
+
+/* --- Media Queries para Responsividad --- */
+
+/* Para pantallas pequeñas (ej: móviles en retrato, hasta 480px) */
+@media (max-width: 480px) {
+  body {
+    padding: 10px; /* Menos padding en los bordes para móviles */
+  }
+
+  .profile-tab {
+    padding: 20px 15px; /* Ajuste de padding interno */
+    border-radius: 10px;
+  }
+
+  .back-to-home-button {
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+    font-size: 0.85em;
+  }
+
+  .profile-header {
+    margin-top: 45px; /* Asegura espacio para el botón de regreso */
+    padding-bottom: 15px;
+  }
+
+  .profile-pic-container {
+    width: 120px; /* Un poco más pequeña en móviles */
+    height: 120px;
+  }
+
+  .profile-header h2 {
+    font-size: 1.8em;
+  }
+
+  .profile-header p {
+    font-size: 1em;
+  }
+
+  .profile-navigation {
+    flex-direction: column; /* Apila los botones de navegación verticalmente */
+    gap: 10px; /* Espacio entre botones apilados */
+    margin-bottom: 20px;
+  }
+
+  .nav-button {
+    padding: 10px 15px;
+    font-size: 1em;
+  }
+
+  .profile-content {
+    padding: 15px;
+  }
+
+  .content-section h3 {
+    font-size: 1.6em;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+  }
+
+  .form-group label {
+    font-size: 0.95em;
+  }
+
+  .form-group input,
+  .content-section textarea {
+    padding: 10px;
+    font-size: 1em;
+  }
+
+  .save-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    width: 100%; /* Haz el botón de guardar de ancho completo */
+    box-sizing: border-box;
+  }
+
+  .purchase-item {
+    padding: 12px;
+    font-size: 0.95em;
+  }
+
+  .purchase-item span:last-child {
+    text-align: right; /* Alinea el precio a la derecha si lo deseas */
+    width: 100%; /* Permite que el precio se alinee bien */
+  }
+}
+
+/* Para tablets y pantallas medianas (ej: entre 481px y 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  .profile-tab {
+    padding: 25px 20px;
+  }
+
+  .back-to-home-button {
+    top: 15px;
+    left: 15px;
+    padding: 9px 14px;
+    font-size: 0.9em;
+  }
+
+  .profile-header {
+    margin-top: 50px;
+  }
+
+  .profile-navigation {
+    flex-wrap: wrap; /* Permite que los botones de navegación se envuelvan si no caben */
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .nav-button {
+    flex-basis: auto; /* Permite que el ancho se ajuste al contenido */
+    padding: 10px 20px;
+    font-size: 1.05em;
+  }
+
+  .content-section h3 {
+    font-size: 1.7em;
+  }
+
+  .form-group input,
+  .content-section textarea {
+    font-size: 1.05em;
+  }
+
+  .save-button {
+    padding: 11px 22px;
+    font-size: 1.05em;
+  }
+
+  .purchase-item {
+    flex-direction: row; /* Vuelve a fila para pantallas más grandes */
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Para pantallas grandes (desktops, laptops, más de 768px) */
+@media (min-width: 769px) {
+  /* Los estilos base ya están optimizados para estas pantallas,
+       pero puedes agregar ajustes finos aquí si lo necesitas. */
+}

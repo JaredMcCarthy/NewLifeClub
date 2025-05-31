@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tienda - NewLifeRun Club</title>
+    <link rel="stylesheet" href="css/tienda.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/barra-baja.css" />
+    <link rel="stylesheet" href="css/Userprofile.css" />
+    <link rel="stylesheet" href="css/carrito.css" />
+    <link rel="stylesheet" href="css/search.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav class="main-nav">
+      <div class="nav-container">
+        <div class="nav-left">
+          <a href="index.html" class="nav-logo">NewLifeRun Club</a>
+          <button class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <div class="nav-center">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="membresias.html" class="nav-link">Membresías</a>
+          <a href="eventos.html" class="nav-link">Eventos</a>
+          <a href="tienda.html" class="nav-link active">Tienda</a>
+          <a href="newlifepro.html" class="nav-link"
+            >NewLife <span class="pro-badge">PRO</span></a
+          >
+        </div>
+
+        <div class="nav-right">
+          <!-- Botones para invitados (login/registro) -->
+          <a href="#" class="login-button" id="register-btn">Registrarse</a>
+          <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
+
+          <!-- Botones para usuarios logueados (ocultos por defecto) -->
+          <div class="user-actions">
+            <button id="logout-btn" class="user-button">Cerrar sesion</button>
+            <button class="user-button" id="search-btn">🔍</button>
+            <!-- Menú de búsqueda -->
+            <div class="search-menu" id="searchMenu">
+              <div class="search-container">
+                <button class="mobile-close-btn" id="mobileCloseSearch">
+                  ×
+                </button>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar en el sitio..."
+                />
+                <div class="search-results" id="searchResults">
+                  <!-- Los resultados se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
+            <button class="user-button cart-button" id="cart-btn">
+              🛒<span id="cart-count" class="cart-count">0</span>
+            </button>
+            <a href="Userprofile.html" class="user-button" id="profile-btn"
+              >👤</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Corre con <span class="highlight">Orgullo</span></h1>
+          <p>
+            Nuestra identidad ahora se viste. Llevá el espíritu del club en cada
+            kilómetro.
+          </p>
+          <button class="cta-button">Explorar Colección</button>
+        </div>
+        <div class="hero-image">
+          <img
+            src="testcamisa/Heroexample.png"
+            alt="Ropa Exclusiva"
+            class="floating-image"
+            id="heroImage"
+          />
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section" id="infoSection">
+      <div class="container">
+        <div class="info-content">
+          <div class="info-image">
+            <img
+              src="testcamisa/banner2.png"
+              alt="Calidad Superior"
+              class="settled-image"
+              id="settledImage"
+            />
+          </div>
+          <div class="info-text">
+            <h2>¿Por qué elegir nuestra ropa?</h2>
+            <div class="feature">
+              <div class="feature-icon">✨</div>
+              <div class="feature-text">
+                <h3>Calidad Premium</h3>
+                <p>
+                  Materiales de alta calidad que duran más y se sienten
+                  increíbles
+                </p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">🌱</div>
+              <div class="feature-text">
+                <h3>Sostenible</h3>
+                <p>Producción responsable con el medio ambiente</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">💎</div>
+              <div class="feature-text">
+                <h3>Diseño Exclusivo</h3>
+                <p>Piezas únicas que no encontrarás en ningún otro lugar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+      <div class="container">
+        <h2>Encuentra tu estilo</h2>
+        <div class="categories-grid">
+          <div class="category-card" data-category="mujer">
+            <div class="category-image">
+              <img src="testcamisa/mujerbanner.png" alt="Ropa Mujer" />
+            </div>
+            <div class="category-overlay">
+              <h3>Mujer</h3>
+              <p>Elegancia y comodidad</p>
+            </div>
+          </div>
+          <div class="category-card" data-category="hombre">
+            <div class="category-image">
+              <img src="testcamisa/hombrebanner.png" alt="Ropa Hombre" />
+            </div>
+            <div class="category-overlay">
+              <h3>Hombre</h3>
+              <p>Estilo y personalidad</p>
+            </div>
+          </div>
+          <div class="category-card" data-category="unisex">
+            <div class="category-image">
+              <img src="testcamisa/unisexbanner.png" alt="Ropa Unisex" />
+            </div>
+            <div class="category-overlay">
+              <h3>Unisex</h3>
+              <p>Para todos los estilos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Sections -->
+    <!-- Mujer Section -->
+    <section class="products-section" id="mujer">
+      <div class="container">
+        <h2>Colección Mujer</h2>
+        <div class="products-grid">
+          <div class="product-card" data-product="camisa-mujer-1">
+            <div class="product-image">
+              <img src="Fotostienda/mujer1.png" alt="Camisa Mujer 1" />
+            </div>
+            <div class="product-info">
+              <h3>Blusa Elegante Rosa</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-mujer-2">
+            <div class="product-image">
+              <img src="Fotostienda/mujer2.png" alt="Camisa Mujer 2" />
+            </div>
+            <div class="product-info">
+              <h3>Top Premium Fucsia</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-mujer-3">
+            <div class="product-image">
+              <img src="Fotostienda/mujer3.png" alt="Camisa Mujer 3" />
+            </div>
+            <div class="product-info">
+              <h3>Camisa Clásica Blanca</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hombre Section -->
+    <section class="products-section" id="hombre">
+      <div class="container">
+        <h2>Colección Hombre</h2>
+        <div class="products-grid">
+          <div class="product-card" data-product="camisa-hombre-1">
+            <div class="product-image">
+              <img src="Fotostienda/Hombre1.png" alt="Camisa Hombre 1" />
+            </div>
+            <div class="product-info">
+              <h3>Polo Deportivo Negro</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-hombre-2">
+            <div class="product-image">
+              <img src="Fotostienda/Hombre2.png" alt="Camisa Hombre 2" />
+            </div>
+            <div class="product-info">
+              <h3>Camisa Casual Blanca</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-hombre-3">
+            <div class="product-image">
+              <img src="Fotostienda/Hombre3.png" alt="Camisa Hombre 3" />
+            </div>
+            <div class="product-info">
+              <h3>Henley Premium</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Unisex Section -->
+    <section class="products-section" id="unisex">
+      <div class="container">
+        <h2>Colección Unisex</h2>
+        <div class="products-grid">
+          <div class="product-card" data-product="camisa-unisex-1">
+            <div class="product-image">
+              <img src="Fotostienda/unisex1.png" alt="Camisa Unisex 1" />
+            </div>
+            <div class="product-info">
+              <h3>Oversized Tee</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-unisex-2">
+            <div class="product-image">
+              <img src="Fotostienda/unisex2.png" alt="Camisa Unisex 2" />
+            </div>
+            <div class="product-info">
+              <h3>Hoodie Minimalista</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+          <div class="product-card" data-product="camisa-unisex-3">
+            <div class="product-image">
+              <img src="Fotostienda/unisex3.png" alt="Camisa Unisex 3" />
+            </div>
+            <div class="product-info">
+              <h3>Tank Top Fucsia</h3>
+              <p class="price">L.500</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+      <div class="container">
+        <div class="newsletter-content">
+          <h2>Mantente al día con las últimas tendencias</h2>
+          <p>
+            Suscríbete a nuestro newsletter y recibe un 15% de descuento en tu
+            primera compra
+          </p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Tu email" required />
+            <button type="submit">Suscribirme</button>
+          </form>
+          <div class="social-icons">
+            <a href="#" aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" aria-label="Facebook"
+              ><i class="fab fa-facebook"></i
+            ></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-body">
+          <div class="modal-images">
+            <div class="main-image">
+              <img id="mainProductImage" src="" alt="" />
+            </div>
+            <div class="thumbnail-images">
+              <img class="thumbnail active" src="" alt="" />
+              <img class="thumbnail" src="" alt="" />
+              <img class="thumbnail" src="" alt="" />
+            </div>
+          </div>
+          <div class="modal-info">
+            <h2 id="modalProductName"></h2>
+            <p class="modal-price" id="modalProductPrice"></p>
+            <div class="product-description">
+              <p id="modalProductDescription"></p>
+            </div>
+            <div class="size-selector">
+              <h4>Talla:</h4>
+              <div class="size-options">
+                <button class="size-btn">XS</button>
+                <button class="size-btn">S</button>
+                <button class="size-btn active">M</button>
+                <button class="size-btn">L</button>
+                <button class="size-btn">XL</button>
+              </div>
+            </div>
+            <div class="quantity-selector">
+              <h4>Cantidad:</h4>
+              <div class="quantity-controls">
+                <button class="qty-btn minus">-</button>
+                <span class="quantity">1</span>
+                <button class="qty-btn plus">+</button>
+              </div>
+            </div>
+            <button class="add-to-cart-btn">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel">
+      <div class="cart-header">
+        <h2 class="cart-title">Mi Carrito</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-indicator">
+        <div class="progress-steps">
+          <div class="progress-line">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="step active" data-step="1">1</div>
+          <div class="step" data-step="2">2</div>
+          <div class="step" data-step="3">3</div>
+          <div class="step" data-step="4">4</div>
+        </div>
+      </div>
+
+      <div class="cart-content">
+        <!-- Step 1: Cart Items -->
+        <div class="cart-step active" id="step1">
+          <h3>Tus Productos</h3>
+          <div id="cartItems" class="cart-items">
+            <!-- Los items del carrito se insertarán aquí dinámicamente -->
+          </div>
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Envío:</span>
+              <span id="shipping">L.100</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Shipping Information -->
+        <div class="cart-step" id="step2">
+          <h3>Información de Envío</h3>
+          <form id="shippingForm" class="shipping-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-name">Nombre</label>
+                  <input
+                    type="text"
+                    id="shipping-name"
+                    placeholder="Tu nombre"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu nombre</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-lastname">Apellido</label>
+                  <input
+                    type="text"
+                    id="shipping-lastname"
+                    placeholder="Tu apellido"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu apellido</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-address">Dirección de Envío</label>
+              <input
+                type="text"
+                id="shipping-address"
+                placeholder="Calle, número, colonia"
+                required
+              />
+              <div class="error">Por favor ingresa una dirección válida</div>
+            </div>
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-city">Ciudad</label>
+                  <input
+                    type="text"
+                    id="shipping-city"
+                    placeholder="Tu ciudad"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu ciudad</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-zip">Código Postal</label>
+                  <input
+                    type="text"
+                    id="shipping-zip"
+                    placeholder="XXXXX"
+                    pattern="[0-9]{5}"
+                    required
+                  />
+                  <div class="error">
+                    Ingresa un código postal válido (5 dígitos)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-phone">Teléfono</label>
+              <input
+                type="tel"
+                id="shipping-phone"
+                placeholder="Número de teléfono"
+                pattern="[0-9]+"
+                minlength="8"
+                maxlength="15"
+                required
+              />
+              <div class="error">
+                Por favor ingresa un número de teléfono válido
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-email">Email</label>
+              <input
+                type="email"
+                id="shipping-email"
+                placeholder="tucorreo@ejemplo.com"
+                required
+              />
+              <div class="error">Ingresa un correo electrónico válido</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment Method -->
+        <div class="cart-step" id="step3">
+          <h3>Método de Pago</h3>
+          <div class="payment-methods">
+            <div class="payment-option" data-payment="card">
+              <div class="payment-icon">💳</div>
+              <div class="payment-info">
+                <h4>Tarjeta de Crédito/Débito</h4>
+                <p>Paga de forma segura con tu tarjeta</p>
+              </div>
+            </div>
+            <div id="cardForm" style="display: none">
+              <div class="form-group">
+                <label for="card-number">Número de Tarjeta</label>
+                <input
+                  type="text"
+                  id="card-number"
+                  maxlength="16"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-expiry">Fecha de Expiración</label>
+                    <input
+                      type="text"
+                      id="card-expiry"
+                      placeholder="MM/YY"
+                      maxlength="5"
+                    />
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input
+                      type="text"
+                      id="card-cvv"
+                      maxlength="4"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Order Confirmation -->
+        <div class="cart-step" id="step4">
+          <div class="success-animation">
+            <div class="success-icon">✓</div>
+            <h3>¡Pedido Confirmado!</h3>
+            <p>Número de Orden: <span id="orderNumber"></span></p>
+            <p>Se ha enviado un correo de confirmación a:</p>
+            <p id="confirmationEmail"></p>
+            <div class="order-summary" id="orderSummary">
+              <!-- Resumen del pedido se insertará aquí -->
+            </div>
+            <p class="final-amount">Total: <span id="finalAmount"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="cart-actions">
+        <button id="backBtn" class="btn btn-secondary" style="display: none">
+          Anterior
+        </button>
+        <button id="nextBtn" class="btn btn-primary">Continuar</button>
+      </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!--Footer al final del sitio web mismo a todos-->
+    <footer class="footer-final">
+      <div class="footer-columns">
+        <!-- Columna Izquierda -->
+        <div class="footer-column">
+          <h2 class="logo">NewLifeRun Club</h2>
+          <p>Transformando vidas a través del deporte.</p>
+        </div>
+
+        <!-- Columna Central -->
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="membresias.html">Membresías</a></li>
+            <li><a href="eventos.html">Eventos</a></li>
+            <li><a href="tienda.html">Tienda</a></li>
+            <li><a href="newlifepro.html">NewLife Pro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <ul class="contacto-lista">
+            <li>
+              <a href="mailto:info@newliferun.com">info@newliferun.com</a>
+            </li>
+            <li><a href="tel:+50433647133">+504 3364-7133</a></li>
+            <li>Tegucigalpa, Honduras</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="copyright">
+        <p>&copy; 2025 NewLifeRun Club. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="js/cart-handler.js"></script>
+    <script src="js/tienda.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/navbar-session.js"></script>
+  </body>
+</html>

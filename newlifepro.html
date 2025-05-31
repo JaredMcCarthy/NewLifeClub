@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NewLifePro Club | From Runners to Runners</title>
+    <link rel="stylesheet" href="css/newlifepro.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/barra-baja.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/carrito.css" />
+    <link rel="stylesheet" href="css/search.css" />
+    <style>
+      /* Estilos específicos para newlifepro.html fase 3 del carrito */
+      #newlifepro-cart #step3 h3 {
+        text-align: center;
+        font-size: 1.6rem;
+        color: #333;
+        margin-bottom: 25px;
+        font-weight: 600;
+      }
+
+      #newlifepro-cart #step3 h3:after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #ff1493;
+        margin: 12px auto 0;
+        border-radius: 2px;
+      }
+
+      #newlifepro-cart #step3 .payment-methods {
+        margin-bottom: 30px;
+      }
+
+      #newlifepro-cart #step3 .payment-option {
+        background: #ffffff;
+        border: 2px solid #e8e8e8;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+      }
+
+      #newlifepro-cart #step3 .payment-option:hover {
+        border-color: #ff1493;
+        background: rgba(255, 20, 147, 0.05);
+      }
+
+      #newlifepro-cart #step3 .payment-option.selected {
+        border-color: #ff1493;
+        background: rgba(255, 20, 147, 0.1);
+      }
+
+      #newlifepro-cart #step3 .payment-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #ff1493, #ff69b4);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+      }
+
+      #newlifepro-cart #step3 .payment-info h4 {
+        margin: 0;
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+      }
+
+      #newlifepro-cart #step3 .payment-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      #newlifepro-cart #step3 #cardForm {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+
+      #newlifepro-cart #step3 #cardForm .form-group {
+        margin-bottom: 20px;
+      }
+
+      #newlifepro-cart #step3 #cardForm label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+
+      #newlifepro-cart #step3 #cardForm input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #333;
+        background: #ffffff;
+        transition: all 0.3s ease;
+      }
+
+      #newlifepro-cart #step3 #cardForm input:focus {
+        border-color: #ff1493;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.1);
+      }
+
+      #newlifepro-cart #step3 #cardForm input:hover {
+        border-color: #ff1493;
+      }
+
+      #newlifepro-cart #step3 #cardForm input::placeholder {
+        color: #999;
+      }
+
+      #newlifepro-cart #step3 #cardForm .form-row {
+        display: flex;
+        gap: 15px;
+      }
+
+      #newlifepro-cart #step3 #cardForm .form-col {
+        flex: 1;
+      }
+
+      /* Alineación específica para Fecha de Expiración y CVV */
+      #newlifepro-cart #step3 #cardForm .form-row .form-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      #newlifepro-cart #step3 #cardForm .form-row .form-col .form-group {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="main-nav">
+      <div class="nav-container">
+        <div class="nav-left">
+          <a href="newlifepro.html" class="nav-logo">NewLifeRun Club</a>
+          <button class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <div class="nav-center">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="membresias.html" class="nav-link">Membresías</a>
+          <a href="eventos.html" class="nav-link">Eventos</a>
+          <a href="tienda.html" class="nav-link">Tienda</a>
+          <a href="newlifepro.html" class="nav-link active"
+            >NewLife <span class="pro-badge active">PRO</span></a
+          >
+        </div>
+
+        <div class="nav-right">
+          <!-- Botones para invitados (login/registro) -->
+          <a href="#" class="login-button" id="register-btn">Registrarse</a>
+          <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
+
+          <!-- Botones para usuarios logueados (ocultos por defecto) -->
+          <div class="user-actions" style="display: none">
+            <button id="logout-btn" class="user-button">Cerrar sesion</button>
+            <button href="#" class="user-button" id="search-btn">🔍</button>
+            <!-- Menú de búsqueda -->
+            <div class="search-menu" id="searchMenu">
+              <div class="search-container">
+                <button class="mobile-close-btn" id="mobileCloseSearch">
+                  ×
+                </button>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar en el sitio..."
+                />
+                <div class="search-results" id="searchResults">
+                  <!-- Los resultados se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
+            <button href="#" class="user-button" id="cart-btn">🛒</button>
+            <a href="Userprofile.html" class="user-button" id="profile-btn"
+              >👤</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <h1 class="animate__animated animate__fadeIn">NewLifePro Club</h1>
+        <p class="animate__animated animate__fadeIn animate__delay-1s">
+          From Runners to Runners
+        </p>
+        <button
+          class="cta-button animate__animated animate__fadeIn animate__delay-2s"
+        >
+          ÚNETE AHORA
+        </button>
+      </div>
+      <div class="scroll-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+      <div class="container">
+        <div class="section-header">
+          <h2>¿Qué es <span>NewLifePro Club</span>?</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="about-content">
+          <div class="about-text">
+            <p>
+              Somos una comunidad dedicada a transformar corredores
+              principiantes en atletas completos. Con planes profesionales
+              diseñados para distancias de 5K, 10K, 15K y 25K, te acompañamos en
+              cada paso de tu evolución.
+            </p>
+            <p>
+              Nuestros programas están creados por corredores para corredores,
+              basados en ciencia deportiva y años de experiencia en pista y
+              carretera.
+            </p>
+          </div>
+          <div class="about-image">
+            <img
+              src="fotoslifepro/heropic2.png"
+              alt="Corredores en entrenamiento"
+            />
+          </div>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <h3>3,500+</h3>
+            <p>Corredores graduados</p>
+          </div>
+          <div class="stat-item">
+            <h3>98%</h3>
+            <p>Tasa de éxito</p>
+          </div>
+          <div class="stat-item">
+            <h3>12</h3>
+            <p>Entrenadores expertos</p>
+          </div>
+          <div class="stat-item">
+            <h3>85%</h3>
+            <p>Mejora rendimiento</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Training Plans Section -->
+    <section class="training-plans" id="plans">
+      <div class="container">
+        <div class="section-header">
+          <h2>Planes de <span>Entrenamiento</span></h2>
+          <div class="divider"></div>
+        </div>
+        <div class="plans-description">
+          <p>
+            Cada plan está diseñado científicamente para maximizar tu
+            rendimiento y minimizar lesiones, adaptándose perfectamente a tu
+            nivel actual y objetivos de carrera.
+          </p>
+        </div>
+        <div class="plans-grid">
+          <div class="plan-card" data-distance="5K">
+            <div class="plan-header">
+              <h3>10K</h3>
+              <p>Desarrollo</p>
+            </div>
+            <div class="plan-content">
+              <ul>
+                <li><i class="fas fa-check"></i> 8 semanas de entrenamiento</li>
+                <li>
+                  <i class="fas fa-check"></i> Para principiantes absolutos
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> Transición de caminar a correr
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> Técnicas básicas de respiración
+                </li>
+              </ul>
+              <div class="plan-image">
+                <img src="" alt="" />
+              </div>
+            </div>
+          </div>
+          <div class="plan-card" data-distance="10K">
+            <div class="plan-header">
+              <h3>21K</h3>
+              <p>Profesional</p>
+            </div>
+            <div class="plan-content">
+              <ul>
+                <li>
+                  <i class="fas fa-check"></i> 10 semanas de entrenamiento
+                </li>
+                <li><i class="fas fa-check"></i> Base aeróbica fundamental</li>
+                <li>
+                  <i class="fas fa-check"></i> Introducción a entrenamientos de
+                  ritmo
+                </li>
+                <li><i class="fas fa-check"></i> Fortalecimiento específico</li>
+              </ul>
+              <div class="plan-image">
+                <img src="" alt="" />
+              </div>
+            </div>
+          </div>
+          <div class="plan-card" data-distance="15K">
+            <div class="plan-header">
+              <h3>42K</h3>
+              <p>Avanzado</p>
+            </div>
+            <div class="plan-content">
+              <ul>
+                <li>
+                  <i class="fas fa-check"></i> 12 semanas de entrenamiento
+                </li>
+                <li><i class="fas fa-check"></i> Desarrollo de resistencia</li>
+                <li>
+                  <i class="fas fa-check"></i> Técnicas avanzadas de carrera
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> Periodización del entrenamiento
+                </li>
+              </ul>
+              <div class="plan-image">
+                <img src="" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Membership Section -->
+    <section class="membership" id="membership">
+      <div class="container">
+        <div class="section-header">
+          <h2>Planes de <span>entrenamiento</span></h2>
+          <div class="divider"></div>
+        </div>
+        <div class="membership-grid">
+          <div class="membership-card">
+            <div class="membership-header">
+              <h3>BÁSICO</h3>
+              <div class="price">
+                <span class="amount" style="font-size: 0.9em">L.2,000</span>
+                <span class="period" style="font-size: 0.8em">/1 mes</span>
+              </div>
+            </div>
+            <div class="membership-content">
+              <h4>¿Qué incluye?</h4>
+              <ul>
+                <li>
+                  <i class="fas fa-check"></i> 🎯 Entrenamiento personalizado
+                  según tu meta (10K, 21K o 42K)
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 📈 Evaluaciones, seguimiento y
+                  asesoría especializada
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🧠 Formación física, mental y
+                  táctica
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🤝 Comunidad enfocada y
+                  disciplinada
+                </li>
+              </ul>
+              <button class="membership-button" id="plan-10k-button">
+                SELECCIONAR
+              </button>
+            </div>
+          </div>
+          <div class="membership-card featured">
+            <div class="membership-badge">MÁS POPULAR</div>
+            <div class="membership-header">
+              <h3>PRO</h3>
+              <div class="price">
+                <span class="amount" style="font-size: 0.9em">L.2,000</span>
+                <span class="period" style="font-size: 0.8em">/2 meses</span>
+              </div>
+            </div>
+            <div class="membership-content">
+              <h4>¿Qué incluye?</h4>
+              <ul>
+                <li>
+                  <i class="fas fa-check"></i> 🎯 Entrenamiento personalizado
+                  según tu meta (10K, 21K o 42K)
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 📈 Evaluaciones, seguimiento y
+                  asesoría especializada
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🧠 Formación física, mental y
+                  táctica
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🤝 Comunidad enfocada y
+                  disciplinada
+                </li>
+              </ul>
+              <button class="membership-button" id="plan-42k-button">
+                SELECCIONAR
+              </button>
+            </div>
+          </div>
+          <div class="membership-card">
+            <div class="membership-header">
+              <h3>ELITE</h3>
+              <div class="price">
+                <span class="amount" style="font-size: 0.9em">L.2,000</span>
+                <span class="period" style="font-size: 0.8em">/1 mes</span>
+              </div>
+            </div>
+            <div class="membership-content">
+              <h4>¿Qué incluye?</h4>
+              <ul>
+                <li>
+                  <i class="fas fa-check"></i> 🎯 Entrenamiento personalizado
+                  según tu meta (10K, 21K o 42K)
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 📈 Evaluaciones, seguimiento y
+                  asesoría especializada
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🧠 Formación física, mental y
+                  táctica
+                </li>
+                <li>
+                  <i class="fas fa-check"></i> 🤝 Comunidad enfocada y
+                  disciplinada
+                </li>
+              </ul>
+              <button class="membership-button" id="plan-21k-button">
+                SELECCIONAR
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Join Section -->
+    <section class="why-join" id="why-join">
+      <div class="container">
+        <div class="section-header">
+          <h2>¿Por qué <span>unirte?</span></h2>
+          <div class="divider"></div>
+        </div>
+        <div class="features-container">
+          <div class="feature-card" data-aos="fade-up">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Mejora Garantizada</h3>
+            <p>
+              Nuestros programas están diseñados para mostrar resultados
+              medibles desde las primeras semanas.
+            </p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <h3>Entrenamiento Seguro</h3>
+            <p>
+              Minimizamos el riesgo de lesiones con programas progresivos y
+              adaptados a cada nivel.
+            </p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>Comunidad Activa</h3>
+            <p>
+              Únete a miles de corredores que comparten tus objetivos y te
+              motivarán día a día.
+            </p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h3>Conocimiento Experto</h3>
+            <p>
+              Aprende de entrenadores certificados con experiencia internacional
+              en competiciones.
+            </p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Acceso 24/7</h3>
+            <p>
+              Entrena cuando y donde quieras con nuestro contenido disponible en
+              todos tus dispositivos.
+            </p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="feature-icon">
+              <i class="fas fa-medal"></i>
+            </div>
+            <h3>Resultados Reales</h3>
+            <p>
+              Más del 85% de nuestros miembros logran sus objetivos de carrera
+              en su primer intento.
+            </p>
+          </div>
+        </div>
+        <div class="testimonial-slider">
+          <div class="testimonial active">
+            <div class="testimonial-content">
+              <div class="testimonial-image">
+                <img src="fotoslifepro/random1.png" alt="Testimonio 1" />
+              </div>
+              <p>
+                "Nunca pensé que podría completar un 15K. Después de 3 meses con
+                NewLifePro Club no solo lo completé, sino que terminé entre los
+                primeros 100 de mi categoría."
+              </p>
+              <h4>Carlos Méndez</h4>
+              <p class="testimonial-detail">Miembro desde 2023 | Plan 15K</p>
+            </div>
+          </div>
+          <div class="testimonial">
+            <div class="testimonial-content">
+              <div class="testimonial-image">
+                <img src="fotoslifepro/random2.png" alt="Testimonio 2" />
+              </div>
+              <p>
+                "La comunidad y los entrenadores son increíbles. Me ayudaron a
+                superar mi meseta de rendimiento y ahora estoy corriendo
+                distancias que nunca creí posibles."
+              </p>
+              <h4>Ana Gutiérrez</h4>
+              <p class="testimonial-detail">Miembro desde 2022 | Plan 25K</p>
+            </div>
+          </div>
+          <div class="testimonial">
+            <div class="testimonial-content">
+              <div class="testimonial-image">
+                <img src="fotoslifepro/random3.png" alt="Testimonio 3" />
+              </div>
+              <p>
+                "Comencé sin poder correr ni 1 kilómetro. Hoy, he completado mi
+                primer 10K y estoy preparándome para el 15K. Todo gracias a los
+                planes progresivos."
+              </p>
+              <h4>Miguel Sánchez</h4>
+              <p class="testimonial-detail">Miembro desde 2024 | Plan 10K</p>
+            </div>
+          </div>
+          <div class="testimonial-controls">
+            <button class="prev-testimonial">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="testimonial-dots">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <button class="next-testimonial">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Editorial Section -->
+    <section class="editorial" id="editorial">
+      <div class="container">
+        <div class="section-header">
+          <h2>Nuestros <span>Editoriales</span></h2>
+          <div class="divider"></div>
+        </div>
+        <div class="editorial-grid">
+          <div class="editorial-card">
+            <div class="editorial-image">
+              <img src="fotoslifepro/editorialpic1.png" alt="Editorial 1" />
+            </div>
+            <div class="editorial-content">
+              <span class="editorial-tag">NUTRICIÓN</span>
+              <h3>Alimentación Estratégica para Carreras de 10K+</h3>
+              <p>
+                Descubre los secretos de la nutrición pre y post carrera que
+                maximizarán tu rendimiento y recuperación.
+              </p>
+              <a href="editorial-10k.html" target="_blank" class="read-more"
+                >Leer más <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+          </div>
+          <div class="editorial-card">
+            <div class="editorial-image">
+              <img src="fotoslifepro/biomedpic2.png" alt="Editorial 2" />
+            </div>
+            <div class="editorial-content">
+              <span class="editorial-tag">TÉCNICA</span>
+              <h3>Biomecánica Perfecta: La Clave del Éxito</h3>
+              <p>
+                Análisis detallado de la técnica de carrera que previene
+                lesiones y optimiza tu eficiencia energética.
+              </p>
+              <a href="editorial-bio.html" target="_blank" class="read-more"
+                >Leer más <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+          </div>
+          <div class="editorial-card">
+            <div class="editorial-image">
+              <img src="fotoslifepro/editorialpic3.png" alt="Editorial 3" />
+            </div>
+            <div class="editorial-content">
+              <span class="editorial-tag">MENTAL</span>
+              <h3>Psicología del Corredor: Vence tus Límites</h3>
+              <p>
+                Estrategias mentales comprobadas utilizadas por atletas de élite
+                para superar barreras psicológicas.
+              </p>
+              <a href="editoria-psico.html" target="_blank" class="read-more"
+                >Leer más <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+          </div>
+          <div class="editorial-card">
+            <div class="editorial-image">
+              <img src="fotoslifepro/editorialpic4.png" alt="Editorial 4" />
+            </div>
+            <div class="editorial-content">
+              <span class="editorial-tag">GEAR</span>
+              <h3>El Calzado Correcto según tu Tipo de Pisada</h3>
+              <p>
+                Guía completa para elegir las zapatillas perfectas según tu
+                anatomía y estilo de carrera.
+              </p>
+              <a href="editorial-calza.html" target="_blank" class="read-more"
+                >Leer más <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+        <div class="editorial-cta">
+          <button class="editorial-button">VER TODOS LOS ARTÍCULOS</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="final-cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2>¿Listo para llevar tu carrera al siguiente nivel?</h2>
+          <p>Únete hoy a NewLifePro Club y comienza tu transformación</p>
+          <button class="cta-button">COMENZAR AHORA</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel">
+      <div class="cart-content" id="newlifepro-cart">
+        <button class="close-btn">&times;</button>
+        <h2>Mi Carrito</h2>
+
+        <!-- Progress Bar -->
+        <div class="progress-indicator">
+          <div class="progress-steps">
+            <div class="progress-line">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="step active" data-step="1">1</div>
+            <div class="step" data-step="2">2</div>
+            <div class="step" data-step="3">3</div>
+            <div class="step" data-step="4">4</div>
+          </div>
+        </div>
+
+        <!-- Step 1: Cart Items -->
+        <div class="cart-step active" id="step1">
+          <h3>Tus Productos</h3>
+          <div id="cartItems" class="cart-items">
+            <!-- Los items del carrito se insertarán aquí dinámicamente -->
+          </div>
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Envío:</span>
+              <span id="shipping">$15.00</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Shipping Information -->
+        <div class="cart-step" id="step2">
+          <h3>Información de Envío</h3>
+          <form id="shippingForm" class="shipping-form">
+            <div class="form-row">
+              <div class="form-col">
+                <label for="shipping-name">Nombre</label>
+                <input
+                  type="text"
+                  id="shipping-name"
+                  placeholder="Tu nombre"
+                  required
+                />
+                <div class="error">Por favor ingresa tu nombre</div>
+              </div>
+              <div class="form-col">
+                <label for="shipping-lastname">Apellido</label>
+                <input
+                  type="text"
+                  id="shipping-lastname"
+                  placeholder="Tu apellido"
+                  required
+                />
+                <div class="error">Por favor ingresa tu apellido</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-address">Dirección de Envío</label>
+              <input
+                type="text"
+                id="shipping-address"
+                placeholder="Calle, número, colonia"
+                required
+              />
+              <div class="error">Por favor ingresa una dirección válida</div>
+            </div>
+            <div class="form-row">
+              <div class="form-col">
+                <label for="shipping-city">Ciudad</label>
+                <input
+                  type="text"
+                  id="shipping-city"
+                  placeholder="Tu ciudad"
+                  required
+                />
+                <div class="error">Por favor ingresa tu ciudad</div>
+              </div>
+              <div class="form-col">
+                <label for="shipping-zip">Código Postal</label>
+                <input
+                  type="text"
+                  id="shipping-zip"
+                  placeholder="XXXXX"
+                  pattern="[0-9]{5}"
+                  required
+                />
+                <div class="error">
+                  Ingresa un código postal válido (5 dígitos)
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-phone">Teléfono</label>
+              <input
+                type="tel"
+                id="shipping-phone"
+                placeholder="Número de teléfono"
+                pattern="[0-9]+"
+                minlength="8"
+                maxlength="15"
+                required
+              />
+              <div class="error">
+                Por favor ingresa un número de teléfono válido
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-email">Email</label>
+              <input
+                type="email"
+                id="shipping-email"
+                placeholder="tucorreo@ejemplo.com"
+                required
+              />
+              <div class="error">Ingresa un correo electrónico válido</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment Method -->
+        <div class="cart-step" id="step3">
+          <h3>Método de Pago</h3>
+          <div class="payment-methods">
+            <div class="payment-option" data-payment="card">
+              <div class="payment-icon">💳</div>
+              <div class="payment-info">
+                <h4>Tarjeta de Crédito/Débito</h4>
+                <p>Paga de forma segura con tu tarjeta</p>
+              </div>
+            </div>
+            <div id="cardForm" style="display: none">
+              <div class="form-group">
+                <label for="card-number">Número de Tarjeta</label>
+                <input
+                  type="text"
+                  id="card-number"
+                  maxlength="16"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-expiry">Fecha de Expiración</label>
+                    <input
+                      type="text"
+                      id="card-expiry"
+                      placeholder="MM/YY"
+                      maxlength="5"
+                    />
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input
+                      type="text"
+                      id="card-cvv"
+                      maxlength="4"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Order Confirmation -->
+        <div class="cart-step" id="step4">
+          <div class="success-animation">
+            <div class="success-icon">✓</div>
+            <h3>¡Pedido Confirmado!</h3>
+            <p>Número de Orden: <span id="orderNumber"></span></p>
+            <p>Se ha enviado un correo de confirmación a:</p>
+            <p id="confirmationEmail"></p>
+            <div class="order-summary" id="orderSummary">
+              <!-- Resumen del pedido se insertará aquí -->
+            </div>
+            <p class="final-amount">Total: <span id="finalAmount"></span></p>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="cart-actions">
+          <button id="backBtn" class="btn btn-secondary" style="display: none">
+            Anterior
+          </button>
+          <button id="nextBtn" class="btn btn-primary">Continuar</button>
+        </div>
+      </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- Footer -->
+    <footer class="footer-final">
+      <div class="footer-columns">
+        <!-- Columna Izquierda -->
+        <div class="footer-column">
+          <h2 class="logo">NewLifeRun Club</h2>
+          <p>Transformando vidas a través del deporte.</p>
+        </div>
+
+        <!-- Columna Central -->
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="membresias.html">Membresías</a></li>
+            <li><a href="eventos.html">Eventos</a></li>
+            <li><a href="tienda.html">Tienda</a></li>
+            <li><a href="lifepro.html">NewLife Pro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <ul class="contacto-lista">
+            <li>
+              <a href="mailto:info@newliferun.com">info@newliferun.com</a>
+            </li>
+            <li><a href="tel:+50433647133">+504 3364-7133</a></li>
+            <li>Tegucigalpa, Honduras</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="copyright">
+        <p>&copy; 2025 NewLifeRun Club. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="js/newlifepro.js"></script>
+    <script src="js/cart-handler.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/navbar-session.js"></script>
+
+    <!-- Script específico para plan 10K -->
+    <script>
+      // Funcionalidad para abrir plan10k.html cuando se presiona el botón de la membresía de 10K
+      document.addEventListener("DOMContentLoaded", function () {
+        const plan10kButton = document.getElementById("plan-10k-button");
+        if (plan10kButton) {
+          plan10kButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.open("plan10k.html", "_blank");
+          });
+        }
+      });
+    </script>
+
+    <!-- Script específico para plan 21K -->
+    <script>
+      // Funcionalidad para abrir plan21k.html cuando se presiona el botón de la membresía ELITE
+      document.addEventListener("DOMContentLoaded", function () {
+        const plan21kButton = document.getElementById("plan-21k-button");
+        if (plan21kButton) {
+          plan21kButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.open("plan21k.html", "_blank");
+          });
+        }
+      });
+    </script>
+
+    <!-- Script específico para plan 42K -->
+    <script>
+      // Funcionalidad para abrir plan42k.html cuando se presiona el botón de la membresía PRO
+      document.addEventListener("DOMContentLoaded", function () {
+        const plan42kButton = document.getElementById("plan-42k-button");
+        if (plan42kButton) {
+          plan42kButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.open("plan42k.html", "_blank");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

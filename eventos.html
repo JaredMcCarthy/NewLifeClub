@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos - NewLifeRun Club</title>
+    <link rel="stylesheet" href="css/eventos.css" />
+    <link rel="stylesheet" href="css/tabIniciar.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/Userprofile.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/barra-baja.css" />
+    <link rel="stylesheet" href="css/carrito.css" />
+    <link rel="stylesheet" href="css/search.css" />
+  </head>
+  <body>
+    <nav class="main-nav">
+      <div class="nav-container">
+        <div class="nav-left">
+          <a href="index.html" class="nav-logo">NewLifeRun Club</a>
+          <button class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <div class="nav-center">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="membresias.html" class="nav-link">Membresías</a>
+          <a href="eventos.html" class="nav-link active">Eventos</a>
+          <a href="tienda.html" class="nav-link">Tienda</a>
+          <a href="newlifepro.html" class="nav-link"
+            >NewLife <span class="pro-badge">PRO</span></a
+          >
+        </div>
+
+        <div class="nav-right">
+          <!-- Botones para invitados (login/registro) -->
+          <a href="#" class="login-button" id="register-btn">Registrarse</a>
+          <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
+
+          <!-- Botones para usuarios logueados (ocultos por defecto) -->
+          <div class="user-actions">
+            <button id="logout-btn" class="user-button">Cerrar sesion</button>
+            <button class="user-button" id="search-btn">🔍</button>
+            <!-- Menú de búsqueda -->
+            <div class="search-menu" id="searchMenu">
+              <div class="search-container">
+                <button class="mobile-close-btn" id="mobileCloseSearch">
+                  ×
+                </button>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar en el sitio..."
+                />
+                <div class="search-results" id="searchResults">
+                  <!-- Los resultados se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
+            <button class="user-button cart-button" id="cart-btn">
+              🛒<span id="cart-count" class="cart-count">0</span>
+            </button>
+            <a href="Userprofile.html" class="user-button" id="profile-btn"
+              >👤</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO BANNER DINÁMICO -->
+    <div class="hero-banner">
+      <div class="hero-slider">
+        <div class="slide active">
+          <img src="FotosEvento/Slidepic1.png" alt="Evento Principal" />
+          <div class="slide-content">
+            <h1>Eventos Destacados de NewLife Club</h1>
+            <p>Descubre lo mejor del deporte y la vida activa</p>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="FotosEvento/Slidepic2.png" alt="Evento Principal" />
+          <div class="slide-content">
+            <h1>Competiciones Mensuales</h1>
+            <p>Únete a nuestras carreras y eventos exclusivos</p>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="FotosEvento/Slidepic3.png" alt="Evento Principal" />
+          <div class="slide-content">
+            <h1>Experiencias Únicas</h1>
+            <p>Creando comunidad a través del deporte</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN DE PESTAÑAS -->
+    <div class="event-tabs">
+      <div class="tab-container">
+        <button class="tab-button active" data-tab="eventos-mensuales">
+          Eventos Mensuales
+        </button>
+        <button class="tab-button" data-tab="eventos-pasados">
+          Eventos Pasados
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENIDO DE PESTAÑAS -->
+    <div class="tab-content-container">
+      <!-- PESTAÑA: EVENTOS MENSUALES -->
+      <div id="eventos-mensuales" class="tab-content active">
+        <div class="event-grid">
+          <!-- Evento 1 -->
+          <div class="event-card" data-event="evento1">
+            <div class="event-image">
+              <img src="FotosEvento/evento1.png" alt="Maratón Urbano" />
+            </div>
+            <div class="event-info">
+              <div class="event-date">15 Mayo, 2025</div>
+              <h3>Maratón Urbano</h3>
+              <p class="event-location">Centro de la Ciudad</p>
+            </div>
+          </div>
+
+          <!-- Evento 2 -->
+          <div class="event-card" data-event="evento2">
+            <div class="event-image">
+              <img src="FotosEvento/Evento2.png" alt="Trail Running" />
+            </div>
+            <div class="event-info">
+              <div class="event-date">22 Mayo, 2025</div>
+              <h3>Trail Running Extremo</h3>
+              <p class="event-location">Parque Natural Las Águilas</p>
+            </div>
+          </div>
+
+          <!-- Evento 3 -->
+          <div class="event-card" data-event="evento3">
+            <div class="event-image">
+              <img src="FotosEvento/Evento3.png" alt="Carrera Nocturna" />
+            </div>
+            <div class="event-info">
+              <div class="event-date">29 Mayo, 2025</div>
+              <h3>Carrera Nocturna Neón</h3>
+              <p class="event-location">Paseo Marítimo</p>
+            </div>
+          </div>
+
+          <!-- Evento 4 -->
+          <div class="event-card" data-event="evento4">
+            <div class="event-image">
+              <img src="FotosEvento/Evento4.png" alt="Entrenamiento Grupal" />
+            </div>
+            <div class="event-info">
+              <div class="event-date">5 Junio, 2025</div>
+              <h3>Entrenamiento Grupal Premium</h3>
+              <p class="event-location">Centro Deportivo Elite</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA: EVENTOS PASADOS -->
+      <div id="eventos-pasados" class="tab-content">
+        <div class="event-grid">
+          <!-- Evento Pasado 1 -->
+          <div class="event-card" data-event="pasado1">
+            <div class="event-image">
+              <img
+                src="FotosEvento/EventosPasados/EventoPasado1.png"
+                alt="Competición Invernal"
+              />
+            </div>
+            <div class="event-info">
+              <div class="event-date">15 Enero, 2025</div>
+              <h3>Competición Invernal</h3>
+              <p class="event-location">Sierra Nevada</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETALLES DE EVENTOS (ventanas modales) -->
+    <div class="event-modal-overlay"></div>
+
+    <!-- Modal Evento 1 -->
+    <div id="modal-evento1" class="event-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Maratón Urbano</h2>
+          <p class="modal-date">15 Mayo, 2025</p>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img src="FotosEvento/evento1.png" alt="Maratón Urbano" />
+          </div>
+          <div class="modal-details">
+            <h3>Detalles del evento</h3>
+            <p><strong>Hora:</strong> 8:00 AM</p>
+            <p><strong>Ubicación:</strong> Centro de la Ciudad</p>
+            <p><strong>Distancia:</strong> 42.2 KM</p>
+            <p><strong>Nivel:</strong> Avanzado</p>
+            <p class="modal-description">
+              Únete a la carrera más esperada del año. Recorre las principales
+              avenidas de la ciudad en este emocionante maratón urbano. Habrá
+              puntos de hidratación cada 5 km y servicio médico durante todo el
+              recorrido.
+            </p>
+            <div class="event-registration-form">
+              <h3>Inscríbete al evento</h3>
+              <form id="eventRegistrationForm" class="registration-form">
+                <input
+                  type="hidden"
+                  id="eventId"
+                  name="eventId"
+                  value="evento1"
+                />
+                <input
+                  type="hidden"
+                  id="eventName"
+                  name="eventName"
+                  value="Maratón Urbano"
+                />
+                <input
+                  type="hidden"
+                  id="eventDate"
+                  name="eventDate"
+                  value="2025-05-15"
+                />
+                <input
+                  type="hidden"
+                  id="eventTime"
+                  name="eventTime"
+                  value="08:00"
+                />
+                <input
+                  type="hidden"
+                  id="eventLocation"
+                  name="eventLocation"
+                  value="Centro de la Ciudad"
+                />
+                <input
+                  type="hidden"
+                  id="eventType"
+                  name="eventType"
+                  value="maraton"
+                />
+
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="userName"
+                    name="userName"
+                    placeholder="Nombre completo"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    id="userEmail"
+                    name="userEmail"
+                    placeholder="Correo electrónico"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="tel"
+                    id="userPhone"
+                    name="userPhone"
+                    placeholder="Número de teléfono"
+                    pattern="[0-9]+"
+                    minlength="8"
+                    maxlength="15"
+                    required
+                  />
+                </div>
+                <button type="submit" class="register-button">
+                  Inscríbete ahora
+                </button>
+              </form>
+              <div
+                id="registrationSuccess"
+                class="registration-success"
+                style="display: none"
+              >
+                <h3>¡Inscripción Exitosa!</h3>
+                <p>Te hemos enviado un correo con los detalles del evento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Evento 2 -->
+    <div id="modal-evento2" class="event-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Trail Running Extremo</h2>
+          <p class="modal-date">22 Mayo, 2025</p>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img src="FotosEvento/Evento2.png" alt="Trail Running" />
+          </div>
+          <div class="modal-details">
+            <h3>Detalles del evento</h3>
+            <p><strong>Hora:</strong> 7:30 AM</p>
+            <p><strong>Ubicación:</strong> Parque Natural Las Águilas</p>
+            <p><strong>Distancia:</strong> 25 KM</p>
+            <p><strong>Nivel:</strong> Extremo</p>
+            <p class="modal-description">
+              Desafía tus límites en este trail running que recorre las zonas
+              más espectaculares del Parque Natural. Terreno técnico con
+              desniveles pronunciados que pondrán a prueba tu resistencia y
+              técnica.
+            </p>
+            <div class="event-registration-form">
+              <h3>Inscríbete al evento</h3>
+              <form id="eventRegistrationForm2" class="registration-form">
+                <input
+                  type="hidden"
+                  id="eventId"
+                  name="eventId"
+                  value="evento2"
+                />
+                <input
+                  type="hidden"
+                  id="eventName"
+                  name="eventName"
+                  value="Trail Running Extremo"
+                />
+                <input
+                  type="hidden"
+                  id="eventDate"
+                  name="eventDate"
+                  value="2025-05-22"
+                />
+                <input
+                  type="hidden"
+                  id="eventTime"
+                  name="eventTime"
+                  value="07:30"
+                />
+                <input
+                  type="hidden"
+                  id="eventLocation"
+                  name="eventLocation"
+                  value="Parque Natural Las Águilas"
+                />
+                <input
+                  type="hidden"
+                  id="eventType"
+                  name="eventType"
+                  value="trail"
+                />
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="userName"
+                    name="userName"
+                    placeholder="Nombre completo"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    id="userEmail"
+                    name="userEmail"
+                    placeholder="Correo electrónico"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="tel"
+                    id="userPhone"
+                    name="userPhone"
+                    placeholder="Número de teléfono"
+                    pattern="[0-9]+"
+                    minlength="8"
+                    maxlength="15"
+                    required
+                  />
+                </div>
+                <button type="submit" class="register-button">
+                  Inscríbete ahora
+                </button>
+              </form>
+              <div
+                id="registrationSuccess2"
+                class="registration-success"
+                style="display: none"
+              >
+                <h3>¡Inscripción Exitosa!</h3>
+                <p>Te hemos enviado un correo con los detalles del evento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Evento 3 -->
+    <div id="modal-evento3" class="event-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Carrera Nocturna Neón</h2>
+          <p class="modal-date">29 Mayo, 2025</p>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img src="FotosEvento/Evento3.png" alt="Carrera Nocturna" />
+          </div>
+          <div class="modal-details">
+            <h3>Detalles del evento</h3>
+            <p><strong>Hora:</strong> 9:00 PM</p>
+            <p><strong>Ubicación:</strong> Paseo Marítimo</p>
+            <p><strong>Distancia:</strong> 10 KM</p>
+            <p><strong>Nivel:</strong> Todos los niveles</p>
+            <p class="modal-description">
+              Una experiencia única corriendo bajo las estrellas con iluminación
+              neón. El recorrido estará decorado con luces espectaculares y al
+              finalizar habrá una fiesta con DJ y refrescos para todos los
+              participantes.
+            </p>
+            <div class="event-registration-form">
+              <h3>Inscríbete al evento</h3>
+              <form id="eventRegistrationForm3" class="registration-form">
+                <input
+                  type="hidden"
+                  id="eventId"
+                  name="eventId"
+                  value="evento3"
+                />
+                <input
+                  type="hidden"
+                  id="eventName"
+                  name="eventName"
+                  value="Carrera Nocturna Neón"
+                />
+                <input
+                  type="hidden"
+                  id="eventDate"
+                  name="eventDate"
+                  value="2025-05-29"
+                />
+                <input
+                  type="hidden"
+                  id="eventTime"
+                  name="eventTime"
+                  value="21:00"
+                />
+                <input
+                  type="hidden"
+                  id="eventLocation"
+                  name="eventLocation"
+                  value="Paseo Marítimo"
+                />
+                <input
+                  type="hidden"
+                  id="eventType"
+                  name="eventType"
+                  value="nocturna"
+                />
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="userName"
+                    name="userName"
+                    placeholder="Nombre completo"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    id="userEmail"
+                    name="userEmail"
+                    placeholder="Correo electrónico"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="tel"
+                    id="userPhone"
+                    name="userPhone"
+                    placeholder="Número de teléfono"
+                    pattern="[0-9]+"
+                    minlength="8"
+                    maxlength="15"
+                    required
+                  />
+                </div>
+                <button type="submit" class="register-button">
+                  Inscríbete ahora
+                </button>
+              </form>
+              <div
+                id="registrationSuccess3"
+                class="registration-success"
+                style="display: none"
+              >
+                <h3>¡Inscripción Exitosa!</h3>
+                <p>Te hemos enviado un correo con los detalles del evento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Evento 4 -->
+    <div id="modal-evento4" class="event-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Entrenamiento Grupal Premium</h2>
+          <p class="modal-date">5 Junio, 2025</p>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img src="FotosEvento/Evento4.png" alt="Entrenamiento Grupal" />
+          </div>
+          <div class="modal-details">
+            <h3>Detalles del evento</h3>
+            <p><strong>Hora:</strong> 6:00 PM</p>
+            <p><strong>Ubicación:</strong> Centro Deportivo Elite</p>
+            <p><strong>Duración:</strong> 2 horas</p>
+            <p><strong>Nivel:</strong> Intermedio</p>
+            <p class="modal-description">
+              Sesión de entrenamiento exclusiva con los mejores entrenadores de
+              la región. Técnicas avanzadas de running, consejos de nutrición y
+              análisis biomecánico personalizado.
+            </p>
+            <div class="event-registration-form">
+              <h3>Inscríbete al evento</h3>
+              <form id="eventRegistrationForm4" class="registration-form">
+                <input
+                  type="hidden"
+                  id="eventId"
+                  name="eventId"
+                  value="evento4"
+                />
+                <input
+                  type="hidden"
+                  id="eventName"
+                  name="eventName"
+                  value="Entrenamiento Grupal Premium"
+                />
+                <input
+                  type="hidden"
+                  id="eventDate"
+                  name="eventDate"
+                  value="2025-06-05"
+                />
+                <input
+                  type="hidden"
+                  id="eventTime"
+                  name="eventTime"
+                  value="18:00"
+                />
+                <input
+                  type="hidden"
+                  id="eventLocation"
+                  name="eventLocation"
+                  value="Centro Deportivo Elite"
+                />
+                <input
+                  type="hidden"
+                  id="eventType"
+                  name="eventType"
+                  value="entrenamiento"
+                />
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="userName"
+                    name="userName"
+                    placeholder="Nombre completo"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    id="userEmail"
+                    name="userEmail"
+                    placeholder="Correo electrónico"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="tel"
+                    id="userPhone"
+                    name="userPhone"
+                    placeholder="Número de teléfono"
+                    pattern="[0-9]+"
+                    minlength="8"
+                    maxlength="15"
+                    required
+                  />
+                </div>
+                <button type="submit" class="register-button">
+                  Inscríbete ahora
+                </button>
+              </form>
+              <div
+                id="registrationSuccess4"
+                class="registration-success"
+                style="display: none"
+              >
+                <h3>¡Inscripción Exitosa!</h3>
+                <p>Te hemos enviado un correo con los detalles del evento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modales para eventos pasados -->
+    <div id="modal-pasado1" class="event-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Competición Invernal</h2>
+          <p class="modal-date">15 Enero, 2025</p>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img
+              src="FotosEvento/EventosPasados/EventoPasado1.png"
+              alt="Competición Invernal"
+            />
+          </div>
+          <div class="modal-details">
+            <h3>Resumen del evento</h3>
+            <p><strong>Participantes:</strong> 450 atletas</p>
+            <p><strong>Ubicación:</strong> Sierra Nevada</p>
+            <p><strong>Ganador:</strong> Carlos Mendoza (1h 24m)</p>
+            <p class="modal-description">
+              Una increíble jornada de running sobre nieve que desafió a los
+              corredores con temperaturas bajo cero y un paisaje espectacular.
+              El evento contó con participantes internacionales y una gran
+              cobertura mediática.
+            </p>
+            <a href="eventoPasado1.html" target="_blank" class="gallery-button"
+              >Ver galería de fotos</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Seccion unica para rutas en eventos btw-->
+
+    <section class="rutas-section">
+      <div class="rutas-titulo">
+        <h1 class="animate__animated animate__fadeIn">RUTAS</h1>
+        <div
+          class="titulo-underline animate__animated animate__slideInLeft"
+        ></div>
+      </div>
+
+      <!-- Información principal con imágenes -->
+      <div class="rutas-info">
+        <div class="info-card animate__animated animate__fadeInUp">
+          <div class="info-imagen">
+            <img src="FotosEvento/FotoRutas1.png" alt="Corredor en montaña" />
+          </div>
+          <div class="info-texto">
+            <h2>EXPLORA NUEVOS CAMINOS</h2>
+            <p>
+              Nuestras rutas están diseñadas para desafiarte y llevarte más allá
+              de tus límites. Descubre paisajes impresionantes mientras mejoras
+              tu rendimiento.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="info-card animate__animated animate__fadeInUp"
+          data-delay="200"
+        >
+          <div class="info-texto">
+            <h2>SUPERA TUS LÍMITES</h2>
+            <p>
+              Cada ruta está cuidadosamente planificada por expertos para
+              ofrecerte la mejor experiencia de running, sin importar tu nivel
+              de experiencia.
+            </p>
+          </div>
+          <div class="info-imagen">
+            <img src="FotosEvento/FotoRutas2.png" alt="Grupo de corredores" />
+          </div>
+        </div>
+
+        <div
+          class="info-card animate__animated animate__fadeInUp"
+          data-delay="400"
+        >
+          <div class="info-imagen">
+            <img src="FotosEvento/FotoRutas3.png" alt="Corredor en ciudad" />
+          </div>
+          <div class="info-texto">
+            <h2>COMUNIDAD ACTIVA</h2>
+            <p>
+              Únete a otros corredores apasionados y vive la experiencia de
+              correr en grupo. Comparte tus logros y motívate con historias
+              inspiradoras.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rutas-interactivas">
+        <div class="rutas-int-titulo animate__animated animate__fadeIn">
+          <h2>NUESTRAS RUTAS</h2>
+          <div
+            class="titulo-underline animate__animated animate__slideInLeft"
+          ></div>
+          <p class="rutas-int-descripcion">
+            Descubre nuestras increíbles rutas y únete a la aventura
+          </p>
+        </div>
+
+        <div class="rutas-int-grid">
+          <!-- Ruta 1 -->
+          <div
+            class="ruta-int-card animate__animated animate__fadeInUp"
+            data-ruta-id="1"
+          >
+            <div class="ruta-int-image">
+              <img src="FotosEvento/StravaPic1.png" alt="Ruta 1" />
+            </div>
+            <div class="ruta-int-content">
+              <h3>Ruta Montaña Azul</h3>
+              <div class="ruta-int-details">
+                <span><i class="icon-calendar"></i> Sábados</span>
+                <span><i class="icon-clock"></i> 4 horas</span>
+                <span><i class="icon-difficulty"></i> Moderado</span>
+              </div>
+              <button class="btn-ver-mas">Ver detalles</button>
+            </div>
+          </div>
+
+          <!-- Ruta 2 -->
+          <div
+            class="ruta-int-card animate__animated animate__fadeInUp"
+            data-delay="100"
+            data-ruta-id="2"
+          >
+            <div class="ruta-int-image">
+              <img src="FotosEvento/StravaPic2.png" alt="Ruta 2" />
+            </div>
+            <div class="ruta-int-content">
+              <h3>Ruta Valle Verde</h3>
+              <div class="ruta-int-details">
+                <span><i class="icon-calendar"></i> Domingos</span>
+                <span><i class="icon-clock"></i> 3 horas</span>
+                <span><i class="icon-difficulty"></i> Fácil</span>
+              </div>
+              <button class="btn-ver-mas">Ver detalles</button>
+            </div>
+          </div>
+
+          <!-- Ruta 3 -->
+          <div
+            class="ruta-int-card animate__animated animate__fadeInUp"
+            data-delay="200"
+            data-ruta-id="3"
+          >
+            <div class="ruta-int-image">
+              <img src="FotosEvento/StravaPic3.png" alt="Ruta 3" />
+            </div>
+            <div class="ruta-int-content">
+              <h3>Ruta Cascada Plateada</h3>
+              <div class="ruta-int-details">
+                <span><i class="icon-calendar"></i> Viernes</span>
+                <span><i class="icon-clock"></i> 5 horas</span>
+                <span><i class="icon-difficulty"></i> Avanzado</span>
+              </div>
+              <button class="btn-ver-mas">Ver detalles</button>
+            </div>
+          </div>
+
+          <!-- Ruta 4 -->
+          <div
+            class="ruta-int-card animate__animated animate__fadeInUp"
+            data-delay="300"
+            data-ruta-id="4"
+          >
+            <div class="ruta-int-image">
+              <img src="FotosEvento/StravaPic4.png" alt="Ruta 4" />
+            </div>
+            <div class="ruta-int-content">
+              <h3>Ruta Lago Cristal</h3>
+              <div class="ruta-int-details">
+                <span><i class="icon-calendar"></i> Miércoles</span>
+                <span><i class="icon-clock"></i> 2 horas</span>
+                <span><i class="icon-difficulty"></i> Fácil</span>
+              </div>
+              <button class="btn-ver-mas">Ver detalles</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal para detalles de ruta e inscripción (fuera de .rutas-section para evitar problemas de z-index) -->
+    <div class="ruta-int-modal" id="rutaModal">
+      <div class="modal-int-content">
+        <span class="close-int-modal">&times;</span>
+        <div class="modal-int-body">
+          <!-- Contenido dinámico del modal -->
+          <div class="modal-int-left">
+            <div class="modal-int-image-gallery">
+              <div class="main-int-image">
+                <img
+                  id="modalMainImage"
+                  src="FotosEvento/ministrava1.png"
+                  alt="Imagen principal"
+                />
+              </div>
+              <div class="image-int-thumbnails">
+                <img
+                  class="thumbnail active"
+                  src="FotosEvento/ministrava2.png"
+                  alt="Miniatura 1"
+                />
+                <img
+                  class="thumbnail"
+                  src="FotosEvento/ministrava3.png"
+                  alt="Miniatura 2"
+                />
+                <img
+                  class="thumbnail"
+                  src="FotosEvento/ministrava4.png"
+                  alt="Miniatura 3"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-int-right">
+            <h2 id="modalTitle"></h2>
+            <div class="modal-int-info">
+              <div class="info-int-item">
+                <i class="icon-calendar"></i>
+                <span id="modalFecha"></span>
+              </div>
+              <div class="info-int-item">
+                <i class="icon-clock"></i>
+                <span id="modalDuracion"></span>
+              </div>
+              <div class="info-int-item">
+                <i class="icon-difficulty"></i>
+                <span id="modalDificultad"></span>
+              </div>
+              <div class="info-int-item">
+                <i class="icon-location"></i>
+                <span id="modalUbicacion"></span>
+              </div>
+            </div>
+            <div class="modal-int-description">
+              <h3>Descripción</h3>
+              <p id="modalDescripcion"></p>
+            </div>
+            <div class="modal-int-inscripcion">
+              <h3>¡Inscríbete Ahora!</h3>
+              <form id="inscripcionForm">
+                <input type="hidden" id="rutaId" name="rutaId" />
+                <div class="form-int-group">
+                  <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Nombre completo"
+                    required
+                  />
+                </div>
+                <div class="form-int-group">
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Correo electrónico"
+                    required
+                  />
+                </div>
+                <div class="form-int-group">
+                  <input
+                    type="tel"
+                    id="telefono"
+                    name="telefono"
+                    placeholder="Número de teléfono"
+                    pattern="[0-9]+"
+                    minlength="8"
+                    maxlength="15"
+                    required
+                  />
+                </div>
+                <div class="form-int-group">
+                  <select id="participantes" name="participantes" required>
+                    <option value="">Número de participantes</option>
+                    <option value="1">1 persona</option>
+                    <option value="2">2 personas</option>
+                    <option value="3">3 personas</option>
+                    <option value="4">4 personas</option>
+                    <option value="5">5 personas</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn-inscribirse">
+                  Inscribirme
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="patrocinadores">
+      <h1>Nuestros Patrocinadores</h1>
+      <div class="marquee">
+        <div class="marquee-content">
+          <i class="fa-brands fa-apple"></i>
+          <i class="fa-brands fa-google"></i>
+          <i class="fa-brands fa-discord"></i>
+          <i class="fa-brands fa-slack"></i>
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-amazon"></i>
+          <i class="fa-brands fa-microsoft"></i>
+          <i class="fa-brands fa-twitter"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-linkedin"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel">
+      <div class="cart-header">
+        <h2 class="cart-title">Mi Carrito</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-indicator">
+        <div class="progress-steps">
+          <div class="progress-line">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="step active" data-step="1">1</div>
+          <div class="step" data-step="2">2</div>
+          <div class="step" data-step="3">3</div>
+          <div class="step" data-step="4">4</div>
+        </div>
+      </div>
+
+      <div class="cart-content">
+        <!-- Step 1: Cart Items -->
+        <div class="cart-step active" id="step1">
+          <h3>Tus Productos</h3>
+          <div id="cartItems" class="cart-items">
+            <!-- Los items del carrito se insertarán aquí dinámicamente -->
+          </div>
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Envío:</span>
+              <span id="shipping">$15.00</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Shipping Information -->
+        <div class="cart-step" id="step2">
+          <h3>Información de Envío</h3>
+          <form id="shippingForm" class="shipping-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-name">Nombre</label>
+                  <input
+                    type="text"
+                    id="shipping-name"
+                    placeholder="Tu nombre"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu nombre</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-lastname">Apellido</label>
+                  <input
+                    type="text"
+                    id="shipping-lastname"
+                    placeholder="Tu apellido"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu apellido</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-address">Dirección de Envío</label>
+              <input
+                type="text"
+                id="shipping-address"
+                placeholder="Calle, número, colonia"
+                required
+              />
+              <div class="error">Por favor ingresa una dirección válida</div>
+            </div>
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-city">Ciudad</label>
+                  <input
+                    type="text"
+                    id="shipping-city"
+                    placeholder="Tu ciudad"
+                    required
+                  />
+                  <div class="error">Por favor ingresa tu ciudad</div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="shipping-zip">Código Postal</label>
+                  <input
+                    type="text"
+                    id="shipping-zip"
+                    placeholder="XXXXX"
+                    pattern="[0-9]{5}"
+                    required
+                  />
+                  <div class="error">
+                    Ingresa un código postal válido (5 dígitos)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-phone">Teléfono</label>
+              <input
+                type="tel"
+                id="shipping-phone"
+                placeholder="Número de teléfono"
+                pattern="[0-9]+"
+                minlength="8"
+                maxlength="15"
+                required
+              />
+              <div class="error">
+                Por favor ingresa un número de teléfono válido
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping-email">Email</label>
+              <input
+                type="email"
+                id="shipping-email"
+                placeholder="tucorreo@ejemplo.com"
+                required
+              />
+              <div class="error">Ingresa un correo electrónico válido</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment Method -->
+        <div class="cart-step" id="step3">
+          <h3>Método de Pago</h3>
+          <div class="payment-methods">
+            <div class="payment-option" data-payment="card">
+              <div class="payment-icon">💳</div>
+              <div class="payment-info">
+                <h4>Tarjeta de Crédito/Débito</h4>
+                <p>Paga de forma segura con tu tarjeta</p>
+              </div>
+            </div>
+            <div id="cardForm" style="display: none">
+              <div class="form-group">
+                <label for="card-number">Número de Tarjeta</label>
+                <input
+                  type="text"
+                  id="card-number"
+                  maxlength="16"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-expiry">Fecha de Expiración</label>
+                    <input
+                      type="text"
+                      id="card-expiry"
+                      placeholder="MM/YY"
+                      maxlength="5"
+                    />
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input
+                      type="text"
+                      id="card-cvv"
+                      maxlength="4"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Order Confirmation -->
+        <div class="cart-step" id="step4">
+          <div class="success-animation">
+            <div class="success-icon">✓</div>
+            <h3>¡Pedido Confirmado!</h3>
+            <p>Número de Orden: <span id="orderNumber"></span></p>
+            <p>Se ha enviado un correo de confirmación a:</p>
+            <p id="confirmationEmail"></p>
+            <div class="order-summary" id="orderSummary">
+              <!-- Resumen del pedido se insertará aquí -->
+            </div>
+            <p class="final-amount">Total: <span id="finalAmount"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="cart-actions">
+        <button id="backBtn" class="btn btn-secondary" style="display: none">
+          Anterior
+        </button>
+        <button id="nextBtn" class="btn btn-primary">Continuar</button>
+      </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- Footer -->
+    <footer class="footer-final">
+      <div class="footer-columns">
+        <!-- Columna Izquierda -->
+        <div class="footer-column">
+          <h2 class="logo">NewLifeRun Club</h2>
+          <p>Transformando vidas a través del deporte.</p>
+        </div>
+
+        <!-- Columna Central -->
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="membresias.html">Membresías</a></li>
+            <li><a href="eventos.html">Eventos</a></li>
+            <li><a href="tienda.html">Tienda</a></li>
+            <li><a href="newlifepro.html">NewLife Pro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <ul class="contacto-lista">
+            <li>
+              <a href="mailto:info@newliferun.com">info@newliferun.com</a>
+            </li>
+            <li><a href="tel:+50433647133">+504 3364-7133</a></li>
+            <li>Tegucigalpa, Honduras</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="copyright">
+        <p>&copy; 2025 NewLifeRun Club. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="js/eventos.js"></script>
+    <script src="js/navbar-session.js"></script>
+    <script src="js/shared-components.js"></script>
+    <script src="js/cart-handler.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/event-registration.js"></script>
+  </body>
+</html>
