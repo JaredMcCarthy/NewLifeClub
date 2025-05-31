@@ -1406,7 +1406,7 @@ body {
 
   .gallery {
     position: absolute !important;
-    left: 50% !important;
+    left: 45% !important;
     top: 50% !important;
     transform: translate(-50%, -50%) !important;
     width: 95vw !important;
@@ -1417,6 +1417,7 @@ body {
     gap: 15px !important;
     padding: 0 !important;
     margin: 0 !important;
+    margin-left: -20px !important;
   }
 
   .photo-card {
@@ -1477,25 +1478,9 @@ body {
 
 /* 📱 MEDIA QUERY ESPECÍFICO PARA iPHONE 14 */
 @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) {
-  .gallery-section {
-    padding: 40px 0 !important;
-    min-height: 500px !important;
-    background-color: #111 !important;
-  }
-
-  .gallery-container {
-    width: 100vw !important;
-    height: 400px !important;
-    position: relative !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-
   .gallery {
     position: absolute !important;
-    left: 50% !important;
+    left: 45% !important;
     top: 50% !important;
     transform: translate(-50%, -50%) !important;
     width: 370px !important;
@@ -1504,24 +1489,7 @@ body {
     justify-content: space-evenly !important;
     align-items: center !important;
     gap: 10px !important;
-  }
-
-  .photo-card {
-    flex: 0 0 100px !important;
-    width: 100px !important;
-    height: 150px !important;
-    transform: scale(0.85) !important;
-    opacity: 0.5 !important;
-    filter: blur(1px) !important;
-  }
-
-  .photo-card.active {
-    flex: 0 0 160px !important;
-    width: 160px !important;
-    height: 240px !important;
-    transform: scale(1) !important;
-    opacity: 1 !important;
-    filter: blur(0px) !important;
+    margin-left: -25px !important;
   }
 }
 
@@ -1529,7 +1497,7 @@ body {
 @media only screen and (max-width: 428px) and (-webkit-min-device-pixel-ratio: 2) {
   .gallery {
     position: fixed !important;
-    left: 50% !important;
+    left: 45% !important;
     top: 50% !important;
     transform: translate(-50%, -50%) !important;
     width: 90vw !important;
@@ -1538,17 +1506,6 @@ body {
     align-items: center !important;
     gap: 12px !important;
     z-index: 5 !important;
-  }
-
-  .photo-card {
-    flex: 0 0 95px !important;
-    width: 95px !important;
-    height: 145px !important;
-  }
-
-  .photo-card.active {
-    flex: 0 0 150px !important;
-    width: 150px !important;
-    height: 220px !important;
+    margin-left: -15px !important;
   }
 }
