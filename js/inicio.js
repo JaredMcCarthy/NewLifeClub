@@ -1,3 +1,5 @@
+console.log("🚀 INICIO.JS CARGADO - Versión con debugging");
+
 // Variables globales
 let currentIndex = 4;
 
@@ -313,20 +315,43 @@ const images = [
 
 // Función para generar las fotos dinámicamente
 function generatePhotos() {
+  console.log("🔍 DEBUGGING: generatePhotos iniciado");
+  console.log("🔍 currentIndex:", currentIndex);
+  console.log("🔍 images.length:", images.length);
+
   const gallery = document.getElementById("gallery");
+
+  if (!gallery) {
+    console.error("❌ ERROR: No se encontró el elemento gallery");
+    return;
+  }
+
+  console.log("✅ Elemento gallery encontrado:", gallery);
   gallery.innerHTML = ""; // Limpiar galería antes de regenerar
 
   images.forEach((image, index) => {
+    console.log(`🔍 Generando imagen ${index + 1}: ${image.src}`);
+
     const card = document.createElement("div");
     card.classList.add("photo-card");
     if (index === currentIndex) {
       card.classList.add("active");
+      console.log(`✅ Imagen ${index + 1} marcada como ACTIVA`);
     }
 
     const img = document.createElement("img");
     img.src = image.src;
     img.alt = image.alt;
     img.loading = "lazy"; // Carga perezosa para mejorar el rendimiento
+
+    // DEBUGGING: Verificar si la imagen se carga
+    img.onload = function () {
+      console.log(`✅ Imagen cargada exitosamente: ${image.src}`);
+    };
+
+    img.onerror = function () {
+      console.error(`❌ ERROR cargando imagen: ${image.src}`);
+    };
 
     const info = document.createElement("div");
     info.classList.add("photo-info");
@@ -346,22 +371,60 @@ function generatePhotos() {
     card.appendChild(info);
 
     gallery.appendChild(card);
+    console.log(`✅ Tarjeta ${index + 1} agregada al DOM`);
   });
 
+  console.log("✅ Todas las imágenes procesadas, actualizando posición...");
   updateGalleryPosition();
   updatePhotoCounter();
+
+  // VERIFICAR EL CONTENIDO FINAL
+  console.log(
+    "🔍 Contenido final del gallery:",
+    gallery.innerHTML.length > 0 ? "CON CONTENIDO" : "VACÍO"
+  );
+  console.log(
+    "🔍 Número de photo-cards creadas:",
+    gallery.querySelectorAll(".photo-card").length
+  );
 }
 
 // Función para actualizar la posición de la galería
 function updateGalleryPosition() {
   const gallery = document.getElementById("gallery");
-  const cardWidth = 300 + 32; // ancho de la tarjeta + márgenes (16px a cada lado)
-  const offset = -currentIndex * cardWidth;
+  const galleryContainer = document.querySelector(".gallery-container");
+
+  if (!gallery || !galleryContainer) return;
+
+  // RESPONSIVE: Calcular cardWidth dinámicamente según el viewport
+  let cardWidth, cardMargin;
+
+  const screenWidth = window.innerWidth;
+
+  if (screenWidth <= 375) {
+    // Pantallas muy pequeñas
+    cardWidth = 140;
+    cardMargin = 6; // 3px a cada lado
+  } else if (screenWidth <= 480) {
+    // iPhone 14 y similares
+    cardWidth = 160;
+    cardMargin = 10; // 5px a cada lado
+  } else if (screenWidth <= 768) {
+    // Tablets y móviles grandes
+    cardWidth = 200;
+    cardMargin = 16; // 8px a cada lado
+  } else {
+    // Desktop
+    cardWidth = 300;
+    cardMargin = 32; // 16px a cada lado
+  }
+
+  const totalCardWidth = cardWidth + cardMargin;
+  const offset = -currentIndex * totalCardWidth;
 
   // Calcular el punto central para alinear la carta activa en el centro
-  const galleryContainer = document.querySelector(".gallery-container");
   const containerWidth = galleryContainer.offsetWidth;
-  const centerOffset = (containerWidth - cardWidth) / 2;
+  const centerOffset = (containerWidth - totalCardWidth) / 2;
 
   gallery.style.transform = `translateX(${offset + centerOffset}px)`;
 }
@@ -401,6 +464,16 @@ function handleScroll() {
 
 // Inicializar la galería al cargar la página
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("🚀 DEBUGGING: DOMContentLoaded ejecutado - Iniciando galería");
+  console.log(
+    "🔍 Verificando si existe elemento gallery:",
+    document.getElementById("gallery")
+  );
+  console.log(
+    "🔍 Verificando si existe gallery-section:",
+    document.querySelector(".gallery-section")
+  );
+
   generatePhotos();
 
   // Verificar si la sección es visible al cargar
@@ -411,8 +484,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Ajustar posición en cambio de tamaño de ventana
   window.addEventListener("resize", function () {
+    console.log("🔄 DEBUGGING: Ventana redimensionada, actualizando posición");
     updateGalleryPosition();
   });
+
+  console.log("✅ DEBUGGING: Inicialización de galería completada");
 });
 
 // Precargar imágenes para mejor rendimiento
@@ -570,3 +646,103 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// FUNCIÓN SIMPLE Y ROBUSTA PARA LA GALERÍA
+function initGallery() {
+  console.log("🔧 Iniciando galería...");
+
+  try {
+    const gallery = document.getElementById("gallery");
+    if (!gallery) {
+      console.error("❌ No se encontró elemento #gallery");
+      return;
+    }
+
+    console.log("✅ Elemento gallery encontrado");
+
+    // Array simplificado de imágenes
+    const galleryImages = [
+      {
+        src: "FotosInicio/FotosGaleria/Fotonum1.png",
+        alt: "Corredor 1",
+        likes: 20,
+        comments: 5,
+      },
+      {
+        src: "FotosInicio/FotosGaleria/Fotonum2.png",
+        alt: "Corredor 2",
+        likes: 30,
+        comments: 10,
+      },
+      {
+        src: "FotosInicio/FotosGaleria/Fotonum3.png",
+        alt: "Corredor 3",
+        likes: 25,
+        comments: 8,
+      },
+      {
+        src: "FotosInicio/FotosGaleria/Fotonum4.png",
+        alt: "Corredor 4",
+        likes: 18,
+        comments: 6,
+      },
+      {
+        src: "FotosInicio/FotosGaleria/Fotonum6.png",
+        alt: "Corredor 5",
+        likes: 22,
+        comments: 7,
+      },
+    ];
+
+    console.log("🖼️ Generando", galleryImages.length, "imágenes");
+
+    // Limpiar galería
+    gallery.innerHTML = "";
+
+    // Crear cards
+    galleryImages.forEach((img, index) => {
+      console.log(`Creando card ${index + 1}: ${img.src}`);
+
+      const card = document.createElement("div");
+      card.className = "photo-card" + (index === 2 ? " active" : "");
+
+      const image = document.createElement("img");
+      image.src = img.src;
+      image.alt = img.alt;
+      image.style.width = "100%";
+      image.style.height = "80%";
+      image.style.objectFit = "cover";
+
+      image.onload = () => console.log(`✅ Imagen ${index + 1} cargada`);
+      image.onerror = () => console.error(`❌ Error imagen ${index + 1}`);
+
+      const info = document.createElement("div");
+      info.className = "photo-info";
+      info.innerHTML = `
+        <span class="likes">${img.likes} Likes</span>
+        <span class="comments">${img.comments} Comments</span>
+      `;
+
+      card.appendChild(image);
+      card.appendChild(info);
+      gallery.appendChild(card);
+    });
+
+    console.log("✅ Galería creada exitosamente");
+
+    // Actualizar contador
+    const counter = document.getElementById("photo-counter");
+    if (counter) {
+      counter.textContent = `Foto 3 de ${galleryImages.length}`;
+    }
+  } catch (error) {
+    console.error("❌ ERROR en initGallery:", error);
+  }
+}
+
+// INICIALIZACIÓN SIMPLE
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initGallery);
+} else {
+  initGallery();
+}
