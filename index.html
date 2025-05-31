@@ -510,7 +510,7 @@
         class="about-image slide-in-right"
         style="background-color: transparent !important"
       >
-        <img src="" alt="" />
+        <img src="FotosInicio/F1.PNG" alt="Comunidad de corredores" />
       </div>
     </section>
 
@@ -1362,6 +1362,270 @@
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
 
+    <!-- GALERÍA JAVASCRIPT DIRECTO - VERSIÓN OPTIMIZADA -->
+    <script>
+      console.log("🚀 GALERÍA OPTIMIZADA - JavaScript inline ejecutándose");
+
+      // Variables globales para la galería
+      let currentPhotoIndex = 4; // Empezar en foto 5 (índice 4)
+      const totalPhotos = 10;
+
+      // Array simple con las 10 imágenes - USANDO SOLO IMÁGENES QUE EXISTEN
+      const galleryImages = [
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum1.png",
+          likes: 20,
+          comments: 5,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum2.png",
+          likes: 30,
+          comments: 10,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum3.png",
+          likes: 25,
+          comments: 8,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum4.png",
+          likes: 18,
+          comments: 6,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum6.png",
+          likes: 22,
+          comments: 7,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum7.png",
+          likes: 35,
+          comments: 12,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum8.png",
+          likes: 28,
+          comments: 9,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum9.png",
+          likes: 15,
+          comments: 4,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum10.png",
+          likes: 40,
+          comments: 15,
+        },
+        {
+          src: "FotosInicio/FotosGaleria/Fotonum11.png",
+          likes: 33,
+          comments: 11,
+        },
+      ];
+
+      // 🆕 DEBUGGING ESPECÍFICO PARA iPHONE
+      function iphoneDebugInfo() {
+        const userAgent = navigator.userAgent;
+        const isIPhone = /iPhone/.test(userAgent);
+        const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+
+        console.log("📱 DEBUGGING iPHONE:");
+        console.log("📱 User Agent:", userAgent);
+        console.log("📱 Es iPhone:", isIPhone);
+        console.log("📱 Es Safari:", isSafari);
+        console.log(
+          "📱 Viewport:",
+          window.innerWidth + "x" + window.innerHeight
+        );
+        console.log("📱 Document ready state:", document.readyState);
+
+        // 🆕 SOLO MANTENER INFO EN CONSOLA - QUITAR ELEMENTOS VISUALES
+        // Ya no necesitamos el div de debugging visual porque funciona
+      }
+
+      // Función simple para crear la galería
+      function createSimpleGallery() {
+        console.log("🔧 === INICIO createSimpleGallery ===");
+        console.log("📊 currentPhotoIndex:", currentPhotoIndex);
+        console.log("📊 totalPhotos:", totalPhotos);
+        console.log("📊 galleryImages length:", galleryImages.length);
+
+        const gallery = document.getElementById("gallery");
+        if (!gallery) {
+          console.error("❌ CRÍTICO: No se encontró elemento #gallery");
+
+          // 🆕 SOLO MANTENER ERROR EN CONSOLA - QUITAR ELEMENTO VISUAL
+          // Ya no necesitamos el div de error visual porque funciona
+
+          return;
+        }
+
+        console.log("✅ Elemento gallery encontrado:", gallery);
+
+        // 🆕 MOSTRAR INFO DEL ELEMENTO GALLERY
+        console.log(
+          "📐 Gallery dimensions:",
+          gallery.offsetWidth + "x" + gallery.offsetHeight
+        );
+        console.log("📍 Gallery position:", gallery.getBoundingClientRect());
+
+        // Limpiar galería
+        gallery.innerHTML = "";
+
+        // Calcular índices
+        const prevIndex = (currentPhotoIndex - 1 + totalPhotos) % totalPhotos;
+        const nextIndex = (currentPhotoIndex + 1) % totalPhotos;
+
+        console.log(
+          `📋 Índices: prev=${prevIndex}, current=${currentPhotoIndex}, next=${nextIndex}`
+        );
+
+        // Verificar que las imágenes existen
+        if (!galleryImages[prevIndex]) {
+          console.error("❌ No existe imagen en prevIndex:", prevIndex);
+          return;
+        }
+        if (!galleryImages[currentPhotoIndex]) {
+          console.error(
+            "❌ No existe imagen en currentPhotoIndex:",
+            currentPhotoIndex
+          );
+          return;
+        }
+        if (!galleryImages[nextIndex]) {
+          console.error("❌ No existe imagen en nextIndex:", nextIndex);
+          return;
+        }
+
+        console.log("✅ Todas las imágenes existen en el array");
+
+        // 🆕 CREAR VERSIÓN ESPECÍFICA PARA iPHONE
+        const isIPhone = /iPhone/.test(navigator.userAgent);
+        const loadingAttr = isIPhone ? "" : 'loading="lazy"'; // Quitar lazy loading en iPhone
+
+        // Crear HTML elegante sin debugging
+        gallery.innerHTML = `
+          <div class="photo-card" data-index="${prevIndex}">
+            <img src="${galleryImages[prevIndex].src}" alt="Corredor ${
+          prevIndex + 1
+        }" ${loadingAttr}>
+            <div class="photo-info">
+              <span class="likes">${galleryImages[prevIndex].likes} Likes</span>
+              <span class="comments">${
+                galleryImages[prevIndex].comments
+              } Comments</span>
+            </div>
+          </div>
+          
+          <div class="photo-card active" data-index="${currentPhotoIndex}">
+            <img src="${galleryImages[currentPhotoIndex].src}" alt="Corredor ${
+          currentPhotoIndex + 1
+        }" ${loadingAttr}>
+            <div class="photo-info">
+              <span class="likes">${
+                galleryImages[currentPhotoIndex].likes
+              } Likes</span>
+              <span class="comments">${
+                galleryImages[currentPhotoIndex].comments
+              } Comments</span>
+            </div>
+          </div>
+          
+          <div class="photo-card" data-index="${nextIndex}">
+            <img src="${galleryImages[nextIndex].src}" alt="Corredor ${
+          nextIndex + 1
+        }" ${loadingAttr}>
+            <div class="photo-info">
+              <span class="likes">${galleryImages[nextIndex].likes} Likes</span>
+              <span class="comments">${
+                galleryImages[nextIndex].comments
+              } Comments</span>
+            </div>
+          </div>
+        `;
+
+        console.log("📄 HTML insertado en galería");
+        console.log("🃏 Tarjetas en DOM:", gallery.children.length);
+
+        // 🆕 VERIFICAR IMÁGENES DESPUÉS DE INSERTAR
+        setTimeout(() => {
+          const images = gallery.querySelectorAll("img");
+          console.log("🖼️ Total imágenes en DOM:", images.length);
+
+          images.forEach((img, index) => {
+            console.log(`🖼️ Imagen ${index}:`, img.src);
+            console.log(
+              `🖼️ Imagen ${index} natural size:`,
+              img.naturalWidth + "x" + img.naturalHeight
+            );
+            console.log(`🖼️ Imagen ${index} loaded:`, img.complete);
+
+            // Event listeners para debugging
+            img.onload = () =>
+              console.log(`✅ Imagen ${index} cargada exitosamente`);
+            img.onerror = () =>
+              console.error(`❌ Error cargando imagen ${index}:`, img.src);
+          });
+        }, 100);
+
+        updatePhotoCounter();
+        console.log("🔧 === FIN createSimpleGallery ===");
+      }
+
+      // Función para actualizar contador
+      function updatePhotoCounter() {
+        const counter = document.getElementById("photo-counter");
+        if (counter) {
+          counter.textContent = `Foto ${
+            currentPhotoIndex + 1
+          } de ${totalPhotos}`;
+        }
+      }
+
+      // Función para mover a la siguiente/anterior foto
+      function moveSlide(direction) {
+        console.log(`🔄 Moviendo ${direction > 0 ? "siguiente" : "anterior"}`);
+
+        currentPhotoIndex += direction;
+
+        // Wrap around si es necesario
+        if (currentPhotoIndex >= totalPhotos) {
+          currentPhotoIndex = 0;
+        } else if (currentPhotoIndex < 0) {
+          currentPhotoIndex = totalPhotos - 1;
+        }
+
+        // Recrear galería con nueva imagen central
+        createSimpleGallery();
+      }
+
+      // Hacer funciones globales para los botones HTML
+      window.moveSlide = moveSlide;
+
+      // 🆕 INICIALIZACIÓN MEJORADA PARA iPHONE
+      function initGallery() {
+        console.log("🔄 Iniciando galería...");
+        iphoneDebugInfo(); // Mostrar info de debugging
+        createSimpleGallery();
+      }
+
+      // Múltiples métodos de inicialización para iPhone
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initGallery);
+      } else {
+        initGallery();
+      }
+
+      // Backup - ejecutar después de 1 segundo
+      setTimeout(initGallery, 1000);
+
+      // Backup adicional para iPhone - después de 3 segundos
+      setTimeout(initGallery, 3000);
+
+      console.log("✅ Sistema de galería optimizado configurado");
+    </script>
+
     <!-- ESTILOS ADICIONALES PARA NUEVAS SECCIONES -->
     <style>
       /* Animación para ticker */
@@ -1521,6 +1785,214 @@
         }
         .testimonial-card {
           padding: 1.5rem !important;
+        }
+      }
+
+      /* 🆕 CSS ESPECÍFICOS PARA iPHONE/SAFARI MOBILE */
+      @supports (-webkit-touch-callout: none) {
+        /* Específico para iOS Safari */
+        .gallery-section {
+          -webkit-transform: translateZ(0) !important;
+          transform: translateZ(0) !important;
+          -webkit-backface-visibility: hidden !important;
+          backface-visibility: hidden !important;
+        }
+
+        .gallery-container {
+          -webkit-transform: translateZ(0) !important;
+          transform: translateZ(0) !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+
+        #gallery {
+          -webkit-transform: translateZ(0) !important;
+          transform: translateZ(0) !important;
+          will-change: transform !important;
+        }
+
+        .photo-card {
+          -webkit-transform: translateZ(0) !important;
+          transform: translateZ(0) !important;
+          -webkit-backface-visibility: hidden !important;
+          backface-visibility: hidden !important;
+        }
+
+        .photo-card img {
+          -webkit-transform: translateZ(0) !important;
+          transform: translateZ(0) !important;
+          image-rendering: -webkit-optimize-contrast !important;
+          image-rendering: crisp-edges !important;
+        }
+      }
+
+      /* Media query específico para iPhone */
+      @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+        /* iPhone 14 específico */
+        .gallery-section {
+          min-height: 100vh !important;
+          padding: 2rem 1rem !important;
+        }
+
+        #gallery {
+          min-height: 300px !important;
+          width: 100% !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+        }
+
+        .photo-card {
+          min-width: 150px !important;
+          min-height: 200px !important;
+          flex-shrink: 0 !important;
+        }
+
+        .photo-card img {
+          width: 100% !important;
+          height: auto !important;
+          display: block !important;
+        }
+      }
+
+      /* DISEÑO FINAL ELEGANTE PARA MÓVILES iOS */
+      @media (max-width: 414px) and (-webkit-min-device-pixel-ratio: 2) {
+        .gallery-section {
+          background-color: #000 !important;
+          background: #000 !important;
+          min-height: 80vh !important;
+        }
+
+        .gallery-container {
+          background-color: transparent !important;
+          min-height: 300px !important;
+          padding: 1rem !important;
+        }
+
+        #gallery {
+          min-height: 250px !important;
+          width: 100% !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          gap: 15px !important;
+          padding: 10px !important;
+          border-radius: 15px !important;
+          background: linear-gradient(
+            135deg,
+            rgba(255, 105, 180, 0.1) 0%,
+            rgba(0, 0, 0, 0.3) 100%
+          ) !important;
+          backdrop-filter: blur(10px) !important;
+        }
+
+        .photo-card {
+          background: rgba(255, 255, 255, 0.1) !important;
+          backdrop-filter: blur(10px) !important;
+          border: 1px solid rgba(255, 105, 180, 0.2) !important;
+          border-radius: 15px !important;
+          padding: 8px !important;
+          min-width: 100px !important;
+          max-width: 120px !important;
+          min-height: 150px !important;
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          align-items: center !important;
+          transition: all 0.3s ease !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .photo-card.active {
+          transform: scale(1.05) !important;
+          border: 2px solid #ff69b4 !important;
+          background: rgba(255, 105, 180, 0.2) !important;
+          box-shadow: 0 8px 30px rgba(255, 105, 180, 0.4) !important;
+        }
+
+        .photo-card:not(.active) {
+          opacity: 0.7 !important;
+          filter: blur(1px) !important;
+        }
+
+        .photo-card img {
+          width: 100% !important;
+          height: auto !important;
+          max-height: 120px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          display: block !important;
+          transition: all 0.3s ease !important;
+        }
+
+        .photo-info {
+          background: linear-gradient(
+            135deg,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(255, 105, 180, 0.3) 100%
+          ) !important;
+          color: white !important;
+          padding: 4px 8px !important;
+          border-radius: 8px !important;
+          font-size: 10px !important;
+          margin-top: 8px !important;
+          text-align: center !important;
+          backdrop-filter: blur(5px) !important;
+          border: 1px solid rgba(255, 105, 180, 0.3) !important;
+        }
+
+        .buttons-container {
+          padding: 1.5rem 1rem !important;
+          display: flex !important;
+          gap: 1rem !important;
+          justify-content: center !important;
+        }
+
+        .prev-btn,
+        .next-btn {
+          background: linear-gradient(
+            135deg,
+            #ff69b4 0%,
+            #ff1493 100%
+          ) !important;
+          color: white !important;
+          border: none !important;
+          padding: 12px 25px !important;
+          border-radius: 25px !important;
+          font-weight: bold !important;
+          min-width: 120px !important;
+          font-size: 14px !important;
+          box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4) !important;
+          transition: all 0.3s ease !important;
+          backdrop-filter: blur(10px) !important;
+        }
+
+        .prev-btn:active,
+        .next-btn:active {
+          transform: scale(0.95) !important;
+          box-shadow: 0 2px 10px rgba(255, 105, 180, 0.6) !important;
+        }
+
+        .photo-counter {
+          color: #ff69b4 !important;
+          font-weight: bold !important;
+          text-align: center !important;
+          margin: 1rem 0 !important;
+          font-size: 16px !important;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .gallery-title {
+          color: #ff69b4 !important;
+          text-align: center !important;
+          margin-bottom: 1rem !important;
+        }
+
+        .gallery-subtitle h1 {
+          color: white !important;
+          text-align: center !important;
+          font-size: 1.2rem !important;
+          margin-bottom: 2rem !important;
         }
       }
     </style>
