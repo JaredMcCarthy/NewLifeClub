@@ -1134,6 +1134,74 @@ body {
   transform: translateY(0) !important;
 }
 
+/* 🆕 OPTIMIZACIONES ESPECÍFICAS PARA iPHONE - MOVER HACIA IZQUIERDA */
+@supports (-webkit-touch-callout: none) {
+  /* Este CSS SOLO se aplica en iOS Safari */
+
+  .gallery {
+    position: absolute !important;
+    left: 35% !important;
+    top: 45% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 95vw !important;
+    max-width: 95vw !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: -45px !important;
+  }
+
+  .buttons-container {
+    margin-top: 50px !important;
+    padding: 20px !important;
+    position: relative !important;
+    top: 30px !important;
+  }
+
+  .photo-counter {
+    margin-top: 30px !important;
+    position: relative !important;
+    top: 20px !important;
+  }
+}
+
+/* 🎯 CORRECCIÓN ESPECÍFICA PARA iPHONE - MOVER HACIA IZQUIERDA */
+@supports (-webkit-touch-callout: none) {
+  /* Este CSS SOLO se aplica en iOS Safari */
+
+  .gallery {
+    position: absolute !important;
+    left: 35% !important;
+    top: 45% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 95vw !important;
+    max-width: 95vw !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: -45px !important;
+  }
+
+  .buttons-container {
+    margin-top: 50px !important;
+    padding: 20px !important;
+    position: relative !important;
+    top: 30px !important;
+  }
+
+  .photo-counter {
+    margin-top: 30px !important;
+    position: relative !important;
+    top: 20px !important;
+  }
+}
+
 /* 🆕 OPTIMIZACIONES ESPECÍFICAS PARA iPHONE - PATROCINADORES */
 
 /* Forzar carga de Font Awesome en Safari Mobile */
@@ -1406,8 +1474,8 @@ body {
 
   .gallery {
     position: absolute !important;
-    left: 40% !important;
-    top: 50% !important;
+    left: 35% !important;
+    top: 45% !important;
     transform: translate(-50%, -50%) !important;
     width: 95vw !important;
     max-width: 95vw !important;
@@ -1417,7 +1485,20 @@ body {
     gap: 15px !important;
     padding: 0 !important;
     margin: 0 !important;
-    margin-left: -35px !important;
+    margin-left: -45px !important;
+  }
+
+  .buttons-container {
+    margin-top: 50px !important;
+    padding: 20px !important;
+    position: relative !important;
+    top: 30px !important;
+  }
+
+  .photo-counter {
+    margin-top: 30px !important;
+    position: relative !important;
+    top: 20px !important;
   }
 
   .photo-card {
@@ -1480,8 +1561,8 @@ body {
 @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) {
   .gallery {
     position: absolute !important;
-    left: 40% !important;
-    top: 50% !important;
+    left: 35% !important;
+    top: 45% !important;
     transform: translate(-50%, -50%) !important;
     width: 370px !important;
     height: 300px !important;
@@ -1489,7 +1570,19 @@ body {
     justify-content: space-evenly !important;
     align-items: center !important;
     gap: 10px !important;
-    margin-left: -40px !important;
+    margin-left: -50px !important;
+  }
+
+  .buttons-container {
+    margin-top: 60px !important;
+    position: relative !important;
+    top: 40px !important;
+  }
+
+  .photo-counter {
+    margin-top: 40px !important;
+    position: relative !important;
+    top: 30px !important;
   }
 }
 
@@ -1497,8 +1590,8 @@ body {
 @media only screen and (max-width: 428px) and (-webkit-min-device-pixel-ratio: 2) {
   .gallery {
     position: fixed !important;
-    left: 40% !important;
-    top: 50% !important;
+    left: 35% !important;
+    top: 45% !important;
     transform: translate(-50%, -50%) !important;
     width: 90vw !important;
     display: flex !important;
@@ -1506,6 +1599,18 @@ body {
     align-items: center !important;
     gap: 12px !important;
     z-index: 5 !important;
-    margin-left: -30px !important;
+    margin-left: -40px !important;
+  }
+
+  .buttons-container {
+    margin-top: 50px !important;
+    position: relative !important;
+    top: 35px !important;
+  }
+
+  .photo-counter {
+    margin-top: 35px !important;
+    position: relative !important;
+    top: 25px !important;
   }
 }
