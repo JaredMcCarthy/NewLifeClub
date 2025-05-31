@@ -33,4 +33,20 @@ logs
 
 # Archivos temporales
 *.tmp
-*.temp 
+*.temp
+
+# Archivos pesados temporalmente excluidos
+fotoslifepro/
+FotosEvento/
+FotosInicio/
+FotosMembresia/
+Fotostienda/
+testcamisa/
+Videosgenerales/
+*.mp4
+*.mov
+*.avi
+*.png
+*.jpg
+*.jpeg
+*.gif 
