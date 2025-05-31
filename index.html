@@ -295,12 +295,7 @@
 
     <!-- Hero Video Section -->
     <section class="video-container">
-      <video class="hero-video" autoplay muted loop playsinline>
-        <source
-          src="Videosgenerales/Copia de hero-video.mp4"
-          type="video/mp4"
-        />
-      </video>
+      <!-- VIDEO ELIMINADO - AHORA SOLO USA IMAGEN DE FONDO -->
       <div class="video-overlay"></div>
       <div class="hero-content">
         <h1>NewLifeRun Club</h1>
@@ -309,101 +304,458 @@
       </div>
     </section>
 
-    <!-- Sección Quiénes Somos (izquierda texto, derecha imagen) -->
-    <section id="quienes-somos" class="about-section">
-      <div class="about-text slide-in-left">
-        <h2>Quiénes Somos</h2>
-        <p>
+    <!-- 2. LÍNEA TICKER - DE NUEVOINICIO.HTML -->
+    <div
+      class="newlife-ticker"
+      style="
+        background: #ff69b4;
+        color: white;
+        padding: 0.6rem 0;
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          animation: scrollTicker 15s linear infinite;
+          white-space: nowrap;
+          font-weight: 600;
+        "
+      >
+        NewLife Pro • NewLife Club • NewLife Memories • NewLife Memberships •
+        NewLife Pro • NewLife Club • NewLife Memories • NewLife Memberships •
+      </div>
+    </div>
+
+    <!-- 3. TESTIMONIOS - DE NUEVOINICIO.HTML -->
+    <section
+      class="testimonials-section"
+      style="
+        background: linear-gradient(135deg, #ff69b4 0%, #1a1a1a 100%);
+        padding: 5rem 1rem;
+      "
+    >
+      <div style="max-width: 1200px; margin: 0 auto; text-align: center">
+        <h2
+          style="
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 4rem;
+            color: #ffffff;
+            letter-spacing: -1px;
+          "
+        >
+          LO QUE DICEN NUESTROS MIEMBROS
+        </h2>
+
+        <div
+          class="testimonials-grid"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+          "
+        >
+          <div
+            class="testimonial-card"
+            style="
+              background: rgba(255, 255, 255, 0.1);
+              backdrop-filter: blur(10px);
+              border-radius: 20px;
+              padding: 2.5rem;
+              color: white;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              transition: transform 0.3s ease;
+            "
+            onmouseover="this.style.transform='translateY(-10px)'"
+            onmouseout="this.style.transform='translateY(0)'"
+          >
+            <div style="font-size: 3rem; color: #ff69b4; margin-bottom: 1rem">
+              "
+            </div>
+            <p
+              style="
+                font-size: 1.1rem;
+                line-height: 1.6;
+                margin-bottom: 2rem;
+                opacity: 0.95;
+              "
+            >
+              NewLife cambió completamente mi perspectiva. La ropa es increíble
+              y el contenido motivacional me impulsa cada día.
+            </p>
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  background: #ff69b4;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 800;
+                "
+              >
+                M
+              </div>
+              <div>
+                <div style="font-weight: 700">María González</div>
+                <div style="opacity: 0.7; font-size: 0.9rem">
+                  Miembro Premium
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="testimonial-card"
+            style="
+              background: rgba(0, 0, 0, 0.3);
+              backdrop-filter: blur(10px);
+              border-radius: 20px;
+              padding: 2.5rem;
+              color: white;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              transition: transform 0.3s ease;
+            "
+            onmouseover="this.style.transform='translateY(-10px)'"
+            onmouseout="this.style.transform='translateY(0)'"
+          >
+            <div style="font-size: 3rem; color: #ff69b4; margin-bottom: 1rem">
+              "
+            </div>
+            <p
+              style="
+                font-size: 1.1rem;
+                line-height: 1.6;
+                margin-bottom: 2rem;
+                opacity: 0.95;
+              "
+            >
+              La calidad de la ropa deportiva es excepcional. Me siento
+              empoderado y motivado para entrenar.
+            </p>
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  background: #ff69b4;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 800;
+                "
+              >
+                C
+              </div>
+              <div>
+                <div style="font-weight: 700">Carlos Mendez</div>
+                <div style="opacity: 0.7; font-size: 0.9rem">Miembro VIP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. QUIÉNES SOMOS - DE INDEX.HTML -->
+    <section
+      id="quienes-somos"
+      class="about-section"
+      style="
+        background-color: #000000 !important;
+        background: #000000 !important;
+      "
+    >
+      <div
+        class="about-text slide-in-left"
+        style="background-color: transparent !important"
+      >
+        <h2
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
+          Quiénes Somos
+        </h2>
+        <p
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
           NewLifeRun Club nació con la visión de unir a corredores de todos los
           niveles en una comunidad inclusiva y motivadora. Desde principiantes
           hasta atletas experimentados, creamos un espacio donde todos pueden
           encontrar compañeros de entrenamiento, rutas seguras y desafiantes, y
           el apoyo necesario para alcanzar sus metas personales.
         </p>
-        <p>
+        <p
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
           Fundado en 2020 por un grupo de apasionados del running, hemos crecido
           hasta convertirnos en uno de los clubes más activos del país,
           organizando eventos regulares, entrenamientos grupales y participando
           en competencias nacionales e internacionales.
         </p>
       </div>
-      <div class="about-image slide-in-right">
-        <!-- Nota: Coloca esta imagen en la carpeta "img" -->
-        <img src="img/quienes-somos.jpg" alt="" />
-        <!-- Alternativa usando placeholder hasta que tengas tus imágenes -->
-        <img src="FotosInicio/F1.PNG" alt="Comunidad de corredores" />
+      <div
+        class="about-image slide-in-right"
+        style="background-color: transparent !important"
+      >
+        <img src="" alt="" />
       </div>
     </section>
 
-    <!-- Sección Misión (derecha texto, izquierda imagen) -->
-    <section class="about-section">
-      <div class="about-image slide-in-left">
-        <!-- Alternativa usando placeholder hasta que tengas tus imágenes -->
-        <img src="FotosInicio/F2.PNG" alt="Nuestra Misión" />
-      </div>
-      <div class="about-text slide-in-right">
-        <h2>Nuestra Misión</h2>
-        <p>
-          Inspirar y empoderar a personas de todas las edades y niveles de
-          condición física a descubrir los beneficios del running como estilo de
-          vida saludable, fomentando la conexión comunitaria y el desarrollo
-          personal.
-        </p>
-        <p>
-          Nos comprometemos a crear un entorno inclusivo donde cada corredor se
-          sienta bienvenido y apoyado en su viaje hacia una vida más activa y
-          plena, proporcionando recursos, conocimientos y experiencias que
-          transforman vidas un kilómetro a la vez.
-        </p>
+    <!-- 5. ROPA DEPORTIVA DINÁMICA - DE NUEVOINICIO.HTML -->
+    <section
+      class="newlife-section"
+      style="
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        padding: 4rem 1rem;
+        overflow: hidden;
+      "
+    >
+      <div class="newlife-container" style="max-width: 1200px; margin: 0 auto">
+        <h2
+          style="
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 3rem;
+            color: #ff69b4;
+            text-align: center;
+            letter-spacing: -1px;
+          "
+        >
+          ROPA DEPORTIVA DINÁMICA
+        </h2>
+
+        <div
+          class="carousel-container"
+          style="
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+          "
+        >
+          <button
+            class="carousel-btn prev-btn"
+            onclick="moveCarousel(-1)"
+            style="
+              background: #ff69b4;
+              border: none;
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              color: white;
+              font-size: 1.5rem;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              z-index: 10;
+            "
+          >
+            ←
+          </button>
+
+          <div
+            class="carousel-wrapper"
+            style="flex: 1; overflow: hidden; border-radius: 15px"
+          >
+            <div
+              class="carousel-track"
+              id="clothingCarousel"
+              style="display: flex; transition: transform 0.5s ease; gap: 1rem"
+            >
+              <div
+                class="carousel-item"
+                style="
+                  min-width: 100%;
+                  background: linear-gradient(45deg, #ff69b4, #ff1493);
+                  height: 400px;
+                  border-radius: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                  font-weight: 600;
+                "
+              >
+                Diseño Deportivo #1
+              </div>
+              <div
+                class="carousel-item"
+                style="
+                  min-width: 100%;
+                  background: linear-gradient(45deg, #ff1493, #dc143c);
+                  height: 400px;
+                  border-radius: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                  font-weight: 600;
+                "
+              >
+                Diseño Deportivo #2
+              </div>
+              <div
+                class="carousel-item"
+                style="
+                  min-width: 100%;
+                  background: linear-gradient(45deg, #dc143c, #b91372);
+                  height: 400px;
+                  border-radius: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                  font-weight: 600;
+                "
+              >
+                Diseño Deportivo #3
+              </div>
+              <div
+                class="carousel-item"
+                style="
+                  min-width: 100%;
+                  background: linear-gradient(45deg, #b91372, #ff69b4);
+                  height: 400px;
+                  border-radius: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                  font-weight: 600;
+                "
+              >
+                Diseño Deportivo #4
+              </div>
+              <div
+                class="carousel-item"
+                style="
+                  min-width: 100%;
+                  background: linear-gradient(45deg, #ff69b4, #ff1493);
+                  height: 400px;
+                  border-radius: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                  font-weight: 600;
+                "
+              >
+                Diseño Deportivo #5
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="carousel-btn next-btn"
+            onclick="moveCarousel(1)"
+            style="
+              background: #ff69b4;
+              border: none;
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              color: white;
+              font-size: 1.5rem;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              z-index: 10;
+            "
+          >
+            →
+          </button>
+        </div>
+
+        <div
+          class="carousel-indicators"
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+          "
+        >
+          <span
+            class="indicator active"
+            onclick="goToSlide(0)"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #ff69b4;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            "
+          ></span>
+          <span
+            class="indicator"
+            onclick="goToSlide(1)"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #666;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            "
+          ></span>
+          <span
+            class="indicator"
+            onclick="goToSlide(2)"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #666;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            "
+          ></span>
+          <span
+            class="indicator"
+            onclick="goToSlide(3)"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #666;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            "
+          ></span>
+          <span
+            class="indicator"
+            onclick="goToSlide(4)"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #666;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            "
+          ></span>
+        </div>
       </div>
     </section>
 
-    <!-- Sección Visión -->
-    <section class="about-section">
-      <div class="about-text slide-in-left">
-        <h2>Nuestra Visión</h2>
-        <p>
-          Aspiramos a ser reconocidos como el club de running líder que
-          transforma comunidades a través del deporte, promoviendo un estilo de
-          vida activo y saludable que trasciende el simple acto de correr.
-        </p>
-        <p>
-          Buscamos expandir nuestra influencia para crear un impacto positivo en
-          la sociedad, incentivando la sostenibilidad ambiental, el bienestar
-          integral y la construcción de comunidades más fuertes y conectadas.
-        </p>
-      </div>
-      <div class="about-image slide-in-right">
-        <img src="FotosInicio/F3.PNG" alt="Nuestra vision" />
-      </div>
-    </section>
-
-    <!--Seccion del inicio dedicado a Galeria nada mas-->
-
-    <section class="gallery-section">
-      <h2 class="gallery-title">NewLife Community</h2>
-
-      <div class="gallery-subtitle">
-        <h1>Vive momentos únicos con nuestra comunidad de corredores</h1>
-      </div>
-
-      <div class="gallery-container">
-        <!-- Contenedor de las fotos -->
-        <div id="gallery" class="gallery"></div>
-      </div>
-
-      <!-- Contador de fotos -->
-      <div id="photo-counter" class="photo-counter">Foto 1 de 10</div>
-
-      <!-- Botones para navegar -->
-      <div class="buttons-container">
-        <button class="prev-btn" onclick="moveSlide(-1)">⟵ Anterior</button>
-        <button class="next-btn" onclick="moveSlide(1)">Siguiente ⟶</button>
-      </div>
-    </section>
-
-    <!--Seccion nada mas para cartas hechas para IMPORTANCIA-->
-
+    <!-- 6. NUESTRO IMPACTO - DE INDEX.HTML -->
     <section class="impact-section">
       <h2 class="fade-in">Nuestro Impacto</h2>
       <div class="impact-cards">
@@ -436,8 +788,419 @@
       </div>
     </section>
 
-    <!--Seccion en la parte de preguntas y contactanos que no se que-->
+    <!-- 7. NEWLIFE COMMUNITY - DE INDEX.HTML -->
+    <section class="gallery-section">
+      <h2 class="gallery-title">NewLife Community</h2>
 
+      <div class="gallery-subtitle">
+        <h1>Vive momentos únicos con nuestra comunidad de corredores</h1>
+      </div>
+
+      <div class="gallery-container">
+        <div id="gallery" class="gallery"></div>
+      </div>
+
+      <div id="photo-counter" class="photo-counter">Foto 1 de 10</div>
+
+      <div class="buttons-container">
+        <button class="prev-btn" onclick="moveSlide(-1)">⟵ Anterior</button>
+        <button class="next-btn" onclick="moveSlide(1)">Siguiente ⟶</button>
+      </div>
+    </section>
+
+    <!-- 8. EDITORIALES MOTIVACIONALES - DE NUEVOINICIO.HTML -->
+    <section
+      class="newlife-section"
+      style="background: #000000; padding: 4rem 0; overflow: hidden"
+    >
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem">
+        <h2
+          style="
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 3rem;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: -1px;
+          "
+        >
+          EDITORIALES MOTIVACIONALES
+        </h2>
+      </div>
+
+      <div
+        class="horizontal-scroll"
+        style="
+          display: flex;
+          gap: 2rem;
+          padding: 0 2rem;
+          overflow-x: auto;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+        "
+      >
+        <div
+          class="editorial-card"
+          style="
+            min-width: 350px;
+            height: 500px;
+            background: linear-gradient(180deg, #ff69b4 0%, #1a1a1a 70%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+          "
+        >
+          <div>
+            <h3
+              style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem"
+            >
+              MOTIVACIÓN DIARIA
+            </h3>
+            <p style="opacity: 0.9; line-height: 1.6">
+              Transforma tu mentalidad con contenido que inspira y motiva cada
+              día.
+            </p>
+          </div>
+          <div
+            style="
+              height: 200px;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 10px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 600;
+            "
+          >
+            [Editorial Image]
+          </div>
+        </div>
+
+        <div
+          class="editorial-card"
+          style="
+            min-width: 350px;
+            height: 500px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #ff69b4 70%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          "
+        >
+          <div>
+            <h3
+              style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem"
+            >
+              CRECIMIENTO PERSONAL
+            </h3>
+            <p style="opacity: 0.9; line-height: 1.6">
+              Desarrolla tu potencial máximo con estrategias probadas.
+            </p>
+          </div>
+          <div
+            style="
+              height: 200px;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 10px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 600;
+            "
+          >
+            [Editorial Image]
+          </div>
+        </div>
+
+        <div
+          class="editorial-card"
+          style="
+            min-width: 350px;
+            height: 500px;
+            background: linear-gradient(180deg, #ff69b4 0%, #1a1a1a 70%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+          "
+        >
+          <div>
+            <h3
+              style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem"
+            >
+              MINDSET WINNERS
+            </h3>
+            <p style="opacity: 0.9; line-height: 1.6">
+              Adopta la mentalidad de los ganadores y alcanza tus metas.
+            </p>
+          </div>
+          <div
+            style="
+              height: 200px;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 10px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 600;
+            "
+          >
+            [Editorial Image]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. NUESTRA VISIÓN - DE INDEX.HTML -->
+    <section
+      class="about-section"
+      style="
+        background-color: #000000 !important;
+        background: #000000 !important;
+      "
+    >
+      <div
+        class="about-text slide-in-left"
+        style="background-color: transparent !important"
+      >
+        <h2
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
+          Nuestra Visión
+        </h2>
+        <p
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
+          Aspiramos a ser reconocidos como el club de running líder que
+          transforma comunidades a través del deporte, promoviendo un estilo de
+          vida activo y saludable que trasciende el simple acto de correr.
+        </p>
+        <p
+          style="
+            color: #ffffff !important;
+            background-color: transparent !important;
+          "
+        >
+          Buscamos expandir nuestra influencia para crear un impacto positivo en
+          la sociedad, incentivando la sostenibilidad ambiental, el bienestar
+          integral y la construcción de comunidades más fuertes y conectadas.
+        </p>
+      </div>
+      <div
+        class="about-image slide-in-right"
+        style="background-color: transparent !important"
+      >
+        <img src="FotosInicio/F3.PNG" alt="Nuestra vision" />
+      </div>
+    </section>
+
+    <!-- 10. MEMBRESÍAS PRO - DE NUEVOINICIO.HTML -->
+    <section
+      class="membership-section"
+      style="
+        background: #1a1a1a;
+        padding: 5rem 1rem;
+        position: relative;
+        overflow: hidden;
+      "
+    >
+      <div
+        class="parallax-bg"
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 120%;
+          background: linear-gradient(45deg, #ff69b4, #1a1a1a);
+          opacity: 0.1;
+          transform: translateY(0px);
+          transition: transform 0.1s ease;
+        "
+      ></div>
+
+      <div
+        style="
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: center;
+          position: relative;
+          z-index: 2;
+        "
+      >
+        <h2
+          style="
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 2rem;
+            color: #ff69b4;
+            letter-spacing: -1px;
+          "
+        >
+          MEMBRESÍA PRO
+        </h2>
+
+        <div
+          class="membership-card"
+          style="
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 2px solid #ff69b4;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(255, 105, 180, 0.2);
+          "
+        >
+          <div
+            class="card-bg-effect"
+            style="
+              position: absolute;
+              top: -50%;
+              left: -50%;
+              width: 200%;
+              height: 200%;
+              background: radial-gradient(
+                circle,
+                rgba(255, 105, 180, 0.1) 0%,
+                transparent 70%
+              );
+              animation: pulseEffect 4s ease-in-out infinite;
+            "
+          ></div>
+
+          <div style="position: relative; z-index: 3">
+            <div
+              style="
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(45deg, #ff69b4, #ff1493);
+                border-radius: 20px;
+                margin: 0 auto 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 2rem;
+                font-weight: 900;
+                transform: rotate(-5deg);
+              "
+            >
+              PRO
+            </div>
+
+            <h3
+              style="
+                font-size: 2rem;
+                font-weight: 800;
+                color: #ffffff;
+                margin-bottom: 1rem;
+              "
+            >
+              Acceso Total Premium
+            </h3>
+
+            <p
+              style="
+                color: #ccc;
+                font-size: 1.1rem;
+                line-height: 1.6;
+                margin-bottom: 2rem;
+              "
+            >
+              Desbloquea todo el contenido exclusivo, ropa deportiva premium,
+              editoriales motivacionales y eventos privados.
+            </p>
+
+            <div
+              class="benefits-list"
+              style="text-align: left; margin-bottom: 2rem"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  margin-bottom: 1rem;
+                  color: #fff;
+                "
+              >
+                <span style="color: #ff69b4; font-size: 1.2rem">✓</span>
+                <span>Ropa deportiva exclusiva mensual</span>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  margin-bottom: 1rem;
+                  color: #fff;
+                "
+              >
+                <span style="color: #ff69b4; font-size: 1.2rem">✓</span>
+                <span>Contenido motivacional premium</span>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  margin-bottom: 1rem;
+                  color: #fff;
+                "
+              >
+                <span style="color: #ff69b4; font-size: 1.2rem">✓</span>
+                <span>Eventos exclusivos para miembros</span>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  color: #fff;
+                "
+              >
+                <span style="color: #ff69b4; font-size: 1.2rem">✓</span>
+                <span>Coaching personalizado mensual</span>
+              </div>
+            </div>
+
+            <div
+              style="
+                font-size: 2.5rem;
+                font-weight: 900;
+                color: #ff69b4;
+                margin-bottom: 1rem;
+              "
+            >
+              $99<span style="font-size: 1rem; color: #ccc; font-weight: 400"
+                >/mes</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. CONTACTANOS - DE INDEX.HTML (NO TOCAR) -->
     <section class="contact-section">
       <div class="contact-container">
         <h2 class="fade-in">Contáctanos</h2>
@@ -598,6 +1361,223 @@
     <script src="js/iniciar.js"></script>
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
+
+    <!-- ESTILOS ADICIONALES PARA NUEVAS SECCIONES -->
+    <style>
+      /* Animación para ticker */
+      @keyframes scrollTicker {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* Animación pulse para membresías */
+      @keyframes pulseEffect {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 0.1;
+        }
+        50% {
+          transform: scale(1.1) rotate(5deg);
+          opacity: 0.2;
+        }
+      }
+
+      /* ESTILOS ESPECÍFICOS PARA SECCIONES SOLICITADAS - FUERZA MÁXIMA */
+
+      /* Quiénes Somos - FONDO BLANCO COMPLETO - USAR SELECTOR EXACTO */
+      section#quienes-somos.about-section {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+      }
+      section#quienes-somos.about-section * {
+        background-color: transparent !important;
+        background: transparent !important;
+      }
+      section#quienes-somos.about-section .about-text h2 {
+        color: #000000 !important;
+        background-color: transparent !important;
+      }
+      section#quienes-somos.about-section .about-text p {
+        color: #333333 !important;
+        background-color: transparent !important;
+      }
+
+      /* Nuestra Visión - FONDO NEGRO COMPLETO - SELECTOR MÁXIMO */
+      section.about-section:last-of-type {
+        background-color: #000000 !important;
+        background: #000000 !important;
+      }
+      section.about-section:last-of-type * {
+        background-color: transparent !important;
+        background: transparent !important;
+      }
+      section.about-section:last-of-type .about-text h2 {
+        color: #ffffff !important;
+        background-color: transparent !important;
+      }
+      section.about-section:last-of-type .about-text p {
+        color: #ffffff !important;
+        background-color: transparent !important;
+      }
+
+      /* Nuestro Impacto - FONDO NEGRO COMPLETO - SOBRESCRIBIR GRADIENTE */
+      section.impact-section {
+        background: #000000 !important;
+        background-color: #000000 !important;
+        background-image: none !important;
+        color: #ffffff !important;
+      }
+      section.impact-section * {
+        background-color: transparent !important;
+        background: transparent !important;
+      }
+      section.impact-section h2 {
+        color: #ff69b4 !important;
+        background-color: transparent !important;
+      }
+      section.impact-section .impact-cards {
+        background-color: transparent !important;
+        background: transparent !important;
+      }
+      section.impact-section .impact-card {
+        background-color: #1a1a1a !important;
+        background: #1a1a1a !important;
+        color: #ffffff !important;
+        border: 1px solid #333333 !important;
+      }
+      section.impact-section .impact-card h3 {
+        color: #ff69b4 !important;
+        background-color: transparent !important;
+      }
+      section.impact-section .impact-card p {
+        color: #ffffff !important;
+        background-color: transparent !important;
+      }
+
+      /* Hover effects para carrusel */
+      .carousel-btn:hover {
+        background: #ff1493 !important;
+        transform: scale(1.1);
+      }
+
+      /* Scrollbar para editoriales */
+      .horizontal-scroll::-webkit-scrollbar {
+        height: 8px;
+      }
+      .horizontal-scroll::-webkit-scrollbar-track {
+        background: #2a2a2a;
+        border-radius: 4px;
+      }
+      .horizontal-scroll::-webkit-scrollbar-thumb {
+        background: #ff69b4;
+        border-radius: 4px;
+      }
+
+      /* Parallax hover effect */
+      .membership-section:hover .parallax-bg {
+        transform: translateY(-20px);
+      }
+
+      /* Responsive para nuevas secciones */
+      @media (max-width: 768px) {
+        .carousel-container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .carousel-btn {
+          width: 40px !important;
+          height: 40px !important;
+          font-size: 1.2rem !important;
+        }
+        .horizontal-scroll {
+          padding: 0 1rem !important;
+        }
+        .editorial-card {
+          min-width: 280px !important;
+          height: 400px !important;
+        }
+        .testimonials-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .membership-card {
+          padding: 2rem !important;
+          margin: 1rem 0 !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .carousel-item {
+          height: 300px !important;
+        }
+        .editorial-card {
+          min-width: 260px !important;
+          height: 350px !important;
+          padding: 1.5rem !important;
+        }
+        .testimonial-card {
+          padding: 1.5rem !important;
+        }
+      }
+    </style>
+
+    <!-- JAVASCRIPT PARA NUEVAS FUNCIONALIDADES -->
+    <script>
+      // Variables del carrusel
+      let currentSlide = 0;
+      const totalSlides = 5;
+
+      // Función para mover carrusel
+      function moveCarousel(direction) {
+        currentSlide += direction;
+        if (currentSlide >= totalSlides) currentSlide = 0;
+        if (currentSlide < 0) currentSlide = totalSlides - 1;
+        updateCarousel();
+      }
+
+      // Función para ir a slide específico
+      function goToSlide(slideIndex) {
+        currentSlide = slideIndex;
+        updateCarousel();
+      }
+
+      // Actualizar carrusel
+      function updateCarousel() {
+        const carousel = document.getElementById("clothingCarousel");
+        const indicators = document.querySelectorAll(".indicator");
+
+        if (carousel) {
+          carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        indicators.forEach((indicator, index) => {
+          if (index === currentSlide) {
+            indicator.style.background = "#ff69b4";
+          } else {
+            indicator.style.background = "#666";
+          }
+        });
+      }
+
+      // Auto-slide cada 5 segundos
+      setInterval(() => {
+        moveCarousel(1);
+      }, 5000);
+
+      // Parallax effect en scroll
+      window.addEventListener("scroll", () => {
+        const scrolled = window.pageYOffset;
+        const parallaxBg = document.querySelector(".parallax-bg");
+        if (parallaxBg) {
+          parallaxBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+        }
+      });
+    </script>
+
     <script>
       const container = document.getElementById("container");
       const registerBtn = document.getElementById("register");
