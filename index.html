@@ -2,12 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
     <title>NewLifeRun Club</title>
-    <link rel="stylesheet" href="css/tabInicio.css?v=8.6" />
-    <link rel="stylesheet" href="css/navbar.css" />
+    <!-- 🎯 FUENTE MONTSERRAT AGREGADA -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/tabInicio.css?v=11.1" />
+    <link rel="stylesheet" href="css/navbar.css?v=9.0" />
     <link rel="stylesheet" href="css/barra-baja.css?v=2.0" />
-    <link rel="stylesheet" href="css/tabIniciar.css" />
     <link rel="stylesheet" href="css/carrito.css" />
     <link rel="stylesheet" href="css/search.css" />
     <link
@@ -39,8 +48,20 @@
 
         <div class="nav-right">
           <!-- Botones para invitados (login/registro) -->
-          <a href="#" class="login-button" id="register-btn">Registrarse</a>
-          <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
+          <a
+            href="sesion.html?mode=register"
+            class="login-button"
+            id="register-btn"
+            target="_blank"
+            >Registrarse</a
+          >
+          <a
+            href="sesion.html?mode=login"
+            class="login-button"
+            id="login-btn"
+            target="_blank"
+            >Iniciar Sesión</a
+          >
 
           <!-- Botones para usuarios logueados (ocultos por defecto) -->
           <div class="user-actions">
@@ -510,7 +531,7 @@
         class="about-image slide-in-right"
         style="background-color: transparent !important"
       >
-        <img src="FotosInicio/F1.PNG" alt="Comunidad de corredores" />
+        <img src="" alt="" />
       </div>
     </section>
 
@@ -534,7 +555,7 @@
             letter-spacing: -1px;
           "
         >
-          ROPA DEPORTIVA DINÁMICA
+          NewLife Club Community
         </h2>
 
         <div
@@ -574,90 +595,134 @@
               id="clothingCarousel"
               style="display: flex; transition: transform 0.5s ease; gap: 1rem"
             >
+              <!-- 🎯 FOTO 1 - FotosInicio/foto1.jpeg -->
               <div
                 class="carousel-item"
                 style="
                   min-width: 100%;
-                  background: linear-gradient(45deg, #ff69b4, #ff1493);
                   height: 400px;
                   border-radius: 15px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                  font-weight: 600;
+                  overflow: hidden;
+                  position: relative;
                 "
               >
-                Diseño Deportivo #1
+                <img
+                  src="FotosInicio/foto1.jpeg"
+                  alt="Ropa Deportiva NewLife 1"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 15px;
+                  "
+                />
               </div>
+
+              <!-- 🎯 FOTO 2 - FotosInicio/foto2.jpeg -->
               <div
                 class="carousel-item"
                 style="
                   min-width: 100%;
-                  background: linear-gradient(45deg, #ff1493, #dc143c);
                   height: 400px;
                   border-radius: 15px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                  font-weight: 600;
+                  overflow: hidden;
+                  position: relative;
                 "
               >
-                Diseño Deportivo #2
+                <img
+                  src="FotosInicio/foto2.jpeg"
+                  alt="Ropa Deportiva NewLife 2"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 15px;
+                  "
+                />
               </div>
+
+              <!-- 🎯 FOTO 3 - FotosInicio/foto3.jpeg -->
               <div
                 class="carousel-item"
                 style="
                   min-width: 100%;
-                  background: linear-gradient(45deg, #dc143c, #b91372);
                   height: 400px;
                   border-radius: 15px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                  font-weight: 600;
+                  overflow: hidden;
+                  position: relative;
                 "
               >
-                Diseño Deportivo #3
+                <img
+                  src="FotosInicio/foto3.jpeg"
+                  alt="Ropa Deportiva NewLife 3"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 15px;
+                  "
+                />
               </div>
+
+              <!-- 🎯 FOTO 4 - FotosInicio/foto4.jpeg -->
               <div
                 class="carousel-item"
                 style="
                   min-width: 100%;
-                  background: linear-gradient(45deg, #b91372, #ff69b4);
                   height: 400px;
                   border-radius: 15px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                  font-weight: 600;
+                  overflow: hidden;
+                  position: relative;
                 "
               >
-                Diseño Deportivo #4
+                <img
+                  src="FotosInicio/foto4.jpeg"
+                  alt="Ropa Deportiva NewLife 4"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 15px;
+                  "
+                />
               </div>
+
+              <!-- 🎯 FOTO 5 - FotosInicio/foto5.jpeg -->
               <div
                 class="carousel-item"
                 style="
                   min-width: 100%;
-                  background: linear-gradient(45deg, #ff69b4, #ff1493);
                   height: 400px;
                   border-radius: 15px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                  font-weight: 600;
+                  overflow: hidden;
+                  position: relative;
                 "
               >
-                Diseño Deportivo #5
+                <img
+                  src="FotosInicio/foto5.jpeg"
+                  alt="Ropa Deportiva NewLife 5"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 15px;
+                  "
+                />
               </div>
             </div>
           </div>
@@ -789,24 +854,7 @@
     </section>
 
     <!-- 7. NEWLIFE COMMUNITY - DE INDEX.HTML -->
-    <section class="gallery-section">
-      <h2 class="gallery-title">NewLife Community</h2>
-
-      <div class="gallery-subtitle">
-        <h1>Vive momentos únicos con nuestra comunidad de corredores</h1>
-      </div>
-
-      <div class="gallery-container">
-        <div id="gallery" class="gallery"></div>
-      </div>
-
-      <div id="photo-counter" class="photo-counter">Foto 1 de 10</div>
-
-      <div class="buttons-container">
-        <button class="prev-btn" onclick="moveSlide(-1)">⟵ Anterior</button>
-        <button class="next-btn" onclick="moveSlide(1)">Siguiente ⟶</button>
-      </div>
-    </section>
+    <!-- 7. SECCIÓN NEWLIFE COMMUNITY ELIMINADA (Problemática en móviles) -->
 
     <!-- 8. EDITORIALES MOTIVACIONALES - DE NUEVOINICIO.HTML -->
     <section
@@ -1007,7 +1055,7 @@
         class="about-image slide-in-right"
         style="background-color: transparent !important"
       >
-        <img src="FotosInicio/F3.PNG" alt="Nuestra vision" />
+        <img src="" alt="" />
       </div>
     </section>
 
@@ -1237,86 +1285,11 @@
           <i class="fa-brands fa-apple"></i>
           <i class="fa-brands fa-google"></i>
           <i class="fa-brands fa-discord"></i>
-          <i class="fa-brands fa-slack"></i>
           <i class="fa-brands fa-facebook"></i>
-          <i class="fa-brands fa-amazon"></i>
-          <i class="fa-brands fa-microsoft"></i>
-          <i class="fa-brands fa-twitter"></i>
-          <i class="fa-brands fa-instagram"></i>
           <i class="fa-brands fa-linkedin"></i>
         </div>
       </div>
     </section>
-
-    <!-- Contenedor del formulario de inicio de sesión -->
-    <div class="container" id="container">
-      <div class="form-container sign-up">
-        <form>
-          <h1>Create Account</h1>
-          <div class="social-icons">
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-linkedin-in"></i
-            ></a>
-          </div>
-          <span>or use your email for registeration</span>
-          <input type="text" id="register-name" placeholder="Name" />
-          <input type="email" id="register-email" placeholder="Email" />
-          <input
-            type="password"
-            id="register-password"
-            placeholder="Password"
-          />
-          <button type="button" id="modal-register-btn">Sign Up</button>
-        </form>
-      </div>
-      <div class="form-container sign-in">
-        <form>
-          <h1>Sign In</h1>
-          <div class="social-icons">
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-linkedin-in"></i
-            ></a>
-          </div>
-          <span>or use your email password</span>
-          <input type="email" id="login-email" placeholder="Email required" />
-          <input
-            type="password"
-            id="login-password"
-            placeholder="Password required"
-          />
-          <a href="#">Forget Your Password?</a>
-          <button type="button" id="modal-login-btn">Sign In</button>
-        </form>
-      </div>
-      <div class="toggle-container">
-        <div class="toggle">
-          <div class="toggle-panel toggle-left">
-            <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all of site features</p>
-            <button class="hidden" id="login">Sign In</button>
-          </div>
-          <div class="toggle-panel toggle-right">
-            <h1>Hello, Friend!</h1>
-            <p>
-              Register with your personal details to use all of site features
-            </p>
-            <button class="hidden" id="register">Sign Up</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="overlay"></div>
 
     <!--Footer al final del sitio web mismo a todos-->
     <footer class="footer-final">
@@ -1358,7 +1331,6 @@
       </div>
     </footer>
     <script src="js/inicio.js"></script>
-    <script src="js/iniciar.js"></script>
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
 
@@ -1994,6 +1966,20 @@
           font-size: 1.2rem !important;
           margin-bottom: 2rem !important;
         }
+      }
+
+      /* 🎯 FUERZA UNA SOLA FILA SIEMPRE */
+      .marquee-content {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        grid-template-rows: 1fr !important;
+        grid-auto-rows: 0 !important;
+        grid-auto-flow: column !important;
+      }
+
+      /* 🚨 SOLO 5 ICONOS MÁXIMO */
+      .marquee-content i:nth-child(n + 6) {
+        display: none !important;
       }
     </style>
 
