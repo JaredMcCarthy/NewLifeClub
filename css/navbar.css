@@ -34,6 +34,7 @@
   align-items: center;
 }
 
+/* 🖥️ DESKTOP: Logo a la izquierda (posición normal) */
 .nav-logo {
   font-size: 1.8rem;
   font-weight: 700;
@@ -213,44 +214,41 @@
   visibility: visible;
 }
 
-/* Media Queries para responsive */
+/* 📱 MÓVILES: Reorganización completa - LIMPIO Y FUNCIONAL */
 @media (max-width: 992px) {
-  /* Reorganizar elementos solo en móvil */
   .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 15px;
     position: relative;
+    height: 100%;
   }
 
-  /* Hamburger a la izquierda */
+  /* Hamburger a la izquierda - ESPACIO FIJO */
   .nav-left {
     order: 1;
-    flex: 0 0 60px;
+    flex: 0 0 50px;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
   }
 
   .menu-toggle {
     display: flex;
     margin-left: 0;
+    z-index: 1001;
   }
 
-  /* Logo centrado */
+  /* 🚨 OCULTAR LOGO EN MÓVILES */
   .nav-logo {
-    order: 2;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.4rem;
-    z-index: 1;
+    display: none !important;
   }
 
-  /* Botones a la derecha */
+  /* Botones a la derecha - ESPACIO FIJO */
   .nav-right {
     order: 3;
-    flex: 0 0 60px;
+    flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
     gap: 8px;
@@ -275,36 +273,56 @@
     font-size: 0.8rem;
   }
 
-  /* Botones de usuario más compactos en móvil */
-  .user-button {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-  }
-
+  /* 🚨 MENÚ LATERAL MÓVIL - ARREGLADO */
   .nav-center {
     position: fixed;
     top: 0;
-    right: -100%;
-    width: 70%;
-    max-width: 300px;
+    right: -300px;
+    width: 280px;
     height: 100vh;
     background: #000000;
     flex-direction: column;
-    padding: 100px 20px 20px;
-    transition: all 0.5s ease;
-    gap: 30px;
-    z-index: 5;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-    align-items: center;
+    padding: 80px 0 20px 0;
+    transition: right 0.4s ease;
+    gap: 0;
+    z-index: 1000;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    align-items: stretch;
+    overflow-y: auto;
   }
 
   .nav-center.open {
     right: 0;
   }
 
+  /* 🎯 ENLACES DEL MENÚ - ESTILO LIMPIO */
+  .nav-link {
+    width: 100%;
+    text-align: left;
+    padding: 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.1rem;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  .nav-link:hover {
+    background: rgba(255, 105, 180, 0.1);
+    color: #ff69b4;
+    padding-left: 40px;
+  }
+
+  .nav-link.active {
+    color: #ff69b4;
+    border-bottom-color: #ff69b4;
+    background: rgba(255, 105, 180, 0.05);
+  }
+
+  /* 🎯 ANIMACIÓN HAMBURGER - ARREGLADA */
   .menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg);
-    background: #ff0080;
+    background: #ff69b4;
   }
 
   .menu-toggle.active span:nth-child(2) {
@@ -314,14 +332,29 @@
 
   .menu-toggle.active span:nth-child(3) {
     transform: rotate(-45deg);
-    background: #ff0080;
+    background: #ff69b4;
   }
 
-  .nav-link {
-    width: 100%;
-    text-align: center;
-    padding: 15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* 🚨 USER ACTIONS - RESPETAMOS LÓGICA JS */
+  .user-actions #logout-btn,
+  .user-actions #search-btn,
+  .user-actions #cart-btn {
+    display: none !important;
+  }
+
+  .user-actions #profile-btn {
+    padding: 6px 12px;
+    font-size: 0;
+  }
+
+  .user-actions #profile-btn::before {
+    content: "Cuenta";
+    font-size: 0.8rem;
+  }
+
+  .user-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
 
@@ -384,8 +417,7 @@ body {
   text-align: center;
 }
 
-/* Botomes ocultos cuando inicia sesion */
-
+/* Botones ocultos cuando inicia sesión */
 .user-button {
   background: transparent;
   color: #ffffff;
@@ -412,9 +444,7 @@ body {
   border: none;
 }
 
-/* Resposivo a cualquier tipo de celular */
-
-/* Estilo base: botón elegante y responsive */
+/* Responsive para cualquier tipo de celular */
 .user-button {
   background: transparent;
   color: #ffffff;
