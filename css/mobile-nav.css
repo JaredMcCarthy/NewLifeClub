@@ -1,0 +1,69 @@
+/* Estilos específicos para navegación móvil */
+@media screen and (max-width: 768px) {
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Ocultar elementos innecesarios en móvil */
+  .login-button,
+  #search-btn {
+    display: none !important;
+  }
+
+  /* Mostrar botones de perfil y carrito */
+  #profile-btn,
+  .cart-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 35px !important;
+    height: 35px !important;
+    min-width: 35px !important;
+    min-height: 35px !important;
+    padding: 0 !important;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #ff0080;
+    color: white;
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+
+  /* Menú hamburguesa */
+  .menu-toggle {
+    display: flex;
+    margin-right: 15px;
+  }
+
+  /* Menú desplegable */
+  .nav-center {
+    position: fixed;
+    top: 80px;
+    left: -100%;
+    width: 80%;
+    height: calc(100vh - 80px);
+    background: rgba(0, 0, 0, 0.95);
+    flex-direction: column;
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+
+  .nav-center.open {
+    left: 0;
+  }
+}

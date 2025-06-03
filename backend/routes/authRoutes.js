@@ -31,11 +31,12 @@ router.post("/register", async (req, res) => {
     }
 
     // Verificar si el correo ya existe
-    const [existingUsers] = await pool
-      .promise()
-      .query("SELECT id FROM usuarios WHERE correo = ?", [correo]);
+    const existingUser = await pool.query(
+      "SELECT id FROM usuarios WHERE correo = $1",
+      [correo]
+    );
 
-    if (existingUsers.length > 0) {
+    if (existingUser.rows.length > 0) {
       return res.status(400).json({
         success: false,
         message: "Este correo ya está registrado",
@@ -46,12 +47,10 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(contraseña, 10);
 
     // Insertar nuevo usuario
-    const [result] = await pool
-      .promise()
-      .query(
-        "INSERT INTO usuarios (nombre, correo, contraseña) VALUES (?, ?, ?)",
-        [nombre, correo, hashedPassword]
-      );
+    const result = await pool.query(
+      "INSERT INTO usuarios (nombre, correo, contraseña) VALUES ($1, $2, $3) RETURNING id, nombre, correo",
+      [nombre, correo, hashedPassword]
+    );
 
     // Enviar correo de bienvenida
     try {
@@ -64,7 +63,7 @@ router.post("/register", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Usuario registrado exitosamente",
-      user: { nombre, correo },
+      user: result.rows[0],
     });
   } catch (error) {
     console.error("Error en registro:", error);
@@ -92,23 +91,21 @@ router.post("/login", async (req, res) => {
     }
 
     // Buscar usuario
-    const [users] = await pool
-      .promise()
-      .query(
-        "SELECT id, nombre, correo, contraseña FROM usuarios WHERE correo = ?",
-        [correo]
-      );
+    const result = await pool.query(
+      "SELECT id, nombre, correo, contraseña FROM usuarios WHERE correo = $1",
+      [correo]
+    );
 
-    console.log("🔍 Usuario encontrado:", users.length > 0);
+    console.log("🔍 Usuario encontrado:", result.rows.length > 0);
 
-    if (users.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(400).json({
         success: false,
         message: "Credenciales incorrectas",
       });
     }
 
-    const user = users[0];
+    const user = result.rows[0];
     console.log("👤 Verificando contraseña para usuario:", user.correo);
 
     // Verificar contraseña

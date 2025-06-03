@@ -1,14 +1,22 @@
-const mysql = require("mysql2/promise"); // Usa mysql2/promise
+const { Pool } = require("pg");
 
-// Usar async function para conectar
-const connection = mysql.createPool({
-  host: "127.0.0.1",
-  user: "root",
-  password: "123456789",
-  database: "newlifewsers",
-  waitForConnections: true, // Esperar conexiones si hay muchas
-  connectionLimit: 10, // Límite de conexiones
-  queueLimit: 0, // Sin límite de espera en cola
+const pool = new Pool({
+  connectionString:
+    process.env.DATABASE_URL ||
+    "postgresql://neondb_owner:npg_Np4d5akmOrBS@ep-solitary-wave-a89tsneb-pooler.eastus2.azure.neon.tech/neondb?sslmode=require",
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-module.exports = connection; // Exportamos el pool de conexiones
+// Verificar conexión
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error("Error conectando a la base de datos:", err.stack);
+  } else {
+    console.log("✅ Conectado exitosamente a PostgreSQL en Neon");
+    release();
+  }
+});
+
+module.exports = pool;
