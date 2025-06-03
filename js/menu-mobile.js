@@ -5,11 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para alternar el menú
   function toggleMenu() {
+    if (!menuToggle || !navCenter || !overlay) return;
+
     menuToggle.classList.toggle("active");
     navCenter.classList.toggle("open");
-    overlay.style.display = navCenter.classList.contains("open")
-      ? "block"
-      : "none";
+    overlay.classList.toggle("open");
+
+    // Prevenir scroll cuando el menú está abierto
+    document.body.style.overflow = navCenter.classList.contains("open")
+      ? "hidden"
+      : "";
   }
 
   // Event listeners
@@ -19,15 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Cerrar menú al hacer clic en el overlay
   if (overlay) {
-    overlay.addEventListener("click", () => {
-      if (navCenter.classList.contains("open")) {
-        toggleMenu();
-      }
-    });
+    overlay.addEventListener("click", toggleMenu);
   }
 
   // Cerrar menú al hacer clic en un enlace
-  const navLinks = document.querySelectorAll(".nav-link");
+  const navLinks = document.querySelectorAll(".nav-center .nav-link");
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
       if (navCenter.classList.contains("open")) {
@@ -36,12 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Ajustar menú en cambio de orientación
+  // Cerrar menú al cambiar el tamaño de la ventana
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) {
-      menuToggle.classList.remove("active");
-      navCenter.classList.remove("open");
-      overlay.style.display = "none";
+    if (window.innerWidth > 768 && navCenter.classList.contains("open")) {
+      toggleMenu();
     }
   });
 });
