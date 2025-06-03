@@ -319,7 +319,7 @@
     >
       <div
         style="
-          animation: scrollTicker 15s linear infinite;
+          animation: scroll 15s linear infinite;
           white-space: nowrap;
           font-weight: 600;
         "
@@ -1319,5 +1319,43 @@
     <script src="js/search.js"></script>
     <script src="js/navbar-session.js"></script>
     <script src="js/menu-mobile.js"></script>
+    <script>
+      let currentSlide = 0;
+      const totalSlides = 5;
+
+      function moveCarousel(direction) {
+        currentSlide += direction;
+        if (currentSlide >= totalSlides) currentSlide = 0;
+        if (currentSlide < 0) currentSlide = totalSlides - 1;
+        updateCarousel();
+      }
+
+      function goToSlide(slideIndex) {
+        currentSlide = slideIndex;
+        updateCarousel();
+      }
+
+      function updateCarousel() {
+        const carousel = document.getElementById("clothingCarousel");
+        const indicators = document.querySelectorAll(".indicator");
+        if (!carousel) return;
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        indicators.forEach((indicator, index) => {
+          if (index === currentSlide) {
+            indicator.style.background = "#ff69b4";
+          } else {
+            indicator.style.background = "#666";
+          }
+        });
+      }
+
+      // Auto-slide cada 5 segundos
+      setInterval(() => {
+        moveCarousel(1);
+      }, 5000);
+
+      // Inicializar carrusel al cargar
+      document.addEventListener("DOMContentLoaded", updateCarousel);
+    </script>
   </body>
 </html>
