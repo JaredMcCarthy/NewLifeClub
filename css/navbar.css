@@ -155,7 +155,8 @@ body.logged-in #mobile-account-btn {
 }
 
 /* Botón móvil de cuenta (oculto en escritorio) */
-#mobile-account-btn {
+#mobile-account-btn,
+.mobile-only {
   display: none !important;
 }
 

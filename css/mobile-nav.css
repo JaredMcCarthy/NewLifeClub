@@ -1,6 +1,7 @@
 /* Estilos específicos para navegación móvil */
 /* Ocultar elementos mobile-only en desktop */
-.mobile-only {
+.mobile-only,
+#mobile-account-btn {
   display: none !important;
 }
 
@@ -36,7 +37,7 @@
     display: none !important;
   }
 
-  /* Mostrar botón de cuenta en móvil (solo cuando no hay sesión) */
+  /* Mostrar botón de cuenta SOLO en móvil cuando no hay sesión */
   #mobile-account-btn {
     display: block !important;
     padding: 8px 15px;
