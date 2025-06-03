@@ -658,6 +658,15 @@ body {
   }
 }
 
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 /* Clases para animaciones JS */
 .slide-in-left {
   opacity: 0;
