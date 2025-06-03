@@ -539,3 +539,13 @@ body {
     left: 0;
   }
 }
+
+/* Botón móvil de cuenta (oculto en escritorio) */
+.mobile-only-button {
+  display: none !important;
+}
+
+/* Menú hamburguesa (oculto en escritorio) */
+.menu-toggle {
+  display: none;
+}

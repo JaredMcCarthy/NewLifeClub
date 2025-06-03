@@ -5,6 +5,10 @@
   display: none !important;
 }
 
+.mobile-only-button {
+  display: none !important;
+}
+
 @media screen and (max-width: 768px) {
   /* Mostrar elementos mobile-only en móvil */
   .mobile-only {
@@ -38,8 +42,8 @@
   }
 
   /* Mostrar botón de cuenta SOLO en móvil cuando no hay sesión */
-  #mobile-account-btn {
-    display: block !important;
+  .mobile-only-button {
+    display: inline-block !important;
     padding: 8px 15px;
     background: transparent;
     border: 2px solid #ff0080;
@@ -50,7 +54,7 @@
   }
 
   /* Ocultar botón de cuenta cuando el usuario está logueado */
-  body.logged-in #mobile-account-btn {
+  body.logged-in .mobile-only-button {
     display: none !important;
   }
 
