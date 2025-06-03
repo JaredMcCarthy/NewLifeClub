@@ -5,6 +5,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 15px;
+    width: 100%;
   }
 
   .nav-left {
@@ -41,12 +42,41 @@
     color: white;
     font-size: 1.2rem;
     text-decoration: none;
+    z-index: 1001;
   }
 
   /* Menú hamburguesa */
   .menu-toggle {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
     margin-right: 15px;
+    z-index: 1001;
+  }
+
+  .menu-toggle span {
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
   }
 
   /* Menú desplegable */
@@ -65,5 +95,25 @@
 
   .nav-center.open {
     left: 0;
+  }
+
+  .nav-center .nav-link {
+    color: white;
+    padding: 15px 0;
+    font-size: 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Overlay para cuando el menú está abierto */
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
   }
 }
