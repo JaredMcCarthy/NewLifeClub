@@ -156,7 +156,7 @@ body.logged-in #mobile-account-btn {
 
 /* Botón móvil de cuenta (oculto en escritorio) */
 #mobile-account-btn {
-  display: none;
+  display: none !important;
 }
 
 /* Menú hamburguesa (oculto en escritorio) */

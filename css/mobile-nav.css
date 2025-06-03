@@ -1,5 +1,15 @@
 /* Estilos específicos para navegación móvil */
+/* Ocultar elementos mobile-only en desktop */
+.mobile-only {
+  display: none !important;
+}
+
 @media screen and (max-width: 768px) {
+  /* Mostrar elementos mobile-only en móvil */
+  .mobile-only {
+    display: block !important;
+  }
+
   .nav-container {
     display: flex;
     justify-content: space-between;
