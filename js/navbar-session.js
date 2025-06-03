@@ -1,10 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const justLoggedOut = localStorage.getItem("justLoggedOut") === "true";
-  const isIndex =
-    window.location.pathname.endsWith("index.html") ||
-    window.location.pathname === "/";
-
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
   const userActions = document.querySelector(".user-actions");
@@ -13,9 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logout-btn");
 
   function updateNavigation() {
-    if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
-    if (registerBtn)
-      registerBtn.style.display = isLoggedIn ? "none" : "inline-block";
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
+    if (registerBtn) registerBtn.style.display = isLoggedIn ? "none" : "block";
     if (userActions) userActions.style.display = isLoggedIn ? "flex" : "none";
 
     // En móvil, asegurarse que los botones de cuenta estén visibles
@@ -26,28 +21,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Actualizar navegación al cargar
+  // Actualizar al cargar la página
   updateNavigation();
 
-  // Actualizar cuando cambie el tamaño de la ventana
-  window.addEventListener("resize", updateNavigation);
+  // Actualizar cuando cambie el localStorage
+  window.addEventListener("storage", function (e) {
+    if (e.key === "isLoggedIn") {
+      updateNavigation();
+    }
+  });
 
-  // Si justo se cerró sesión (desde otra pestaña), redirigir con mensaje suave
-  if (!isLoggedIn && justLoggedOut) {
-    localStorage.removeItem("justLoggedOut");
-    alert("👋 ¡Vuelve pronto!");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // Si no ha iniciado sesión y no está en index, mostrar alerta de bloqueo
-  if (!isLoggedIn && !isIndex) {
-    alert("🚫 No puedes pasar. Por favor inicia sesión o regístrate primero.");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // Cerrar sesión manual
+  // Manejar cierre de sesión
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("isLoggedIn");
@@ -59,12 +43,4 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "index.html";
     });
   }
-
-  // Cierre de sesión detectado desde otra pestaña
-  window.addEventListener("storage", () => {
-    if (localStorage.getItem("isLoggedIn") !== "true") {
-      localStorage.setItem("justLoggedOut", "true"); // Marca que fue desde otra tab
-      window.location.href = "index.html";
-    }
-  });
 });

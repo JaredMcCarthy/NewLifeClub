@@ -6,7 +6,6 @@
     align-items: center;
     padding: 0 15px;
     width: 100%;
-    position: relative;
   }
 
   .nav-left {
@@ -18,49 +17,22 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-left: auto;
   }
 
-  /* Ocultar elementos innecesarios en móvil */
-  .login-button {
+  /* Botones de inicio de sesión y registro */
+  #login-btn,
+  #register-btn {
     display: block !important;
-    font-size: 14px;
-    padding: 8px 12px !important;
-    margin: 5px 0;
   }
 
-  #search-btn {
+  /* Ocultar botones de usuario por defecto */
+  .user-actions {
     display: none !important;
-  }
-
-  /* Mostrar botones de perfil y carrito solo si está logueado */
-  #profile-btn,
-  .cart-button {
-    display: none !important;
-  }
-
-  body.logged-in #profile-btn,
-  body.logged-in .cart-button {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 35px !important;
-    height: 35px !important;
-    min-width: 35px !important;
-    min-height: 35px !important;
-    padding: 0 !important;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid #ff0080;
-    color: white;
-    font-size: 1.2rem;
-    text-decoration: none;
-    z-index: 1001;
   }
 
   /* Menú hamburguesa */
   .menu-toggle {
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 30px;
@@ -70,11 +42,9 @@
     cursor: pointer;
     padding: 0;
     margin-right: 15px;
-    z-index: 1001;
   }
 
   .menu-toggle span {
-    display: block !important;
     width: 100%;
     height: 2px;
     background-color: #fff;
@@ -105,7 +75,6 @@
     padding: 20px;
     transition: left 0.3s ease;
     z-index: 1000;
-    display: flex !important;
   }
 
   .nav-center.open {
@@ -118,7 +87,6 @@
     font-size: 1.2rem;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    display: block;
   }
 
   /* Overlay */
@@ -135,26 +103,5 @@
 
   .overlay.open {
     display: block;
-  }
-
-  /* Ajustes para botones de sesión en móvil */
-  .user-actions {
-    display: none !important;
-  }
-
-  body.logged-in .user-actions {
-    display: flex !important;
-    gap: 10px;
-  }
-
-  #login-btn,
-  #register-btn {
-    display: block !important;
-    margin: 5px 0;
-  }
-
-  body.logged-in #login-btn,
-  body.logged-in #register-btn {
-    display: none !important;
   }
 }
