@@ -29,12 +29,12 @@
     <nav class="main-nav">
       <div class="nav-container">
         <div class="nav-left">
-          <a href="index.html" class="nav-logo">NewLifeRun Club</a>
           <button class="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
           </button>
+          <a href="index.html" class="nav-logo">NewLifeRun Club</a>
         </div>
 
         <div class="nav-center">
@@ -48,47 +48,25 @@
         </div>
 
         <div class="nav-right">
-          <!-- Botón de cuenta para móvil -->
+          <!-- Botón de cuenta para móvil (solo visible en móvil cuando no hay sesión) -->
           <a href="sesion.html" class="mobile-only" id="mobile-account-btn"
             >Cuenta</a
           >
 
-          <!-- Botones para invitados (login/registro) -->
+          <!-- Botones para invitados (solo visibles en escritorio cuando no hay sesión) -->
           <a
             href="sesion.html?mode=register"
             class="login-button"
             id="register-btn"
-            target="_blank"
             >Registrarse</a
           >
-          <a
-            href="sesion.html?mode=login"
-            class="login-button"
-            id="login-btn"
-            target="_blank"
+          <a href="sesion.html?mode=login" class="login-button" id="login-btn"
             >Iniciar Sesión</a
           >
 
-          <!-- Botones para usuarios logueados (ocultos por defecto) -->
+          <!-- Botones para usuarios logueados -->
           <div class="user-actions">
-            <button id="logout-btn" class="user-button">Cerrar sesion</button>
             <button class="user-button" id="search-btn">🔍</button>
-            <!-- Menú de búsqueda -->
-            <div class="search-menu" id="searchMenu">
-              <div class="search-container">
-                <button class="mobile-close-btn" id="mobileCloseSearch">
-                  ×
-                </button>
-                <input
-                  type="text"
-                  id="searchInput"
-                  placeholder="Buscar en el sitio..."
-                />
-                <div class="search-results" id="searchResults">
-                  <!-- Los resultados se mostrarán aquí -->
-                </div>
-              </div>
-            </div>
             <button class="user-button cart-button" id="cart-btn">
               🛒<span id="cart-count" class="cart-count">0</span>
             </button>
