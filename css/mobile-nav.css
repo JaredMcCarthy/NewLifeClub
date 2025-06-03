@@ -146,4 +146,21 @@
   .overlay.open {
     display: block;
   }
+
+  /* En móvil, mostrar el botón de cuenta solo cuando NO hay sesión iniciada */
+  #mobile-account-btn {
+    display: inline-block !important;
+    padding: 8px 15px;
+    background: transparent;
+    border: 2px solid #ff0080;
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  /* Ocultar el botón cuando hay sesión iniciada */
+  body.logged-in #mobile-account-btn {
+    display: none !important;
+  }
 }
