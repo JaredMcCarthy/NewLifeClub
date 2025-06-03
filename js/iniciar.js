@@ -74,15 +74,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         // 1. Registro
-        const response = await fetch("http://localhost:3000/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ nombre, correo, contraseña }),
-        });
+        const response = await fetch(
+          "https://newlife-club.vercel.app/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ nombre, correo, contraseña }),
+          }
+        );
 
         const data = await response.json();
 
@@ -91,15 +94,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // 2. Auto-login después de registro exitoso
-        const loginResponse = await fetch("http://localhost:3000/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ correo, contraseña }),
-        });
+        const loginResponse = await fetch(
+          "https://newlife-club.vercel.app/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ correo, contraseña }),
+          }
+        );
 
         const loginData = await loginResponse.json();
 
@@ -136,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/login", {
+        const response = await fetch("https://newlife-club.vercel.app/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
