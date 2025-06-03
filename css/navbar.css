@@ -29,6 +29,7 @@
   height: 100%;
 }
 
+/* Sección izquierda - Logo */
 .nav-left {
   display: flex;
   align-items: center;
@@ -67,6 +68,7 @@
   width: 100%;
 }
 
+/* Sección central - Menú principal */
 .nav-center {
   display: flex;
   gap: 25px;
@@ -110,11 +112,14 @@
   width: 100%;
 }
 
+/* Sección derecha - Botones de acción */
 .nav-right {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
+/* Botones de login/register (solo visibles en escritorio cuando no hay sesión) */
 .login-button {
   background: transparent;
   color: #ffffff;
@@ -125,7 +130,6 @@
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 0.9rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 #login-btn {
@@ -133,13 +137,67 @@
   border: none;
 }
 
-.login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
+/* Botones de usuario (solo visibles cuando hay sesión) */
+.user-actions {
+  display: none;
+  gap: 15px;
+  align-items: center;
 }
 
-#register-btn:hover {
-  background-color: rgba(255, 0, 128, 0.1);
+body.logged-in .user-actions {
+  display: flex;
+}
+
+body.logged-in #login-btn,
+body.logged-in #register-btn,
+body.logged-in #mobile-account-btn {
+  display: none !important;
+}
+
+/* Botón móvil de cuenta (oculto en escritorio) */
+#mobile-account-btn {
+  display: none;
+}
+
+/* Menú hamburguesa (oculto en escritorio) */
+.menu-toggle {
+  display: none;
+}
+
+/* Estilos para los botones de usuario */
+.user-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.user-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Media queries */
+@media screen and (min-width: 769px) {
+  .nav-center {
+    display: flex !important;
+  }
+
+  .user-actions {
+    gap: 20px;
+  }
+
+  #search-btn,
+  #cart-btn,
+  #profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* Pro badge */
@@ -156,30 +214,6 @@
 
 .nav-link:hover .pro-badge {
   transform: scale(1.1);
-}
-
-/* Menú móvil */
-.menu-toggle {
-  display: none;
-  cursor: pointer;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 25px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  z-index: 10;
-}
-
-.menu-toggle span {
-  width: 100%;
-  height: 3px;
-  background: #ffffff;
-  border-radius: 10px;
-  transition: all 0.3s linear;
-  transform-origin: 1px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Video de fondo (para demostración) */
@@ -421,61 +455,6 @@ body {
 .content-demo {
   padding: 120px 20px 50px;
   text-align: center;
-}
-
-/* Botones ocultos cuando inicia sesión */
-.user-button {
-  background: transparent;
-  color: #ffffff;
-  border: 2px solid #ff0080;
-  padding: 8px 16px;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-/* Hover con fondo degradado */
-.user-button:hover {
-  background: linear-gradient(45deg, #ff69b4, #ff0080);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
-  color: white;
-  border: none;
-}
-
-/* Responsive para cualquier tipo de celular */
-.user-button {
-  background: transparent;
-  color: #ffffff;
-  border: 2px solid #ff0080;
-  padding: 8px 16px;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  white-space: nowrap; /* evita que el texto salte de línea */
-}
-
-/* Hover con fondo degradado */
-.user-button:hover {
-  background: linear-gradient(45deg, #ff69b4, #ff0080);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
-  color: white;
-  border: none;
 }
 
 /* 📱 Móviles (pantallas menores a 600px) */
