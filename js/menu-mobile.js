@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Verificar estado de sesión y agregar clase al body
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (isLoggedIn) {
+    document.body.classList.add("logged-in");
+  } else {
+    document.body.classList.remove("logged-in");
+  }
+
   const menuToggle = document.querySelector(".menu-toggle");
   const navCenter = document.querySelector(".nav-center");
   const overlay = document.querySelector(".overlay");
@@ -41,6 +49,18 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("resize", () => {
     if (window.innerWidth > 768 && navCenter.classList.contains("open")) {
       toggleMenu();
+    }
+  });
+
+  // Observar cambios en el localStorage para actualizar la UI
+  window.addEventListener("storage", function (e) {
+    if (e.key === "isLoggedIn") {
+      const isLoggedIn = e.newValue === "true";
+      if (isLoggedIn) {
+        document.body.classList.add("logged-in");
+      } else {
+        document.body.classList.remove("logged-in");
+      }
     }
   });
 });
