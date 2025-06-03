@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userActions = document.querySelector(".user-actions");
   const logoutBtn = document.getElementById("logout-btn");
 
-  // Mostrar u ocultar botones según sesión
+  // Mostrar u ocultar botones según sesión (funciona en PC, tablet y móvil)
   if (isLoggedIn) {
     if (loginBtn) loginBtn.style.display = "none";
     if (registerBtn) registerBtn.style.display = "none";
@@ -40,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
       localStorage.setItem("justLoggedOut", "true"); // Bandera temporal para identificar cierre
       location.reload(); // Actualiza la navbar
     });

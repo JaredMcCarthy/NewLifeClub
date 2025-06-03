@@ -537,6 +537,7 @@
                   <input
                     type="email"
                     class="form-input"
+                    name="correo"
                     placeholder="tu@correo.com"
                     required
                   />
@@ -547,6 +548,7 @@
                     <input
                       type="password"
                       class="form-input"
+                      name="contraseña"
                       placeholder="••••••••"
                       id="loginPassword"
                       required
@@ -575,6 +577,7 @@
                   <input
                     type="text"
                     class="form-input"
+                    name="nombre"
                     placeholder="Juan Pérez"
                     required
                   />
@@ -584,6 +587,7 @@
                   <input
                     type="email"
                     class="form-input"
+                    name="correo"
                     placeholder="tu@correo.com"
                     required
                   />
@@ -594,6 +598,7 @@
                     <input
                       type="password"
                       class="form-input"
+                      name="contraseña"
                       placeholder="••••••••"
                       id="registerPassword"
                       required
@@ -717,62 +722,66 @@
         const submitBtn = form.querySelector(".submit-btn");
         const originalText = submitBtn.textContent;
 
-        // Obtener datos del formulario
-        const email = form.querySelector('input[type="email"]').value;
-        const password = form.querySelector('input[type="password"]').value;
-
-        // Validaciones básicas
-        if (!email || !password) {
-          alert("❌ Por favor completa todos los campos");
-          return;
-        }
-
-        // UI Loading
-        submitBtn.innerHTML = '<div class="loading"></div>Iniciando sesión...';
-        submitBtn.disabled = true;
-
         try {
-          console.log("🔐 Intentando login para:", email);
+          const correo = form
+            .querySelector('input[name="correo"]')
+            .value.trim();
+          const contraseña = form.querySelector(
+            'input[name="contraseña"]'
+          ).value;
 
-          // Llamada a la API de login
-          const response = await fetch("/api/auth/login", {
+          if (!correo || !contraseña) {
+            alert("❌ Por favor completa todos los campos");
+            return;
+          }
+
+          submitBtn.innerHTML =
+            '<div class="loading"></div>Iniciando sesión...';
+          submitBtn.disabled = true;
+
+          const loginData = {
+            correo: correo,
+            contraseña: contraseña,
+          };
+
+          console.log("🔐 Intentando login para:", correo);
+
+          const response = await fetch("http://localhost:3000/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Accept: "application/json",
             },
-            body: JSON.stringify({
-              email: email,
-              password: password,
-            }),
+            body: JSON.stringify(loginData),
           });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            throw new Error(`Error del servidor: ${response.status}`);
+          }
 
           const data = await response.json();
           console.log("📡 Respuesta del servidor:", data);
 
-          if (response.ok && data.success) {
-            // Login exitoso
+          if (data.success) {
             console.log("✅ Login exitoso");
-
-            // Guardar sesión en localStorage
             localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userName", data.user?.name || "Usuario");
-
-            // Mostrar mensaje de éxito
-            alert(`✅ ¡Bienvenido de vuelta, ${data.user?.name || "Usuario"}!`);
-
-            // Redireccionar a la página principal
+            localStorage.setItem("userEmail", correo);
+            localStorage.setItem("userName", data.user?.nombre || "Usuario");
+            alert(
+              `✅ ¡Bienvenido de vuelta, ${data.user?.nombre || "Usuario"}!`
+            );
             window.location.href = "index.html";
           } else {
-            // Error en login
-            console.error("❌ Error en login:", data.message);
-            alert(data.message || "❌ Credenciales incorrectas");
+            throw new Error(data.message || "Credenciales incorrectas");
           }
         } catch (error) {
-          console.error("❌ Error de conexión:", error);
-          alert("❌ Error de conexión. Por favor intenta de nuevo.");
+          console.error("❌ Error:", error);
+          alert(
+            error.message || "❌ Error de conexión. Por favor intenta de nuevo."
+          );
         } finally {
-          // Restaurar botón
           submitBtn.textContent = originalText;
           submitBtn.disabled = false;
         }
@@ -787,83 +796,86 @@
         const submitBtn = form.querySelector(".submit-btn");
         const originalText = submitBtn.textContent;
 
-        // Obtener datos del formulario
-        const name = form.querySelector('input[type="text"]').value;
-        const email = form.querySelector('input[type="email"]').value;
-        const password = form.querySelector("#registerPassword").value;
-        const confirmPassword = form.querySelector("#confirmPassword").value;
-        const termsAccepted = form.querySelector("#terms").checked;
-
-        // Validaciones
-        if (!name || !email || !password || !confirmPassword) {
-          alert("❌ Por favor completa todos los campos");
-          return;
-        }
-
-        if (password !== confirmPassword) {
-          alert("❌ Las contraseñas no coinciden");
-          return;
-        }
-
-        if (password.length < 6) {
-          alert("❌ La contraseña debe tener al menos 6 caracteres");
-          return;
-        }
-
-        if (!termsAccepted) {
-          alert("❌ Debes aceptar los términos y condiciones");
-          return;
-        }
-
-        // UI Loading
-        submitBtn.innerHTML = '<div class="loading"></div>Creando cuenta...';
-        submitBtn.disabled = true;
-
         try {
-          console.log("📝 Intentando registro para:", email);
+          const nombre = form
+            .querySelector('input[name="nombre"]')
+            .value.trim();
+          const correo = form
+            .querySelector('input[name="correo"]')
+            .value.trim();
+          const contraseña = form.querySelector(
+            'input[name="contraseña"]'
+          ).value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
 
-          // Llamada a la API de registro
-          const response = await fetch("/api/auth/register", {
+          if (!nombre || !correo || !contraseña || !confirmPassword) {
+            alert("❌ Por favor completa todos los campos");
+            return;
+          }
+
+          if (contraseña !== confirmPassword) {
+            alert("❌ Las contraseñas no coinciden");
+            return;
+          }
+
+          if (contraseña.length < 6) {
+            alert("❌ La contraseña debe tener al menos 6 caracteres");
+            return;
+          }
+
+          if (!document.getElementById("terms").checked) {
+            alert("❌ Debes aceptar los términos y condiciones");
+            return;
+          }
+
+          submitBtn.innerHTML = '<div class="loading"></div>Creando cuenta...';
+          submitBtn.disabled = true;
+
+          const userData = {
+            nombre: nombre,
+            correo: correo,
+            contraseña: contraseña,
+          };
+
+          console.log("📝 Intentando registro para:", correo);
+
+          const response = await fetch("http://localhost:3000/register", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Accept: "application/json",
             },
-            body: JSON.stringify({
-              name: name,
-              email: email,
-              password: password,
-            }),
+            body: JSON.stringify(userData),
           });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            throw new Error(`Error del servidor: ${response.status}`);
+          }
 
           const data = await response.json();
           console.log("📡 Respuesta del servidor:", data);
 
-          if (response.ok && data.success) {
-            // Registro exitoso
+          if (data.success) {
             console.log("✅ Registro exitoso");
-
-            // Guardar sesión en localStorage
             localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userName", name);
-
-            // Mostrar mensaje de éxito
+            localStorage.setItem("userEmail", correo);
+            localStorage.setItem("userName", nombre);
             alert(
-              `🎉 ¡Cuenta creada exitosamente!\n\n✅ Se ha enviado un correo de bienvenida a ${email}\n\n¡Bienvenido a NewLifeRun Club!`
+              `🎉 ¡Cuenta creada exitosamente!\n\n✅ Se ha enviado un correo de bienvenida a ${correo}\n\n¡Bienvenido a NewLifeRun Club!`
             );
-
-            // Redireccionar a la página principal
             window.location.href = "index.html";
           } else {
-            // Error en registro
-            console.error("❌ Error en registro:", data.message);
-            alert(data.message || "❌ Error al crear la cuenta");
+            throw new Error(data.message || "Error al crear la cuenta");
           }
         } catch (error) {
-          console.error("❌ Error de conexión:", error);
-          alert("❌ Error de conexión. Por favor intenta de nuevo.");
+          console.error("❌ Error:", error);
+          alert(
+            error.message || "❌ Error de conexión. Por favor intenta de nuevo."
+          );
         } finally {
-          // Restaurar botón
           submitBtn.textContent = originalText;
           submitBtn.disabled = false;
         }
