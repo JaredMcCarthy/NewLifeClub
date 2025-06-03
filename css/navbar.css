@@ -502,3 +502,60 @@ body {
     padding: 8px 16px;
   }
 }
+
+/* Estilos específicos para móvil */
+@media screen and (max-width: 768px) {
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .login-button {
+    display: none; /* Ocultar botones de login/register en móvil */
+  }
+
+  #profile-btn,
+  .cart-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  #search-btn {
+    display: none; /* Ocultar búsqueda en móvil */
+  }
+
+  .menu-toggle {
+    display: flex;
+    margin-left: 15px;
+  }
+
+  .nav-center {
+    position: fixed;
+    top: 80px;
+    left: -100%;
+    width: 80%;
+    height: calc(100vh - 80px);
+    background: rgba(0, 0, 0, 0.95);
+    flex-direction: column;
+    padding: 20px;
+    transition: left 0.3s ease;
+  }
+
+  .nav-center.open {
+    left: 0;
+  }
+}
