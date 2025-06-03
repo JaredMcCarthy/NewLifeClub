@@ -8,18 +8,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
   const userActions = document.querySelector(".user-actions");
+  const cartBtn = document.querySelector(".cart-button");
+  const profileBtn = document.getElementById("profile-btn");
   const logoutBtn = document.getElementById("logout-btn");
 
-  // Mostrar u ocultar botones según sesión (funciona en PC, tablet y móvil)
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (registerBtn) registerBtn.style.display = "none";
-    if (userActions) userActions.style.display = "flex";
-  } else {
-    if (loginBtn) loginBtn.style.display = "inline-block";
-    if (registerBtn) registerBtn.style.display = "inline-block";
-    if (userActions) userActions.style.display = "none";
+  function updateNavigation() {
+    if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
+    if (registerBtn)
+      registerBtn.style.display = isLoggedIn ? "none" : "inline-block";
+    if (userActions) userActions.style.display = isLoggedIn ? "flex" : "none";
+
+    // En móvil, asegurarse que los botones de cuenta estén visibles
+    if (window.innerWidth <= 768) {
+      if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
+      if (registerBtn)
+        registerBtn.style.display = isLoggedIn ? "none" : "block";
+    }
   }
+
+  // Actualizar navegación al cargar
+  updateNavigation();
+
+  // Actualizar cuando cambie el tamaño de la ventana
+  window.addEventListener("resize", updateNavigation);
 
   // Si justo se cerró sesión (desde otra pestaña), redirigir con mensaje suave
   if (!isLoggedIn && justLoggedOut) {
@@ -42,8 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");
+      localStorage.removeItem("token");
       localStorage.setItem("justLoggedOut", "true"); // Bandera temporal para identificar cierre
-      location.reload(); // Actualiza la navbar
+      updateNavigation();
+      window.location.href = "index.html";
     });
   }
 

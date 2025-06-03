@@ -22,15 +22,25 @@
   }
 
   /* Ocultar elementos innecesarios en móvil */
-  .login-button,
+  .login-button {
+    display: block !important;
+    font-size: 14px;
+    padding: 8px 12px !important;
+    margin: 5px 0;
+  }
+
   #search-btn {
     display: none !important;
   }
 
-  /* Mostrar botones de perfil y carrito */
+  /* Mostrar botones de perfil y carrito solo si está logueado */
   #profile-btn,
-  .cart-button,
-  .user-button {
+  .cart-button {
+    display: none !important;
+  }
+
+  body.logged-in #profile-btn,
+  body.logged-in .cart-button {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
@@ -46,15 +56,6 @@
     font-size: 1.2rem;
     text-decoration: none;
     z-index: 1001;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  /* Asegurar que los botones de usuario estén visibles */
-  .user-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 10px;
   }
 
   /* Menú hamburguesa */
@@ -70,8 +71,6 @@
     padding: 0;
     margin-right: 15px;
     z-index: 1001;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
 
   .menu-toggle span {
@@ -80,8 +79,6 @@
     height: 2px;
     background-color: #fff;
     transition: all 0.3s ease;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
 
   .menu-toggle.active span:nth-child(1) {
@@ -108,6 +105,7 @@
     padding: 20px;
     transition: left 0.3s ease;
     z-index: 1000;
+    display: flex !important;
   }
 
   .nav-center.open {
@@ -123,7 +121,7 @@
     display: block;
   }
 
-  /* Overlay para cuando el menú está abierto */
+  /* Overlay */
   .overlay {
     display: none;
     position: fixed;
@@ -137,5 +135,26 @@
 
   .overlay.open {
     display: block;
+  }
+
+  /* Ajustes para botones de sesión en móvil */
+  .user-actions {
+    display: none !important;
+  }
+
+  body.logged-in .user-actions {
+    display: flex !important;
+    gap: 10px;
+  }
+
+  #login-btn,
+  #register-btn {
+    display: block !important;
+    margin: 5px 0;
+  }
+
+  body.logged-in #login-btn,
+  body.logged-in #register-btn {
+    display: none !important;
   }
 }
