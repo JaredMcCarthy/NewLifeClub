@@ -160,14 +160,17 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/newsletter", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ correo }),
-        });
+        const response = await fetch(
+          "https://newlifeclub.onrender.com/api/event-registration",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ correo }),
+          }
+        );
 
         const data = await response.json();
 

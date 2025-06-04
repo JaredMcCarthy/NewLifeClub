@@ -527,13 +527,16 @@ async function procesarInscripcionRuta() {
   };
 
   try {
-    const response = await fetch("http://localhost:3000/api/rutas/registro", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+    const response = await fetch(
+      "https://newlifeclub.onrender.com/api/event-registration",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
 
     const data = await response.json();
 

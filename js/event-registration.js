@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Intentar enviar datos al servidor
       const response = await fetch(
-        "http://localhost:3000/api/event-registration",
+        "https://newlifeclub.onrender.com/api/event-registration",
         {
           method: "POST",
           headers: {
