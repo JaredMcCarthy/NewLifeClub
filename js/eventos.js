@@ -528,7 +528,7 @@ async function procesarInscripcionRuta() {
 
   try {
     const response = await fetch(
-      "https://newlifeclub.onrender.com/api/event-registration",
+      "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
       {
         method: "POST",
         headers: {

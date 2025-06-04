@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         const response = await fetch(
-          "https://newlifeclub.onrender.com/api/contacts",
+          "https://newlifeclub.onrender.com/backend/routes/contacts",
           {
             method: "POST",
             headers: {
