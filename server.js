@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql2");
 const cors = require("cors");
 const path = require("path");
 const helmet = require("helmet");
@@ -35,28 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// Configuración de la base de datos MySQL
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "123456789",
-  database: process.env.DB_NAME || "newlifewsers",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
-
-// Verificar conexión a la base de datos
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error("❌ Error conectando a la base de datos:", err);
-    return;
-  }
-  console.log("✅ Conexión a la base de datos establecida");
-  connection.release();
-});
-
-// Compartir la conexión con las rutas
+// Compartir la conexión de PostgreSQL (Neon) con las rutas
+const pool = require("./backend/config/db");
 app.locals.pool = pool;
 
 // Rutas
