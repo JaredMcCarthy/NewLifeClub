@@ -1,7 +1,18 @@
 console.log("🍔 Menu-mobile.js cargado");
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🍔 Inicializando menú móvil...");
+  // Verificar si estamos en la página de inicio
+  const isIndexPage =
+    window.location.pathname === "/" ||
+    window.location.pathname.includes("index.html") ||
+    window.location.pathname === "";
+
+  if (isIndexPage) {
+    console.log("🏠 Estamos en index.html - usando inicio.js para menú móvil");
+    return; // Salir temprano para evitar conflictos
+  }
+
+  console.log("🍔 Inicializando menú móvil para páginas secundarias...");
 
   // Elementos del menú
   const menuToggle = document.querySelector(".menu-toggle");
@@ -174,7 +185,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  console.log("✅ Menu-mobile.js inicializado correctamente");
+  console.log(
+    "✅ Menu-mobile.js inicializado correctamente para páginas secundarias"
+  );
 
   // Test inmediato para verificar que funciona
   console.log("🧪 Test inicial - elementos disponibles:", {
@@ -183,5 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay: overlay ? "✅" : "❌",
     windowWidth: window.innerWidth,
     isMobile: window.innerWidth <= 768,
+    currentPage: window.location.pathname,
   });
 });
