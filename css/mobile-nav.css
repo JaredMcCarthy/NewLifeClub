@@ -21,6 +21,8 @@
     width: 100% !important;
     height: 60px !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 1002 !important;
   }
 
   /* ===== LADO IZQUIERDO ===== */
@@ -52,8 +54,9 @@
     border: none !important;
     cursor: pointer !important;
     padding: 0 !important;
-    z-index: 1001 !important;
+    z-index: 1003 !important;
     flex-shrink: 0 !important;
+    position: relative !important;
   }
 
   .menu-toggle span {
@@ -76,25 +79,36 @@
     transform: rotate(-45deg) translate(7px, -7px) !important;
   }
 
-  /* ===== MENÚ DESPLEGABLE ===== */
+  /* ===== MENÚ DESPLEGABLE - ARREGLADO ===== */
   .nav-center {
     position: fixed !important;
     top: 60px !important;
     left: -100% !important;
     width: 80% !important;
+    max-width: 300px !important;
     height: calc(100vh - 60px) !important;
-    background: rgba(0, 0, 0, 0.95) !important;
+    background: rgba(0, 0, 0, 0.98) !important;
+    backdrop-filter: blur(10px) !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 20px !important;
     transition: left 0.3s ease !important;
-    z-index: 1000 !important;
+    z-index: 9999 !important; /* Z-index muy alto */
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-right: 2px solid #ff0080 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3) !important;
   }
 
   .nav-center.open {
     left: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
+  /* Asegurar que los links sean visibles */
   .nav-center .nav-link {
     color: white !important;
     padding: 15px 0 !important;
@@ -102,11 +116,22 @@
     text-align: left !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     text-decoration: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 10000 !important;
   }
 
   .nav-center .nav-link:hover {
-    background: rgba(255, 105, 180, 0.1) !important;
-    padding-left: 10px !important;
+    background: rgba(255, 105, 180, 0.2) !important;
+    padding-left: 15px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .nav-center .nav-link.active {
+    color: #ff0080 !important;
+    font-weight: 700 !important;
   }
 
   /* ===== LADO DERECHO ===== */
@@ -115,6 +140,7 @@
     align-items: center !important;
     gap: 8px !important;
     flex-shrink: 0 !important;
+    z-index: 1002 !important;
   }
 
   /* Ocultar elementos de desktop en móvil */
@@ -159,6 +185,7 @@
     line-height: 1 !important;
     position: relative !important;
     flex-shrink: 0 !important;
+    z-index: 1002 !important;
   }
 
   .cart-button:hover,
@@ -183,9 +210,10 @@
     align-items: center !important;
     justify-content: center !important;
     line-height: 1 !important;
+    z-index: 1003 !important;
   }
 
-  /* ===== OVERLAY ===== */
+  /* ===== OVERLAY ARREGLADO ===== */
   .overlay {
     display: none !important;
     position: fixed !important;
@@ -193,12 +221,17 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    z-index: 999 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 9998 !important; /* Debajo del menú pero arriba del contenido */
+    visibility: hidden !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
   }
 
   .overlay.open {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* ===== ASEGURAR QUE TODOS LOS BOTONES SEAN VISIBLES ===== */
@@ -225,6 +258,64 @@
   * {
     box-sizing: border-box !important;
   }
+
+  /* ===== ASEGURAR QUE EL MENÚ APAREZCA SOBRE TODO ===== */
+  body.menu-open {
+    overflow: hidden !important;
+  }
+
+  /* Forzar visibilidad del menú cuando está abierto */
+  .main-nav .nav-center.open {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    left: 0 !important;
+  }
+
+  /* ===== CSS ADICIONAL PARA FORZAR VISIBILIDAD ===== */
+  /* Forzar que el menú aparezca cuando está abierto */
+  .nav-center.open {
+    left: 0 !important;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+  }
+
+  /* Asegurar que los links del menú sean clickeables */
+  .nav-center.open .nav-link {
+    pointer-events: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+
+  /* Resetear cualquier transform que pueda estar interfiriendo */
+  .nav-center {
+    transform: none !important;
+  }
+
+  .nav-center.open {
+    transform: none !important;
+  }
+
+  /* Asegurar z-index más alto que cualquier otro elemento */
+  .nav-center.open {
+    z-index: 99999 !important;
+  }
+
+  /* En caso de que haya conflictos con otros elementos */
+  .main-nav {
+    position: relative !important;
+    z-index: 1000 !important;
+  }
+
+  /* Asegurar que el overlay no bloquee el menú */
+  .overlay.open {
+    z-index: 9998 !important;
+  }
 }
 
 /* ========== DESKTOP: Ocultar móvil-específico ========== */
@@ -239,6 +330,10 @@
   }
 
   .menu-toggle {
+    display: none !important;
+  }
+
+  .overlay {
     display: none !important;
   }
 }
