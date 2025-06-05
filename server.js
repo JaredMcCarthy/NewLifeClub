@@ -38,18 +38,18 @@ app.use(express.static(path.join(__dirname)));
 const pool = require("./backend/config/db");
 app.locals.pool = pool;
 
-// Rutas
-app.use("/", authRoutes);
-app.use("/backend/routes/eventRegistration", eventRoutes);
-app.use("/backend/routes/newsletter", newsletterRoutes);
-app.use("/backend/routes/contacts", contactRoutes);
-app.use("/backend/routes/rutasRoutes", rutasRoutes);
-
 // Agregar middleware para debugging de rutas
 app.use((req, res, next) => {
   console.log(`📍 ${req.method} ${req.url}`);
   next();
 });
+
+// Rutas principales
+app.use("/api", authRoutes);
+app.use("/api", eventRoutes);
+app.use("/backend/routes", newsletterRoutes);
+app.use("/backend/routes", contactRoutes);
+app.use("/backend/routes", rutasRoutes);
 
 // Servir archivos estáticos
 app.get("/", (req, res) => {

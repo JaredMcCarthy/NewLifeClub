@@ -9,10 +9,28 @@ router.use((req, res, next) => {
     method: req.method,
     url: req.url,
     body: req.body,
-    headers: req.headers,
   });
   next();
 });
+
+// Función para crear tabla de usuarios si no existe
+const createUsersTable = async (pool) => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS usuarios (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        correo VARCHAR(255) UNIQUE NOT NULL,
+        contraseña VARCHAR(255) NOT NULL,
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ultimo_acceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log("✅ Tabla usuarios verificada/creada");
+  } catch (error) {
+    console.error("❌ Error creando tabla usuarios:", error);
+  }
+};
 
 // Ruta de registro
 router.post("/register", async (req, res) => {
@@ -20,6 +38,9 @@ router.post("/register", async (req, res) => {
   console.log("📝 Datos recibidos:", req.body);
 
   try {
+    // Crear tabla si no existe
+    await createUsersTable(pool);
+
     const { nombre, correo, contraseña } = req.body;
 
     // Validaciones
@@ -55,8 +76,9 @@ router.post("/register", async (req, res) => {
     // Enviar correo de bienvenida
     try {
       await sendWelcomeEmail(correo, nombre);
+      console.log("✅ Correo de bienvenida enviado");
     } catch (emailError) {
-      console.error("Error al enviar correo de bienvenida:", emailError);
+      console.error("❌ Error al enviar correo de bienvenida:", emailError);
       // Continuamos aunque falle el envío del correo
     }
 
@@ -64,9 +86,10 @@ router.post("/register", async (req, res) => {
       success: true,
       message: "Usuario registrado exitosamente",
       user: result.rows[0],
+      redirect: "/index.html", // Agregar redirección
     });
   } catch (error) {
-    console.error("Error en registro:", error);
+    console.error("❌ Error en registro:", error);
     res.status(500).json({
       success: false,
       message: "Error al registrar usuario",
@@ -80,6 +103,9 @@ router.post("/login", async (req, res) => {
   console.log("🔑 Intento de login para:", req.body.correo);
 
   try {
+    // Crear tabla si no existe
+    await createUsersTable(pool);
+
     const { correo, contraseña } = req.body;
 
     // Validaciones
@@ -119,7 +145,15 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Login exitoso
+    // Actualizar último acceso
+    await pool.query(
+      "UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1",
+      [user.id]
+    );
+
+    // Login exitoso - crear token simple
+    const token = Buffer.from(`${user.id}:${Date.now()}`).toString("base64");
+
     console.log("✅ Login exitoso para:", user.correo);
 
     res.status(200).json({
@@ -130,6 +164,9 @@ router.post("/login", async (req, res) => {
         nombre: user.nombre,
         correo: user.correo,
       },
+      token: token,
+      expiresIn: 24 * 60 * 60 * 1000, // 24 horas en milliseconds
+      redirect: "/index.html", // Agregar redirección
     });
   } catch (error) {
     console.error("❌ Error en login:", error);
