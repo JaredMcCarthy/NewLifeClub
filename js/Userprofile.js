@@ -1,15 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Referencia al correo del usuario actualmente loggeado
   const currentUserEmail = localStorage.getItem("userEmail");
-  // Si no hay un correo de usuario loggeado, se puede redirigir o mostrar un mensaje
-  if (!currentUserEmail) {
-    console.warn("⚠️ No hay usuario loggeado. Redirigiendo a inicio...");
-    alert("Debes iniciar sesión para acceder a tu perfil");
-    window.location.href = "sesion.html";
-    return;
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  // ========== VALIDACIÓN MEJORADA - NO POPUP INNECESARIO ==========
+  if (!currentUserEmail || !isLoggedIn) {
+    console.warn("⚠️ No hay usuario loggeado válido");
+    // Solo redirigir en móvil y solo si realmente no está loggeado
+    if (window.innerWidth <= 768) {
+      alert("Debes iniciar sesión para acceder a tu perfil");
+      window.location.href = "sesion.html";
+      return;
+    }
   }
 
-  console.log("✅ Usuario loggeado:", currentUserEmail);
+  console.log("✅ Usuario loggeado en perfil:", currentUserEmail);
 
   // --- Manejo de la navegación entre secciones ---
   const navButtons = document.querySelectorAll(
