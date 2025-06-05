@@ -22,8 +22,7 @@ const createUsersTable = async (pool) => {
         nombre VARCHAR(255) NOT NULL,
         correo VARCHAR(255) UNIQUE NOT NULL,
         contraseña VARCHAR(255) NOT NULL,
-        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        ultimo_acceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     console.log("✅ Tabla usuarios verificada/creada");
@@ -160,12 +159,6 @@ router.post("/login", async (req, res) => {
         message: "Credenciales incorrectas",
       });
     }
-
-    // Actualizar último acceso
-    await pool.query(
-      "UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1",
-      [user.id]
-    );
 
     // Login exitoso - crear token simple
     const token = Buffer.from(`${user.id}:${Date.now()}`).toString("base64");
