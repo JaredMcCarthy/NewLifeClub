@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { suscribirCorreo } = require("../controllers/newsletterController");
 
-// Cambio la ruta para que coincida con la URL del frontend
+// Ruta principal
 router.post("/newsletter", suscribirCorreo);
+
+// Ruta alternativa para compatibilidad
+router.post("/", suscribirCorreo);
 
 module.exports = router;

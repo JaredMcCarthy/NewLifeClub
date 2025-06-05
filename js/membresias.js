@@ -160,17 +160,55 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        const response = await fetch(
-          "https://newlifeclub.onrender.com/backend/routes/newsletter",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({ correo }),
-          }
+        console.log("📤 Intentando enviar newsletter a:", correo);
+        console.log(
+          "🌐 URL completa:",
+          "https://newlifeclub.onrender.com/backend/routes/newsletter"
         );
+
+        // Probar múltiples URLs por si una no funciona
+        const urlsToTry = [
+          "https://newlifeclub.onrender.com/backend/routes/newsletter",
+          "https://newlifeclub.onrender.com/newsletter",
+          "https://newlifeclub.onrender.com/api/newsletter",
+        ];
+
+        let response = null;
+        let lastError = null;
+
+        for (const url of urlsToTry) {
+          try {
+            console.log("🔄 Probando URL:", url);
+            response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({ correo }),
+            });
+
+            console.log("📡 Respuesta de", url, "- Status:", response.status);
+
+            if (response.ok) {
+              console.log("✅ URL funcionando:", url);
+              break;
+            } else {
+              console.log("❌ URL falló:", url, "Status:", response.status);
+            }
+          } catch (error) {
+            console.log("❌ Error con URL:", url, error.message);
+            lastError = error;
+            continue;
+          }
+        }
+
+        if (!response || !response.ok) {
+          throw lastError || new Error("Todas las URLs fallaron");
+        }
+
+        console.log("📡 Respuesta recibida - Status:", response.status);
+        console.log("📡 Respuesta recibida - Headers:", response.headers);
 
         const data = await response.json();
         console.log("📄 Respuesta del newsletter:", data);

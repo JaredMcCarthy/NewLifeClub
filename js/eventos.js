@@ -404,6 +404,10 @@ function initRutasInteractivas() {
       e.preventDefault();
       procesarInscripcionRuta();
     });
+  } else {
+    console.log(
+      "⚠️ Formulario de inscripción no encontrado - probablemente no estamos en la página de eventos"
+    );
   }
 
   // Inicializar eventos para las miniaturas de imágenes
@@ -537,17 +541,51 @@ async function procesarInscripcionRuta() {
   try {
     console.log("📤 Enviando datos de inscripción a ruta:", formData);
 
-    const response = await fetch(
+    // Probar múltiples URLs por si una no funciona
+    const urlsToTry = [
       "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
+      "https://newlifeclub.onrender.com/rutasRoutes",
+      "https://newlifeclub.onrender.com/api/rutasRoutes",
+    ];
+
+    let response = null;
+    let lastError = null;
+
+    for (const url of urlsToTry) {
+      try {
+        console.log("🔄 Probando URL para rutas:", url);
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        console.log("📡 Respuesta de", url, "- Status:", response.status);
+
+        if (response.ok) {
+          console.log("✅ URL funcionando para rutas:", url);
+          break;
+        } else {
+          console.log(
+            "❌ URL falló para rutas:",
+            url,
+            "Status:",
+            response.status
+          );
+        }
+      } catch (error) {
+        console.log("❌ Error con URL de rutas:", url, error.message);
+        lastError = error;
+        continue;
       }
-    );
+    }
+
+    if (!response || !response.ok) {
+      throw lastError || new Error("Todas las URLs para rutas fallaron");
+    }
 
     console.log("📥 Respuesta del servidor:", response.status);
 
@@ -616,12 +654,17 @@ async function procesarInscripcionRuta() {
 }
 
 // Agregar el event listener al formulario de inscripción
-document
-  .getElementById("inscripcionForm")
-  .addEventListener("submit", function (e) {
+const inscripcionForm = document.getElementById("inscripcionForm");
+if (inscripcionForm) {
+  inscripcionForm.addEventListener("submit", function (e) {
     e.preventDefault();
     procesarInscripcionRuta();
   });
+} else {
+  console.log(
+    "⚠️ Formulario de inscripción no encontrado - probablemente no estamos en la página de eventos"
+  );
+}
 
 // Agregar estilos CSS para el banner de éxito
 const addSuccessBannerStyles = () => {
@@ -768,22 +811,9 @@ document.addEventListener("DOMContentLoaded", function () {
       navCenter.classList.remove("open");
       overlay.classList.remove("open");
     });
+  } else {
+    console.log(
+      "⚠️ Elementos del menú no encontrados - no se configurará el menú móvil"
+    );
   }
-});
-
-// Este menu no se puede mover de aqui ej final sino va afectar lit todo el proceso de la pagina para enviar backend a l;os ususarios y server.
-const menuToggle = document.querySelector(".menu-toggle");
-const navCenter = document.querySelector(".nav-center");
-const overlay = document.querySelector(".overlay");
-
-menuToggle.addEventListener("click", () => {
-  menuToggle.classList.toggle("active");
-  navCenter.classList.toggle("open");
-  overlay.classList.toggle("open");
-});
-
-overlay.addEventListener("click", () => {
-  menuToggle.classList.remove("active");
-  navCenter.classList.remove("open");
-  overlay.classList.remove("open");
 });
