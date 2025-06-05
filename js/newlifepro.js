@@ -1,5 +1,55 @@
 // Codigo solamente para animaciones preincipales de la pagina de pro
 
+// ========================================
+// MENÚ MÓVIL SIMPLE - FUNCIÓN DIRECTA
+// ========================================
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("🍔 Inicializando menú móvil en newlifepro.js");
+
+  // Función simple del menú móvil
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navCenter = document.querySelector(".nav-center");
+  const overlay = document.querySelector(".overlay");
+
+  if (menuToggle && navCenter && overlay) {
+    console.log("✅ Elementos del menú encontrados en newlifepro");
+
+    menuToggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log("🍔 Click en menú - newlifepro.js");
+
+      menuToggle.classList.toggle("active");
+      navCenter.classList.toggle("show");
+      overlay.classList.toggle("show");
+      document.body.classList.toggle("menu-open");
+    });
+
+    overlay.addEventListener("click", function () {
+      console.log("🎭 Cerrando menú por overlay - newlifepro.js");
+
+      menuToggle.classList.remove("active");
+      navCenter.classList.remove("show");
+      overlay.classList.remove("show");
+      document.body.classList.remove("menu-open");
+    });
+
+    // Cerrar menú cuando se hace click en links
+    const navLinks = navCenter.querySelectorAll(".nav-link");
+    navLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        menuToggle.classList.remove("active");
+        navCenter.classList.remove("show");
+        overlay.classList.remove("show");
+        document.body.classList.remove("menu-open");
+      });
+    });
+
+    console.log("✅ Menú móvil configurado en newlifepro.js");
+  } else {
+    console.log("❌ No se encontraron elementos del menú en newlifepro.js");
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   // ========== HERO SECTION ANIMATION ==========
   const heroContent = document.querySelector(".hero-content");

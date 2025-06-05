@@ -2,6 +2,56 @@
 // FUNCIONALIDAD COMPLETA DE LA TIENDA
 // ========================================
 
+// ========================================
+// MENÚ MÓVIL SIMPLE - FUNCIÓN DIRECTA
+// ========================================
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("🍔 Inicializando menú móvil en tienda.js");
+
+  // Función simple del menú móvil
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navCenter = document.querySelector(".nav-center");
+  const overlay = document.querySelector(".overlay");
+
+  if (menuToggle && navCenter && overlay) {
+    console.log("✅ Elementos del menú encontrados en tienda");
+
+    menuToggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log("🍔 Click en menú - tienda.js");
+
+      menuToggle.classList.toggle("active");
+      navCenter.classList.toggle("show");
+      overlay.classList.toggle("show");
+      document.body.classList.toggle("menu-open");
+    });
+
+    overlay.addEventListener("click", function () {
+      console.log("🎭 Cerrando menú por overlay - tienda.js");
+
+      menuToggle.classList.remove("active");
+      navCenter.classList.remove("show");
+      overlay.classList.remove("show");
+      document.body.classList.remove("menu-open");
+    });
+
+    // Cerrar menú cuando se hace click en links
+    const navLinks = navCenter.querySelectorAll(".nav-link");
+    navLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        menuToggle.classList.remove("active");
+        navCenter.classList.remove("show");
+        overlay.classList.remove("show");
+        document.body.classList.remove("menu-open");
+      });
+    });
+
+    console.log("✅ Menú móvil configurado en tienda.js");
+  } else {
+    console.log("❌ No se encontraron elementos del menú en tienda.js");
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   // ========================================
   // ANIMACIÓN DE LA IMAGEN DEL HERO
@@ -550,21 +600,3 @@ function showToast(message, type = "success") {
     toast.remove();
   }, 3000);
 }
-
-//Funcion solamente para burger menu
-
-const menuToggle = document.querySelector(".menu-toggle");
-const navCenter = document.querySelector(".nav-center");
-const overlay = document.querySelector(".overlay");
-
-menuToggle.addEventListener("click", () => {
-  menuToggle.classList.toggle("active");
-  navCenter.classList.toggle("open");
-  overlay.classList.toggle("open");
-});
-
-overlay.addEventListener("click", () => {
-  menuToggle.classList.remove("active");
-  navCenter.classList.remove("open");
-  overlay.classList.remove("open");
-});
