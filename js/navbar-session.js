@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ========== LIMPIEZA DE SESIÓN AL INICIAR ==========
+  // Para que todos los usuarios empiecen desde 0 sin sesión abierta
+  console.log("🧹 Limpiando sesiones para nuevo inicio...");
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("token");
+  console.log("✅ Sesión limpiada - usuarios empiezan desde 0");
+
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
   const userActions = document.querySelector(".user-actions");
@@ -24,13 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function logout() {
+    console.log("🚪 Cerrando sesión...");
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("token");
     clearTimeout(sessionTimer);
     updateNavigation();
-    window.location.href = "sesion.html";
+    console.log("✅ Sesión cerrada exitosamente");
+    window.location.href = "index.html"; // Cambié a index.html en lugar de sesion.html
   }
 
   // Reiniciar timer en actividad del usuario
@@ -74,4 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
       updateNavigation();
     }
   });
+
+  // ========== FUNCIÓN GLOBAL PARA CERRAR SESIÓN ==========
+  // Para que funcione desde cualquier página
+  window.cerrarSesion = function () {
+    if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
+      logout();
+    }
+  };
 });

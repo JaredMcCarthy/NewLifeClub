@@ -3,14 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentUserEmail = localStorage.getItem("userEmail");
   // Si no hay un correo de usuario loggeado, se puede redirigir o mostrar un mensaje
   if (!currentUserEmail) {
-    // Redirigir a la página de inicio de sesión o mostrar un error
-    console.warn("No hay usuario loggeado. Redirigiendo a inicio...");
-    // window.location.href = "login.html"; // Descomenta si tienes una página de login dedicada
-    // Si la pestaña de perfil es parte de index.html, podrías solo ocultarla o mostrar un mensaje
-    return; // Detiene la ejecución del script si no hay usuario
+    console.warn("⚠️ No hay usuario loggeado. Redirigiendo a inicio...");
+    alert("Debes iniciar sesión para acceder a tu perfil");
+    window.location.href = "sesion.html";
+    return;
   }
 
-  // --- Manejo de la navegación entre secciones (sin cambios) ---
+  console.log("✅ Usuario loggeado:", currentUserEmail);
+
+  // --- Manejo de la navegación entre secciones ---
   const navButtons = document.querySelectorAll(
     ".nav-button:not(.logout-button)"
   );
@@ -18,11 +19,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   navButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      console.log("📱 Navegando a sección:", button.dataset.target);
       navButtons.forEach((btn) => btn.classList.remove("active"));
       contentSections.forEach((section) => section.classList.remove("active"));
       button.classList.add("active");
       const targetId = button.dataset.target;
-      document.getElementById(targetId).classList.add("active");
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.classList.add("active");
+      }
     });
   });
 
@@ -40,18 +45,24 @@ document.addEventListener("DOMContentLoaded", () => {
     profilePic.src = "https://via.placeholder.com/150/ff00ff/FFFFFF?text=Foto"; // Imagen por defecto
   }
 
-  profilePicUpload.addEventListener("change", (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        profilePic.src = e.target.result;
-        // Guardar la foto de perfil con la clave del usuario actual
-        localStorage.setItem(`profilePic_${currentUserEmail}`, e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
+  if (profilePicUpload) {
+    profilePicUpload.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profilePic.src = e.target.result;
+          // Guardar la foto de perfil con la clave del usuario actual
+          localStorage.setItem(
+            `profilePic_${currentUserEmail}`,
+            e.target.result
+          );
+          console.log("📸 Foto de perfil actualizada");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
   // --- Manejo de guardar y cargar información del perfil ---
   const saveButtons = document.querySelectorAll(".save-button");
@@ -64,8 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const displaySport = document.getElementById("display-sport");
 
   // Asignar el correo del usuario loggeado al campo de email (solo lectura)
-  emailInput.value = currentUserEmail;
-  emailInput.readOnly = true; // Asegurarse de que no sea editable
+  if (emailInput) {
+    emailInput.value = currentUserEmail;
+    emailInput.readOnly = true; // Asegurarse de que no sea editable
+  }
 
   // Cargar datos guardados específicos para el usuario actual
   const savedNickname = localStorage.getItem(
@@ -76,89 +89,146 @@ document.addEventListener("DOMContentLoaded", () => {
     `userBiography_${currentUserEmail}`
   );
 
-  if (savedNickname) {
-    nicknameInput.value = savedNickname;
-    displayNickname.textContent = `¡Hola, ${savedNickname}!`;
-  } else {
-    // Si no hay apodo guardado, mostrar un valor por defecto
-    nicknameInput.value = ""; // O algún valor inicial para el nuevo usuario
-    displayNickname.textContent = "¡Hola, Corredor!";
+  if (nicknameInput && displayNickname) {
+    if (savedNickname) {
+      nicknameInput.value = savedNickname;
+      displayNickname.textContent = `¡Hola, ${savedNickname}!`;
+    } else {
+      nicknameInput.value = "";
+      displayNickname.textContent = "¡Hola, Corredor!";
+    }
   }
 
-  if (savedSport) {
-    sportInput.value = savedSport;
-    displaySport.textContent = `Deporte: ${savedSport}`;
-  } else {
-    // Si no hay deporte guardado, mostrar un valor por defecto
-    sportInput.value = ""; // O algún valor inicial para el nuevo usuario
-    displaySport.textContent = "Deporte: Corredor de larga distancia";
+  if (sportInput && displaySport) {
+    if (savedSport) {
+      sportInput.value = savedSport;
+      displaySport.textContent = `Deporte: ${savedSport}`;
+    } else {
+      sportInput.value = "";
+      displaySport.textContent = "Deporte: Corredor de larga distancia";
+    }
   }
 
-  if (savedBiography) {
-    biographyTextarea.value = savedBiography;
-  } else {
-    // Si no hay biografía guardada, dejarla vacía o con un placeholder
-    biographyTextarea.value = "";
+  if (biographyTextarea) {
+    if (savedBiography) {
+      biographyTextarea.value = savedBiography;
+    } else {
+      biographyTextarea.value = "";
+    }
   }
 
   saveButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const section = button.dataset.section;
+      console.log("💾 Guardando sección:", section);
 
       if (section === "personal-info") {
-        const newNickname = nicknameInput.value.trim();
-        const newSport = sportInput.value.trim();
+        const newNickname = nicknameInput?.value.trim() || "";
+        const newSport = sportInput?.value.trim() || "";
 
-        if (newNickname) {
-          displayNickname.textContent = `¡Hola, ${newNickname}!`;
-          // Guardar con la clave del usuario actual
-          localStorage.setItem(`userNickname_${currentUserEmail}`, newNickname);
-        } else {
-          displayNickname.textContent = "¡Hola, Corredor!";
-          // Eliminar si está vacío
-          localStorage.removeItem(`userNickname_${currentUserEmail}`);
+        if (displayNickname) {
+          if (newNickname) {
+            displayNickname.textContent = `¡Hola, ${newNickname}!`;
+            localStorage.setItem(
+              `userNickname_${currentUserEmail}`,
+              newNickname
+            );
+          } else {
+            displayNickname.textContent = "¡Hola, Corredor!";
+            localStorage.removeItem(`userNickname_${currentUserEmail}`);
+          }
         }
 
-        if (newSport) {
-          displaySport.textContent = `Deporte: ${newSport}`;
-          // Guardar con la clave del usuario actual
-          localStorage.setItem(`userSport_${currentUserEmail}`, newSport);
-        } else {
-          displaySport.textContent = "Deporte: Corredor de larga distancia";
-          // Eliminar si está vacío
-          localStorage.removeItem(`userSport_${currentUserEmail}`);
+        if (displaySport) {
+          if (newSport) {
+            displaySport.textContent = `Deporte: ${newSport}`;
+            localStorage.setItem(`userSport_${currentUserEmail}`, newSport);
+          } else {
+            displaySport.textContent = "Deporte: Corredor de larga distancia";
+            localStorage.removeItem(`userSport_${currentUserEmail}`);
+          }
         }
+
         alert("¡Información personal guardada!");
       } else if (section === "my-bio") {
-        const newBiography = biographyTextarea.value.trim();
-        // Guardar con la clave del usuario actual
+        const newBiography = biographyTextarea?.value.trim() || "";
         localStorage.setItem(`userBiography_${currentUserEmail}`, newBiography);
         alert("¡Biografía guardada!");
       }
     });
   });
 
-  // --- Lógica para Mis Compras (sin cambios, pero recuerda que esto DEBERÍA venir de tu backend) ---
-  // Si tus compras también son específicas del usuario, la clave para guardarlas también debería incluir el correo.
+  // ========== BOTONES DEL PERFIL - MEJORADOS ==========
 
-  // Funcionalidad del botón de logout
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      // Confirmar antes de cerrar sesión
-      if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
-        // Limpiar datos de sesión
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("token");
-
-        // Mostrar mensaje de confirmación
-        alert("Sesión cerrada exitosamente");
-
-        // Redireccionar al inicio
-        window.location.href = "index.html";
-      }
-    });
+  // Botón de "Mi Información"
+  const infoBtn = document.querySelector('[data-target="personal-info"]');
+  if (infoBtn) {
+    console.log("✅ Botón 'Mi Información' configurado");
   }
+
+  // Botón de "Mi Biografía"
+  const bioBtn = document.querySelector('[data-target="my-bio"]');
+  if (bioBtn) {
+    console.log("✅ Botón 'Mi Biografía' configurado");
+  }
+
+  // Botón de "Mis Compras"
+  const comprasBtn = document.querySelector('[data-target="my-purchases"]');
+  if (comprasBtn) {
+    console.log("✅ Botón 'Mis Compras' configurado");
+  }
+
+  // ========== BOTÓN CERRAR SESIÓN - MEJORADO ==========
+  const logoutBtn = document.getElementById("logout-btn");
+  const logoutButton = document.querySelector(".logout-button");
+
+  // Función para cerrar sesión
+  function cerrarSesion() {
+    console.log("🚪 Intentando cerrar sesión...");
+    if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
+      console.log("✅ Usuario confirmó cierre de sesión");
+
+      // Limpiar datos de sesión
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("token");
+
+      // Mostrar mensaje de confirmación
+      alert("Sesión cerrada exitosamente");
+
+      // Redireccionar al inicio
+      console.log("🏠 Redirigiendo a inicio...");
+      window.location.href = "index.html";
+    } else {
+      console.log("❌ Usuario canceló cierre de sesión");
+    }
+  }
+
+  // Agregar event listeners para botón de cerrar sesión
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", cerrarSesion);
+    console.log("✅ Event listener agregado a #logout-btn");
+  }
+
+  if (logoutButton) {
+    logoutButton.addEventListener("click", cerrarSesion);
+    console.log("✅ Event listener agregado a .logout-button");
+  }
+
+  // También buscar por texto del botón
+  const allButtons = document.querySelectorAll("button, .nav-button");
+  allButtons.forEach((button) => {
+    const buttonText = button.textContent.trim().toLowerCase();
+    if (
+      buttonText.includes("cerrar sesión") ||
+      buttonText.includes("cerrar sesion") ||
+      buttonText.includes("logout")
+    ) {
+      button.addEventListener("click", cerrarSesion);
+      console.log("✅ Event listener agregado a botón con texto:", buttonText);
+    }
+  });
+
+  console.log("🎯 Perfil de usuario completamente configurado");
 });
