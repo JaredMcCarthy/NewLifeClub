@@ -510,6 +510,9 @@ function inicializarGaleriaImagenesRuta() {
 // Función para procesar la inscripción a una ruta
 async function procesarInscripcionRuta() {
   const form = document.getElementById("inscripcionForm");
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.textContent;
+
   const rutaId = form.querySelector("#rutaId").value;
   const ruta = rutasIntData.find((r) => r.id == rutaId);
 
@@ -526,33 +529,49 @@ async function procesarInscripcionRuta() {
     dificultad: ruta.dificultad,
   };
 
+  // Mostrar estado de carga
+  submitButton.disabled = true;
+  submitButton.innerHTML =
+    '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+
   try {
+    console.log("📤 Enviando datos de inscripción a ruta:", formData);
+
     const response = await fetch(
       "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(formData),
       }
     );
 
+    console.log("📥 Respuesta del servidor:", response.status);
+
     const data = await response.json();
+    console.log("📄 Datos de respuesta:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al procesar la inscripción");
+    }
 
     if (data.success) {
       // Ocultar el formulario
       form.style.display = "none";
 
-      // Crear y mostrar el banner de éxito
+      // Crear y mostrar el banner de éxito (SIN mencionar correo)
       const banner = document.createElement("div");
       banner.className = "success-banner animate__animated animate__fadeInDown";
       banner.innerHTML = `
         <div class="success-content">
           <i class="fas fa-check-circle"></i>
           <h3>¡Inscripción Exitosa!</h3>
-          <p>Te has registrado exitosamente en la ruta ${ruta.titulo}.</p>
-          <p>Te hemos enviado un correo con todos los detalles.</p>
+          <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
+          <p>Participantes: ${formData.participantes} persona(s)</p>
+          <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
           <button class="close-banner">Cerrar</button>
         </div>
       `;
@@ -580,12 +599,19 @@ async function procesarInscripcionRuta() {
           }, 500);
         }
       }, 5000);
+
+      // Limpiar formulario
+      form.reset();
     } else {
       throw new Error(data.message || "Error en el registro");
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error al procesar inscripción:", error);
     alert("Error al procesar la inscripción: " + error.message);
+  } finally {
+    // Restaurar el botón
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButtonText;
   }
 }
 
@@ -597,61 +623,132 @@ document
     procesarInscripcionRuta();
   });
 
-// Agregar estilos para el banner
-const style = document.createElement("style");
-style.textContent = `
-  .success-banner {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10000;
-    background: #4CAF50;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
+// Agregar estilos CSS para el banner de éxito
+const addSuccessBannerStyles = () => {
+  const style = document.createElement("style");
+  style.textContent = `
+    .success-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+      text-align: center;
+      min-width: 400px;
+      max-width: 90vw;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-  .success-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
+    .success-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
 
-  .success-banner i {
-    font-size: 48px;
-    color: white;
-  }
+    .success-banner i {
+      font-size: 3rem;
+      color: white;
+      margin-bottom: 10px;
+    }
 
-  .success-banner h3 {
-    margin: 10px 0;
-    font-size: 24px;
-  }
+    .success-banner h3 {
+      font-size: 1.5rem;
+      margin: 0;
+      font-weight: 700;
+    }
 
-  .success-banner p {
-    margin: 5px 0;
-  }
+    .success-banner p {
+      margin: 5px 0;
+      font-size: 1rem;
+      opacity: 0.95;
+      line-height: 1.4;
+    }
 
-  .close-banner {
-    background: white;
-    color: #4CAF50;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-weight: bold;
-  }
+    .success-banner strong {
+      color: #FFE082;
+    }
 
-  .close-banner:hover {
-    background: #f0f0f0;
-  }
-`;
+    .close-banner {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
 
-document.head.appendChild(style);
+    .close-banner:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Animaciones para el banner */
+    .animate__fadeInDown {
+      animation: fadeInDown 0.5s ease-out;
+    }
+
+    .animate__fadeOutUp {
+      animation: fadeOutUp 0.5s ease-in;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @keyframes fadeOutUp {
+      from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+      }
+    }
+
+    /* Responsive para móviles */
+    @media (max-width: 768px) {
+      .success-banner {
+        min-width: 300px;
+        padding: 20px;
+        margin: 0 10px;
+      }
+
+      .success-banner h3 {
+        font-size: 1.3rem;
+      }
+
+      .success-banner p {
+        font-size: 0.9rem;
+      }
+    }
+  `;
+
+  if (!document.querySelector("#success-banner-styles")) {
+    style.id = "success-banner-styles";
+    document.head.appendChild(style);
+  }
+};
+
+// Inicializar estilos cuando se carga el DOM
+document.addEventListener("DOMContentLoaded", addSuccessBannerStyles);
 
 //Menu responsivo para dispositivos mobiles
 document.addEventListener("DOMContentLoaded", function () {

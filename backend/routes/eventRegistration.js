@@ -4,6 +4,7 @@ const { sendEventConfirmationEmail } = require("../config/mailer");
 
 // Endpoint para registrar en evento
 router.post("/event-registration", async (req, res) => {
+  console.log("🎉 Solicitud de registro en evento recibida");
   console.log("📥 Datos de registro recibidos:", req.body);
 
   try {
@@ -41,6 +42,15 @@ router.post("/event-registration", async (req, res) => {
     // Obtener la conexión del pool compartido (PostgreSQL)
     const pool = req.app.locals.pool;
 
+    if (!pool) {
+      console.log("❌ Pool de base de datos no disponible");
+      return res.status(500).json({
+        success: false,
+        message: "Error de conexión a la base de datos",
+      });
+    }
+
+    console.log("🔧 Creando tabla event_registrations si no existe...");
     // Crear tabla si no existe (PostgreSQL sintaxis)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS event_registrations (
@@ -58,7 +68,9 @@ router.post("/event-registration", async (req, res) => {
         status VARCHAR(20) DEFAULT 'active'
       )
     `);
+    console.log("✅ Tabla event_registrations verificada");
 
+    console.log("💾 Insertando registro en la base de datos...");
     // Insertar en la base de datos (PostgreSQL sintaxis con $1, $2, etc.)
     const result = await pool.query(
       `INSERT INTO event_registrations 
@@ -79,6 +91,7 @@ router.post("/event-registration", async (req, res) => {
 
     console.log("✅ Registro guardado en la base de datos");
 
+    console.log("📧 Intentando enviar correo de confirmación...");
     try {
       // Enviar correo de confirmación
       await sendEventConfirmationEmail({
@@ -89,12 +102,17 @@ router.post("/event-registration", async (req, res) => {
         eventTime,
         eventLocation,
       });
-      console.log("📧 Correo de confirmación enviado");
+      console.log("📧 Correo de confirmación enviado exitosamente");
 
       return res.status(200).json({
         success: true,
-        message: "Inscripción registrada exitosamente",
-        data: result.rows[0],
+        message: "Inscripción registrada exitosamente y correo enviado",
+        data: {
+          id: result.rows[0].id,
+          eventName,
+          userName,
+          userEmail,
+        },
       });
     } catch (emailError) {
       console.error("❌ Error al enviar el correo:", emailError);
@@ -102,11 +120,20 @@ router.post("/event-registration", async (req, res) => {
         success: true,
         message:
           "Inscripción registrada exitosamente, pero hubo un problema al enviar el correo",
-        data: result.rows[0],
+        data: {
+          id: result.rows[0].id,
+          eventName,
+          userName,
+          userEmail,
+        },
       });
     }
   } catch (error) {
-    console.error("❌ Error en el registro:", error);
+    console.error("❌ Error en el registro de evento:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+    });
     return res.status(500).json({
       success: false,
       message: "Error al procesar la inscripción",

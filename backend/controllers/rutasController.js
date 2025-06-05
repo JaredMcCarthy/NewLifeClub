@@ -1,5 +1,3 @@
-const { transporter } = require("../config/mailer");
-
 const registrarEnRuta = async (req, res) => {
   try {
     const {
@@ -35,11 +33,11 @@ const registrarEnRuta = async (req, res) => {
       )
     `);
 
-    // Insertar en la base de datos usando PostgreSQL sintaxis
+    // Insertar en la base de datos
     const result = await pool.query(
       `INSERT INTO rutas_registros 
-       (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+      (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
       [
         rutaId,
         rutaNombre,
@@ -54,54 +52,27 @@ const registrarEnRuta = async (req, res) => {
       ]
     );
 
-    // Enviar correo de confirmación
-    await transporter.sendMail({
-      from: '"NewLifeRun Club" <newliferunclubhonduras@gmail.com>',
-      to: email,
-      subject: `¡Bienvenido a la ${rutaNombre}!`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #333;">¡Gracias por unirte a nuestra ruta semanal!</h2>
-          
-          <div style="background-color: #f8f8f8; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #333;">Detalles de la Ruta</h3>
-            <p><strong>Ruta:</strong> ${rutaNombre}</p>
-            <p><strong>Fecha:</strong> ${fecha}</p>
-            <p><strong>Duración:</strong> ${duracion}</p>
-            <p><strong>Ubicación:</strong> ${ubicacion}</p>
-            <p><strong>Dificultad:</strong> ${dificultad}</p>
-            <p><strong>Participantes registrados:</strong> ${participantes}</p>
-          </div>
-          
-          <p>Te esperamos para vivir esta increíble aventura. No olvides:</p>
-          <ul>
-            <li>Llevar ropa adecuada</li>
-            <li>Hidratación suficiente</li>
-            <li>Llegar 15 minutos antes</li>
-          </ul>
-          
-          <p>Si tienes alguna pregunta, no dudes en contactarnos:</p>
-          <p>Email: info@newliferun.com</p>
-          <p>Teléfono: +504 3364-7133</p>
-        </div>
-      `,
-    });
+    console.log("✅ Registro de ruta guardado en BD");
 
-    res.status(200).json({
+    // Solo devolver éxito - NO enviar correo como pidió el usuario
+    return res.status(200).json({
       success: true,
-      message: "Registro exitoso en la ruta",
-      data: result.rows[0],
+      message: "Inscripción en ruta registrada exitosamente",
+      data: {
+        id: result.rows[0].id,
+        rutaNombre,
+        nombre,
+        participantes,
+      },
     });
   } catch (error) {
-    console.error("Error en registro de ruta:", error);
-    res.status(500).json({
+    console.error("❌ Error en registro de ruta:", error);
+    return res.status(500).json({
       success: false,
-      message: "Error al procesar el registro",
+      message: "Error al procesar la inscripción en ruta",
       error: error.message,
     });
   }
 };
 
-module.exports = {
-  registrarEnRuta,
-};
+module.exports = { registrarEnRuta };
