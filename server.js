@@ -51,6 +51,15 @@ app.use("/backend/routes", newsletterRoutes);
 app.use("/backend/routes", contactRoutes);
 app.use("/backend/routes", rutasRoutes);
 
+// Rutas adicionales para newsletter (fallback)
+app.use("/newsletter", newsletterRoutes);
+
+// Rutas adicionales para rutas (fallback)
+app.use("/rutasRoutes", rutasRoutes);
+
+// Rutas adicionales para eventos (fallback)
+app.use("/event-registration", eventRoutes);
+
 // Servir archivos estáticos
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));

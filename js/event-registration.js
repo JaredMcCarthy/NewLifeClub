@@ -37,17 +37,53 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Intentar enviar datos al servidor
-      const response = await fetch(
+      console.log("📤 Enviando datos de evento:", formData);
+
+      // Probar múltiples URLs por si una no funciona
+      const urlsToTry = [
         "https://newlifeclub.onrender.com/api/event-registration",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(formData),
+        "https://newlifeclub.onrender.com/event-registration",
+        "https://newlifeclub.onrender.com/backend/routes/event-registration",
+      ];
+
+      let response = null;
+      let lastError = null;
+
+      for (const url of urlsToTry) {
+        try {
+          console.log("🔄 Probando URL para eventos:", url);
+          response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          console.log("📡 Respuesta de", url, "- Status:", response.status);
+
+          if (response.ok) {
+            console.log("✅ URL funcionando para eventos:", url);
+            break;
+          } else {
+            console.log(
+              "❌ URL falló para eventos:",
+              url,
+              "Status:",
+              response.status
+            );
+          }
+        } catch (error) {
+          console.log("❌ Error con URL de eventos:", url, error.message);
+          lastError = error;
+          continue;
         }
-      );
+      }
+
+      if (!response || !response.ok) {
+        throw lastError || new Error("Todas las URLs para eventos fallaron");
+      }
 
       // Intentar parsear la respuesta como JSON
       let responseData;
