@@ -10,6 +10,54 @@
   display: none !important;
 }
 
+/* ===== FIX: Eliminar línea negra lateral en móvil ===== */
+* {
+  box-sizing: border-box !important;
+}
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Eliminar cualquier border, shadow o outline problemático */
+@media screen and (max-width: 768px) {
+  /* Resetear cualquier elemento que pueda causar líneas */
+  *,
+  *::before,
+  *::after {
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Asegurar que body y html no tengan bordes */
+  html,
+  body {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  /* Eliminar cualquier contenedor problemático */
+  .container,
+  .main-container,
+  section,
+  div {
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+  }
+}
+
 /* ========== NAVEGACIÓN MÓVIL SIMPLE ========== */
 @media screen and (max-width: 768px) {
   /* ===== NAVBAR BASE ===== */
@@ -21,6 +69,8 @@
     z-index: 1000 !important;
     background: #000 !important;
     height: 60px !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .nav-container {
@@ -30,6 +80,7 @@
     padding: 0 15px !important;
     height: 60px !important;
     max-width: 100% !important;
+    border: none !important;
   }
 
   /* ===== LADO IZQUIERDO ===== */
@@ -95,6 +146,8 @@
     transition: left 0.3s ease !important;
     z-index: 999 !important;
     overflow-y: auto !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   /* MENÚ ABIERTO - CSS PURO */
@@ -113,6 +166,8 @@
     font-weight: 600 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     transition: all 0.3s ease !important;
+    border-left: none !important;
+    border-right: none !important;
   }
 
   .nav-center .nav-link:hover,
@@ -162,6 +217,7 @@
     font-size: 1.1rem !important;
     text-decoration: none !important;
     transition: all 0.3s ease !important;
+    box-shadow: none !important;
   }
 
   .cart-button:hover,
@@ -186,6 +242,7 @@
     align-items: center !important;
     justify-content: center !important;
     font-weight: 700 !important;
+    border: none !important;
   }
 
   /* ===== OVERLAY SIMPLE ===== */
@@ -198,6 +255,7 @@
     height: 100% !important;
     background: rgba(0, 0, 0, 0.5) !important;
     z-index: 998 !important;
+    border: none !important;
   }
 
   .overlay.show {
@@ -216,6 +274,36 @@
   /* Resetear cualquier transformación problemática */
   .nav-center * {
     transform: none !important;
+  }
+
+  /* ===== FIX ESPECÍFICO PARA LÍNEA NEGRA ===== */
+  /* Eliminar borders problemáticos en tienda y eventos */
+  .hero,
+  .hero-banner,
+  .event-grid,
+  .products-section,
+  .categories-section,
+  .info-section,
+  .newsletter-section,
+  .rutas-section,
+  .tab-content-container {
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Asegurar que ningún elemento sobresalga */
+  .container,
+  .hero-content,
+  .event-content {
+    max-width: 100vw !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    border: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
