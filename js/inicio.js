@@ -93,11 +93,29 @@ document.addEventListener("DOMContentLoaded", function () {
       const originalText = btn.textContent;
       const formContainer = contactForm.parentElement;
 
+      // Verificar que todos los campos existen antes de acceder
+      const nombreField =
+        this.querySelector('[name="nombre"]') || this.querySelector("#nombre");
+      const correoField =
+        this.querySelector('[name="correo"]') || this.querySelector("#correo");
+      const asuntoField =
+        this.querySelector('[name="asunto"]') || this.querySelector("#asunto");
+      const mensajeField =
+        this.querySelector('[name="mensaje"]') ||
+        this.querySelector("#mensaje");
+
+      if (!nombreField || !correoField || !asuntoField || !mensajeField) {
+        alert(
+          "Error: No se pudieron encontrar todos los campos del formulario"
+        );
+        return;
+      }
+
       const formData = {
-        nombre: this.querySelector('[name="nombre"]').value,
-        correo: this.querySelector('[name="correo"]').value,
-        asunto: this.querySelector('[name="asunto"]').value,
-        mensaje: this.querySelector('[name="mensaje"]').value,
+        nombre: nombreField.value,
+        correo: correoField.value,
+        asunto: asuntoField.value,
+        mensaje: mensajeField.value,
       };
 
       if (

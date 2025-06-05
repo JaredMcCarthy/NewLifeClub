@@ -6,6 +6,46 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileBtn = document.getElementById("profile-btn");
   const logoutBtn = document.getElementById("logout-btn");
 
+  // Sistema de expiración de sesión
+  const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos en milliseconds
+  let sessionTimer;
+
+  function resetSessionTimer() {
+    clearTimeout(sessionTimer);
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (isLoggedIn) {
+      sessionTimer = setTimeout(() => {
+        alert(
+          "Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente."
+        );
+        logout();
+      }, SESSION_TIMEOUT);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("token");
+    clearTimeout(sessionTimer);
+    updateNavigation();
+    window.location.href = "sesion.html";
+  }
+
+  // Reiniciar timer en actividad del usuario
+  [
+    "mousedown",
+    "mousemove",
+    "keypress",
+    "scroll",
+    "touchstart",
+    "click",
+  ].forEach((event) => {
+    document.addEventListener(event, resetSessionTimer, true);
+  });
+
   function updateNavigation() {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
@@ -18,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
       if (registerBtn)
         registerBtn.style.display = isLoggedIn ? "none" : "block";
+    }
+
+    // Inicializar timer de sesión si está logueado
+    if (isLoggedIn) {
+      resetSessionTimer();
     }
   }
 
@@ -34,13 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Manejar cierre de sesión
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("token");
-      localStorage.setItem("justLoggedOut", "true"); // Bandera temporal para identificar cierre
-      updateNavigation();
-      window.location.href = "index.html";
+      logout();
     });
   }
 });

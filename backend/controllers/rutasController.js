@@ -16,11 +16,29 @@ const registrarEnRuta = async (req, res) => {
       dificultad,
     } = req.body;
 
-    // Insertar en la base de datos
-    const [result] = await db.execute(
+    // Crear tabla si no existe
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS rutas_registros (
+        id SERIAL PRIMARY KEY,
+        ruta_id VARCHAR(50) NOT NULL,
+        ruta_nombre VARCHAR(255) NOT NULL,
+        nombre_participante VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        telefono VARCHAR(50) NOT NULL,
+        num_participantes INTEGER NOT NULL,
+        fecha VARCHAR(100) NOT NULL,
+        duracion VARCHAR(50) NOT NULL,
+        ubicacion VARCHAR(255) NOT NULL,
+        dificultad VARCHAR(50) NOT NULL,
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Insertar en la base de datos usando PostgreSQL sintaxis
+    const result = await db.query(
       `INSERT INTO rutas_registros 
-       (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad, fecha_registro) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+       (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
       [
         rutaId,
         rutaNombre,
@@ -71,7 +89,7 @@ const registrarEnRuta = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Registro exitoso en la ruta",
-      data: result,
+      data: result.rows[0],
     });
   } catch (error) {
     console.error("Error en registro de ruta:", error);
