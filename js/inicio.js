@@ -17,23 +17,116 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   };
 
-  //Menu responsivo para dispositivos mobiles
+  //Menu responsivo para dispositivos mobiles - MEJORADO
   const menuToggle = document.querySelector(".menu-toggle");
   const navCenter = document.querySelector(".nav-center");
   const overlay = document.querySelector(".overlay");
 
   if (menuToggle && navCenter && overlay) {
-    menuToggle.addEventListener("click", () => {
+    console.log("🍔 Menú móvil encontrado en inicio.js");
+
+    menuToggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("🍔 Click en menú hamburguesa");
+
+      // Toggle clases
       menuToggle.classList.toggle("active");
       navCenter.classList.toggle("open");
       overlay.classList.toggle("open");
+
+      // Si está abierto, forzar estilos para asegurar visibilidad
+      if (navCenter.classList.contains("open")) {
+        console.log("🔓 Abriendo menú móvil");
+        document.body.classList.add("menu-open");
+
+        // Forzar estilos inline para asegurar que aparezca
+        navCenter.style.cssText = `
+          position: fixed !important;
+          top: 60px !important;
+          left: 0 !important;
+          width: 80% !important;
+          max-width: 300px !important;
+          height: calc(100vh - 60px) !important;
+          background: rgba(0, 0, 0, 0.98) !important;
+          backdrop-filter: blur(10px) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          padding: 20px !important;
+          z-index: 99999 !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          pointer-events: auto !important;
+          border-right: 2px solid #ff0080 !important;
+          box-shadow: 2px 0 10px rgba(0,0,0,0.3) !important;
+          transform: none !important;
+        `;
+
+        overlay.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          background: rgba(0, 0, 0, 0.6) !important;
+          z-index: 9998 !important;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        `;
+
+        // Asegurar que los links sean visibles
+        const navLinks = navCenter.querySelectorAll(".nav-link");
+        navLinks.forEach((link) => {
+          link.style.cssText = `
+            color: white !important;
+            padding: 15px 0 !important;
+            font-size: 1.2rem !important;
+            text-align: left !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            text-decoration: none !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 100000 !important;
+            pointer-events: auto !important;
+          `;
+        });
+
+        console.log("✅ Menú móvil abierto");
+      } else {
+        console.log("🔒 Cerrando menú móvil");
+        document.body.classList.remove("menu-open");
+        navCenter.style.left = "-100%";
+        overlay.style.display = "none";
+      }
     });
 
     overlay.addEventListener("click", () => {
+      console.log("🌫️ Click en overlay - cerrando menú");
       menuToggle.classList.remove("active");
       navCenter.classList.remove("open");
       overlay.classList.remove("open");
+      document.body.classList.remove("menu-open");
+      navCenter.style.left = "-100%";
+      overlay.style.display = "none";
     });
+
+    // Cerrar menú al hacer click en un link
+    const navLinks = navCenter.querySelectorAll(".nav-link");
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        console.log("🔗 Click en nav link - cerrando menú");
+        menuToggle.classList.remove("active");
+        navCenter.classList.remove("open");
+        overlay.classList.remove("open");
+        document.body.classList.remove("menu-open");
+        navCenter.style.left = "-100%";
+        overlay.style.display = "none";
+      });
+    });
+  } else {
+    console.error("❌ Elementos del menú móvil no encontrados en inicio.js");
   }
 
   // Ejecuta la animación cuando se carga la página
