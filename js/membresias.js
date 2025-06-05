@@ -181,11 +181,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Probar múltiples URLs por si una no funciona
         const urlsToTry = [
-          "https://newlifeclub.onrender.com/api/newsletter",
-          "https://newlifeclub.onrender.com/backend/routes/newsletter",
-          "https://newlifeclub.onrender.com/newsletter",
-          "https://newlifeclub.onrender.com/api/suscribir",
-          "https://newlifeclub.onrender.com/newsletter/suscribir",
+          "https://newlifeclub.onrender.com/newsletter-api/newsletter",
+          "https://newlifeclub.onrender.com/newsletter-api/suscribir",
+          "https://newlifeclub.onrender.com/newsletter-api/",
         ];
 
         let response = null;
