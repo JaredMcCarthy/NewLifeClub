@@ -32,7 +32,24 @@ const createUsersTable = async (pool) => {
 };
 
 // Ruta de registro
-router.post("/register", async (req, res) => {
+router.post("/", async (req, res) => {
+  // Si la URL termina en /register, procesar registro
+  if (req.originalUrl.includes("/register")) {
+    return handleRegister(req, res);
+  }
+  // Si la URL termina en /login, procesar login
+  if (req.originalUrl.includes("/login")) {
+    return handleLogin(req, res);
+  }
+
+  return res.status(404).json({
+    success: false,
+    message: "Ruta no encontrada",
+  });
+});
+
+// Función para manejar registro
+const handleRegister = async (req, res) => {
   const pool = req.app.locals.pool;
   console.log("📝 Datos recibidos:", req.body);
 
@@ -94,10 +111,10 @@ router.post("/register", async (req, res) => {
       message: "Error al registrar usuario",
     });
   }
-});
+};
 
-// Ruta de login
-router.post("/login", async (req, res) => {
+// Función para manejar login
+const handleLogin = async (req, res) => {
   const pool = req.app.locals.pool;
   console.log("🔑 Intento de login para:", req.body.correo);
 
@@ -192,6 +209,6 @@ router.post("/login", async (req, res) => {
           : "Error interno del servidor",
     });
   }
-});
+};
 
 module.exports = router;
