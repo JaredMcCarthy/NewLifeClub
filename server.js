@@ -44,20 +44,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rutas específicas PRIMERO (antes que auth)
-app.use("/api/newsletter", newsletterRoutes);
-app.use("/api/event-registration", eventRoutes);
-app.use("/api/rutasRoutes", rutasRoutes);
-app.use("/backend/routes", newsletterRoutes);
+// Rutas principales
+app.use("/api", authRoutes);
+app.use("/api", eventRoutes);
 app.use("/backend/routes", contactRoutes);
 app.use("/backend/routes", rutasRoutes);
 
-// AUTH con rutas específicas (NO capturar todo /api)
-app.use("/api/login", authRoutes);
-app.use("/api/register", authRoutes);
-
-// Rutas adicionales para newsletter (fallback)
-app.use("/newsletter", newsletterRoutes);
+// Newsletter completamente separado
+app.use("/newsletter-api", newsletterRoutes);
 
 // Rutas adicionales para rutas (fallback)
 app.use("/rutasRoutes", rutasRoutes);
