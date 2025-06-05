@@ -1,15 +1,14 @@
-const db = require("../config/db");
-
 const suscribirCorreo = async (req, res) => {
   try {
     const { correo } = req.body;
+    const pool = req.app.locals.pool;
 
     if (!correo) {
       return res.status(400).json({ mensaje: "El correo es requerido" });
     }
 
     // Crear tabla si no existe
-    await db.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS newsletter (
         id SERIAL PRIMARY KEY,
         correo VARCHAR(255) UNIQUE NOT NULL,
@@ -18,7 +17,7 @@ const suscribirCorreo = async (req, res) => {
     `);
 
     // Verificar si el correo ya existe
-    const existingEmail = await db.query(
+    const existingEmail = await pool.query(
       "SELECT id FROM newsletter WHERE correo = $1",
       [correo]
     );
@@ -28,7 +27,7 @@ const suscribirCorreo = async (req, res) => {
     }
 
     // Insertar en la base de datos usando PostgreSQL sintaxis
-    await db.query("INSERT INTO newsletter (correo) VALUES ($1)", [correo]);
+    await pool.query("INSERT INTO newsletter (correo) VALUES ($1)", [correo]);
 
     res.status(201).json({ mensaje: "Correo suscrito correctamente" });
   } catch (error) {

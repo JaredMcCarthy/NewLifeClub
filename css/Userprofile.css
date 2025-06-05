@@ -143,6 +143,21 @@
   transform: translateY(-1px);
 }
 
+/* Estilo especial para el botón de logout */
+.nav-button.logout-button {
+  background-color: #dc3545; /* Rojo para logout */
+  color: #fff;
+  border: 2px solid #dc3545;
+  font-weight: bold;
+}
+
+.nav-button.logout-button:hover {
+  background-color: #c82333; /* Rojo más oscuro al hover */
+  border-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
 /* Contenido de las Secciones */
 .profile-content {
   background-color: #2a2a2a; /* Negro un poco más claro para el contenido */

@@ -4,10 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const userActions = document.querySelector(".user-actions");
   const cartBtn = document.querySelector(".cart-button");
   const profileBtn = document.getElementById("profile-btn");
-  const logoutBtn = document.getElementById("logout-btn");
 
   // Sistema de expiración de sesión
-  const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos en milliseconds
+  const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutos en milliseconds
   let sessionTimer;
 
   function resetSessionTimer() {
@@ -75,11 +74,4 @@ document.addEventListener("DOMContentLoaded", () => {
       updateNavigation();
     }
   });
-
-  // Manejar cierre de sesión
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      logout();
-    });
-  }
 });
