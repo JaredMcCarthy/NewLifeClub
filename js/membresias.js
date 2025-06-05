@@ -173,16 +173,21 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         const data = await response.json();
+        console.log("📄 Respuesta del newsletter:", data);
 
         if (!response.ok) {
           throw new Error(data.mensaje || "Error al procesar la suscripción");
         }
 
-        // Mostrar mensaje de éxito
-        alert(
-          "¡Gracias por suscribirte! Te mantendremos informado de todas nuestras novedades."
-        );
-        emailInput.value = "";
+        if (data.success) {
+          // Mostrar mensaje de éxito
+          alert(
+            "¡Gracias por suscribirte! Te mantendremos informado de todas nuestras novedades."
+          );
+          emailInput.value = "";
+        } else {
+          throw new Error(data.mensaje || "Error al procesar la suscripción");
+        }
       } catch (error) {
         console.error("Error al suscribirse:", error);
         alert(
