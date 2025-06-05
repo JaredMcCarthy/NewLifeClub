@@ -3,53 +3,98 @@
 // ========================================
 
 // ========================================
-// MENÚ MÓVIL SIMPLE - FUNCIÓN DIRECTA
+// MENÚ MÓVIL SIMPLE - FUNCIÓN DIRECTA Y PRIORITARIA
 // ========================================
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🍔 Inicializando menú móvil en tienda.js");
+  console.log("🍔 Inicializando menú móvil PRIORITARIO en tienda.js");
 
-  // Función simple del menú móvil
-  const menuToggle = document.querySelector(".menu-toggle");
-  const navCenter = document.querySelector(".nav-center");
-  const overlay = document.querySelector(".overlay");
+  // Esperar un poco para asegurar que el DOM esté completamente listo
+  setTimeout(function () {
+    console.log("⏰ Ejecutando función del menú con delay en tienda.js");
 
-  if (menuToggle && navCenter && overlay) {
-    console.log("✅ Elementos del menú encontrados en tienda");
+    // Función simple del menú móvil - MÁS ESPECÍFICA
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navCenter = document.querySelector(".nav-center");
+    const overlay = document.querySelector(".overlay");
 
-    menuToggle.addEventListener("click", function (e) {
-      e.preventDefault();
-      console.log("🍔 Click en menú - tienda.js");
+    if (menuToggle && navCenter && overlay) {
+      console.log("✅ Elementos del menú encontrados en tienda - LISTO");
 
-      menuToggle.classList.toggle("active");
-      navCenter.classList.toggle("show");
-      overlay.classList.toggle("show");
-      document.body.classList.toggle("menu-open");
-    });
+      // ELIMINAR cualquier event listener previo para evitar conflictos
+      const newMenuToggle = menuToggle.cloneNode(true);
+      menuToggle.parentNode.replaceChild(newMenuToggle, menuToggle);
 
-    overlay.addEventListener("click", function () {
-      console.log("🎭 Cerrando menú por overlay - tienda.js");
+      const newOverlay = overlay.cloneNode(true);
+      overlay.parentNode.replaceChild(newOverlay, overlay);
 
-      menuToggle.classList.remove("active");
-      navCenter.classList.remove("show");
-      overlay.classList.remove("show");
-      document.body.classList.remove("menu-open");
-    });
+      // Obtener referencias a los elementos nuevos
+      const cleanMenuToggle = document.querySelector(".menu-toggle");
+      const cleanOverlay = document.querySelector(".overlay");
 
-    // Cerrar menú cuando se hace click en links
-    const navLinks = navCenter.querySelectorAll(".nav-link");
-    navLinks.forEach(function (link) {
-      link.addEventListener("click", function () {
-        menuToggle.classList.remove("active");
+      console.log("🧹 Event listeners limpiados en tienda.js");
+
+      // Agregar nuevos event listeners
+      cleanMenuToggle.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🍔 CLICK MENÚ TIENDA - FUNCIONANDO!");
+
+        cleanMenuToggle.classList.toggle("active");
+        navCenter.classList.toggle("show");
+        cleanOverlay.classList.toggle("show");
+        document.body.classList.toggle("menu-open");
+
+        console.log("📊 Estados:", {
+          menuActive: cleanMenuToggle.classList.contains("active"),
+          navShow: navCenter.classList.contains("show"),
+          overlayShow: cleanOverlay.classList.contains("show"),
+        });
+      });
+
+      cleanOverlay.addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log("🎭 CERRANDO MENÚ POR OVERLAY - TIENDA");
+
+        cleanMenuToggle.classList.remove("active");
         navCenter.classList.remove("show");
-        overlay.classList.remove("show");
+        cleanOverlay.classList.remove("show");
         document.body.classList.remove("menu-open");
       });
-    });
 
-    console.log("✅ Menú móvil configurado en tienda.js");
-  } else {
-    console.log("❌ No se encontraron elementos del menú en tienda.js");
-  }
+      // Cerrar menú cuando se hace click en links
+      const navLinks = navCenter.querySelectorAll(".nav-link");
+      navLinks.forEach(function (link) {
+        link.addEventListener("click", function () {
+          console.log("🔗 CERRANDO MENÚ POR LINK - TIENDA");
+          cleanMenuToggle.classList.remove("active");
+          navCenter.classList.remove("show");
+          cleanOverlay.classList.remove("show");
+          document.body.classList.remove("menu-open");
+        });
+      });
+
+      console.log("✅ MENÚ MÓVIL CONFIGURADO EXITOSAMENTE EN TIENDA.JS 🎯");
+
+      // Función de debug específica para tienda
+      window.debugTiendaMenu = function () {
+        console.log("🔧 DEBUG TIENDA MENU:", {
+          menuToggle: !!cleanMenuToggle,
+          navCenter: !!navCenter,
+          overlay: !!cleanOverlay,
+          menuActive: cleanMenuToggle.classList.contains("active"),
+          navShow: navCenter.classList.contains("show"),
+          overlayShow: cleanOverlay.classList.contains("show"),
+        });
+      };
+    } else {
+      console.log("❌ NO se encontraron elementos del menú en tienda.js");
+      console.log("🔍 Elementos encontrados:", {
+        menuToggle: !!menuToggle,
+        navCenter: !!navCenter,
+        overlay: !!overlay,
+      });
+    }
+  }, 200); // Delay de 200ms para asegurar que todo esté listo
 });
 
 document.addEventListener("DOMContentLoaded", function () {
