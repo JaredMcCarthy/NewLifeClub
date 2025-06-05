@@ -166,11 +166,26 @@ document.addEventListener("DOMContentLoaded", function () {
           "https://newlifeclub.onrender.com/backend/routes/newsletter"
         );
 
+        // Primero verificar si el servidor está activo
+        try {
+          const healthCheck = await fetch("https://newlifeclub.onrender.com/", {
+            method: "GET",
+            signal: AbortSignal.timeout(5000), // 5 segundos timeout
+          });
+          console.log("🏥 Health check - Status:", healthCheck.status);
+        } catch (healthError) {
+          console.log(
+            "⚠️ Servidor puede estar dormido, intentando despertar..."
+          );
+        }
+
         // Probar múltiples URLs por si una no funciona
         const urlsToTry = [
           "https://newlifeclub.onrender.com/backend/routes/newsletter",
           "https://newlifeclub.onrender.com/newsletter",
           "https://newlifeclub.onrender.com/api/newsletter",
+          "https://newlifeclub.onrender.com/api/suscribir",
+          "https://newlifeclub.onrender.com/newsletter/suscribir",
         ];
 
         let response = null;
@@ -186,15 +201,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 Accept: "application/json",
               },
               body: JSON.stringify({ correo }),
+              signal: AbortSignal.timeout(10000), // 10 segundos timeout
             });
 
             console.log("📡 Respuesta de", url, "- Status:", response.status);
+            console.log("📡 Headers:", [...response.headers.entries()]);
 
             if (response.ok) {
               console.log("✅ URL funcionando:", url);
               break;
             } else {
               console.log("❌ URL falló:", url, "Status:", response.status);
+              const errorText = await response.text();
+              console.log("❌ Error response:", errorText);
             }
           } catch (error) {
             console.log("❌ Error con URL:", url, error.message);

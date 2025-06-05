@@ -5,7 +5,8 @@ const { suscribirCorreo } = require("../controllers/newsletterController");
 // Ruta principal
 router.post("/newsletter", suscribirCorreo);
 
-// Ruta alternativa para compatibilidad
+// Rutas alternativas para compatibilidad
 router.post("/", suscribirCorreo);
+router.post("/suscribir", suscribirCorreo);
 
 module.exports = router;

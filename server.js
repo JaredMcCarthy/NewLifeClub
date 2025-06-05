@@ -53,6 +53,7 @@ app.use("/backend/routes", rutasRoutes);
 
 // Rutas adicionales para newsletter (fallback)
 app.use("/newsletter", newsletterRoutes);
+app.use("/api", newsletterRoutes);
 
 // Rutas adicionales para rutas (fallback)
 app.use("/rutasRoutes", rutasRoutes);
