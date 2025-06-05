@@ -110,11 +110,14 @@ router.post("/login", async (req, res) => {
 
     // Validaciones
     if (!correo || !contraseña) {
+      console.log("❌ Faltan campos: correo o contraseña");
       return res.status(400).json({
         success: false,
         message: "Correo y contraseña son requeridos",
       });
     }
+
+    console.log("🔍 Buscando usuario en BD...");
 
     // Buscar usuario
     const result = await pool.query(
@@ -122,9 +125,13 @@ router.post("/login", async (req, res) => {
       [correo]
     );
 
-    console.log("🔍 Usuario encontrado:", result.rows.length > 0);
+    console.log("🔍 Resultado de búsqueda:", {
+      found: result.rows.length > 0,
+      email: correo,
+    });
 
     if (result.rows.length === 0) {
+      console.log("❌ Usuario no encontrado para:", correo);
       return res.status(400).json({
         success: false,
         message: "Credenciales incorrectas",
@@ -132,13 +139,22 @@ router.post("/login", async (req, res) => {
     }
 
     const user = result.rows[0];
-    console.log("👤 Verificando contraseña para usuario:", user.correo);
+    console.log("👤 Usuario encontrado:", {
+      id: user.id,
+      nombre: user.nombre,
+      correo: user.correo,
+    });
 
     // Verificar contraseña
     const isValid = await bcrypt.compare(contraseña, user.contraseña);
-    console.log("🔐 Contraseña válida:", isValid);
+    console.log("🔐 Verificación de contraseña:", {
+      isValid,
+      providedLength: contraseña.length,
+      hashedLength: user.contraseña.length,
+    });
 
     if (!isValid) {
+      console.log("❌ Contraseña incorrecta para:", correo);
       return res.status(400).json({
         success: false,
         message: "Credenciales incorrectas",
@@ -165,15 +181,22 @@ router.post("/login", async (req, res) => {
         correo: user.correo,
       },
       token: token,
-      expiresIn: 24 * 60 * 60 * 1000, // 24 horas en milliseconds
-      redirect: "/index.html", // Agregar redirección
+      expiresIn: 5 * 60 * 1000, // 5 minutos en milliseconds
+      redirect: "/index.html",
     });
   } catch (error) {
-    console.error("❌ Error en login:", error);
+    console.error("❌ Error detallado en login:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+    });
     res.status(500).json({
       success: false,
       message: "Error al iniciar sesión",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Error interno del servidor",
     });
   }
 });

@@ -1,4 +1,3 @@
-const db = require("../config/db");
 const { transporter } = require("../config/mailer");
 
 const registrarEnRuta = async (req, res) => {
@@ -16,8 +15,10 @@ const registrarEnRuta = async (req, res) => {
       dificultad,
     } = req.body;
 
+    const pool = req.app.locals.pool;
+
     // Crear tabla si no existe
-    await db.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS rutas_registros (
         id SERIAL PRIMARY KEY,
         ruta_id VARCHAR(50) NOT NULL,
@@ -35,7 +36,7 @@ const registrarEnRuta = async (req, res) => {
     `);
 
     // Insertar en la base de datos usando PostgreSQL sintaxis
-    const result = await db.query(
+    const result = await pool.query(
       `INSERT INTO rutas_registros 
        (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,

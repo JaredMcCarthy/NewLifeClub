@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Manejo de la navegación entre secciones (sin cambios) ---
-  const navButtons = document.querySelectorAll(".nav-button");
+  const navButtons = document.querySelectorAll(
+    ".nav-button:not(.logout-button)"
+  );
   const contentSections = document.querySelectorAll(".content-section");
 
   navButtons.forEach((button) => {
@@ -138,4 +140,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Lógica para Mis Compras (sin cambios, pero recuerda que esto DEBERÍA venir de tu backend) ---
   // Si tus compras también son específicas del usuario, la clave para guardarlas también debería incluir el correo.
+
+  // Funcionalidad del botón de logout
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      // Confirmar antes de cerrar sesión
+      if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
+        // Limpiar datos de sesión
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("token");
+
+        // Mostrar mensaje de confirmación
+        alert("Sesión cerrada exitosamente");
+
+        // Redireccionar al inicio
+        window.location.href = "index.html";
+      }
+    });
+  }
 });
