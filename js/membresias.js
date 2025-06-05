@@ -14,6 +14,8 @@ const animateOnScroll = () => {
   });
 };
 
+// ========== NAVEGACIÓN MÓVIL DESHABILITADA - USA simple-mobile-nav.js ==========
+/*
 //Funcion solamente para burger menu
 
 const menuToggle = document.querySelector(".menu-toggle");
@@ -31,6 +33,7 @@ overlay.addEventListener("click", () => {
   navCenter.classList.remove("open");
   overlay.classList.remove("open");
 });
+*/
 
 //Funcion para que el boton vaya abajo a la primera sections
 document.getElementById("open-modal").addEventListener("click", function () {
