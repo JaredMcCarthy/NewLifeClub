@@ -17,22 +17,28 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 0 15px !important;
+    padding: 0 10px !important;
     width: 100% !important;
     height: 60px !important;
+    box-sizing: border-box !important;
   }
 
   /* ===== LADO IZQUIERDO ===== */
   .nav-left {
     display: flex !important;
     align-items: center !important;
-    gap: 15px !important;
+    gap: 10px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
   }
 
   /* Logo más pequeño en móvil */
   .nav-logo {
-    font-size: 1.2rem !important;
+    font-size: 1rem !important;
     display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   /* ===== MENÚ HAMBURGUESA ===== */
@@ -40,13 +46,14 @@
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    width: 30px !important;
-    height: 20px !important;
+    width: 25px !important;
+    height: 18px !important;
     background: transparent !important;
     border: none !important;
     cursor: pointer !important;
     padding: 0 !important;
     z-index: 1001 !important;
+    flex-shrink: 0 !important;
   }
 
   .menu-toggle span {
@@ -106,7 +113,8 @@
   .nav-right {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
   }
 
   /* Ocultar elementos de desktop en móvil */
@@ -120,7 +128,7 @@
   .user-actions {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
   }
 
   /* Ocultar búsqueda en móvil */
@@ -128,28 +136,29 @@
     display: none !important;
   }
 
-  /* Estilo unificado para carrito y perfil */
+  /* Estilo unificado para carrito y perfil - MÁS PEQUEÑOS */
   .cart-button,
   #cart-btn,
   #profile-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
+    width: 35px !important;
+    height: 35px !important;
+    min-width: 35px !important;
+    min-height: 35px !important;
     padding: 0 !important;
     background: transparent !important;
     border: 2px solid #ff0080 !important;
     border-radius: 50% !important;
     color: white !important;
-    font-size: 1.2rem !important;
+    font-size: 1rem !important;
     transition: all 0.3s ease !important;
     margin: 0 !important;
     text-decoration: none !important;
     line-height: 1 !important;
     position: relative !important;
+    flex-shrink: 0 !important;
   }
 
   .cart-button:hover,
@@ -159,17 +168,17 @@
     transform: translateY(-2px) !important;
   }
 
-  /* Contador del carrito */
+  /* Contador del carrito - MÁS PEQUEÑO */
   .cart-count {
     position: absolute !important;
-    top: -5px !important;
-    right: -5px !important;
+    top: -3px !important;
+    right: -3px !important;
     background: #ff0080 !important;
     color: white !important;
     border-radius: 50% !important;
-    width: 18px !important;
-    height: 18px !important;
-    font-size: 0.7rem !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 0.6rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -203,6 +212,18 @@
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+  }
+
+  /* ===== ESPECÍFICO PARA PÁGINAS PROBLEMÁTICAS ===== */
+  /* Tienda y Eventos necesitan espacio extra */
+  .nav-container {
+    max-width: 100vw !important;
+    overflow: hidden !important;
+  }
+
+  /* Asegurar que nada se salga */
+  * {
+    box-sizing: border-box !important;
   }
 }
 
