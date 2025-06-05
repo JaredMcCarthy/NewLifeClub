@@ -517,12 +517,37 @@
 }
 
 @media (max-width: 768px) {
+  .main-nav {
+    height: 60px !important;
+  }
+
+  .nav-container {
+    height: 60px !important;
+    padding: 0 15px !important;
+  }
+
   .hero h1 {
-    font-size: 2.8rem;
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
   }
 
   .hero p {
-    font-size: 1.2rem;
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .section-header h2 {
+    font-size: 2rem !important;
+    line-height: 1.3 !important;
+  }
+
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .container {
+    padding: 0 20px !important;
+    max-width: 100% !important;
   }
 
   .membership-card.featured {
