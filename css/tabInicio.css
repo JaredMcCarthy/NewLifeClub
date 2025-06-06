@@ -183,6 +183,8 @@ body {
   flex-direction: column;
   padding: 40px 20px;
   align-items: center;
+  justify-content: center;
+  min-height: 60vh;
   text-align: center;
   background-color: var(--color-white);
 }
@@ -193,17 +195,23 @@ body {
 
 .about-text {
   width: 100%;
+  max-width: 800px;
   padding: 0;
-  margin-bottom: 30px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .about-text h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
   font-weight: 800;
-  color: var(--color-black);
+  color: var(--color-white) !important;
   position: relative;
   padding-bottom: 15px;
+  text-align: center;
 }
 
 .about-text h2:after {
@@ -219,13 +227,14 @@ body {
 }
 
 .about-text p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: var(--color-white) !important;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
 .about-image {
@@ -1179,6 +1188,55 @@ body {
   min-width: 280px;
   height: 400px;
   padding: 20px;
+}
+
+/* Estilos específicos para imágenes en cards editoriales */
+.editorial-card {
+  transition: all 0.4s ease !important;
+  transform: translateY(0px) !important;
+}
+
+.editorial-card:hover {
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: 0 30px 60px rgba(255, 105, 180, 0.4) !important;
+}
+
+/* Efecto parallax para las cards editoriales */
+.editorial-card[style*="background-image"] {
+  background-attachment: fixed !important;
+  transition: all 0.4s ease, background-position 0.1s ease !important;
+}
+
+/* Animación al hacer scroll */
+@media (prefers-reduced-motion: no-preference) {
+  .editorial-card[style*="background-image"]:hover {
+    background-size: 110% !important;
+    background-position: center center !important;
+  }
+}
+
+/* Mejora para móviles - sin parallax fijo para mejor rendimiento */
+@media (max-width: 768px) {
+  .editorial-card[style*="background-image"] {
+    background-attachment: scroll !important;
+  }
+}
+
+/* Overlay hover effect */
+.editorial-card:hover > div[style*="background: linear-gradient"] {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 105, 180, 0.5) 0%,
+    rgba(26, 26, 26, 0.7) 70%
+  ) !important;
+  transition: background 0.3s ease !important;
+}
+
+/* Contenedor de imagen en editorial cards */
+.editorial-card div[style*="height: 200px"] {
+  overflow: hidden !important;
+  position: relative !important;
+  border-radius: 10px !important;
 }
 
 @media (min-width: 769px) {
