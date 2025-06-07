@@ -305,11 +305,7 @@ const rutasIntData = [
     ubicacion: "Parque Nacional Monte Verde",
     descripcion:
       "Esta hermosa ruta te llevará a través de senderos rodeados de naturaleza exuberante hasta llegar a la cima de la Montaña Azul. Disfrutarás de vistas panorámicas impresionantes y el aire fresco de la montaña. Ideal para excursionistas con experiencia moderada.",
-    imagenes: [
-      "FotosEvento/ministrava1.png",
-      "FotosEvento/ministrava1.png",
-      "FotosEvento/ministrava1.png",
-    ],
+    imagenes: ["FotosEvento/strava1.jpeg"],
   },
   {
     id: 2,
@@ -320,11 +316,7 @@ const rutasIntData = [
     ubicacion: "Reserva Natural El Bosque",
     descripcion:
       "Un recorrido tranquilo y accesible a través del Valle Verde, perfecto para principiantes y familias. Caminarás entre árboles centenarios, cruzarás pequeños arroyos y podrás observar diversas especies de aves. Esta ruta es ideal para quienes buscan una experiencia relajante en contacto con la naturaleza.",
-    imagenes: [
-      "FotosEvento/ministrava2.png",
-      "FotosEvento/ministrava2.png",
-      "FotosEvento/ministrava2.png",
-    ],
+    imagenes: ["FotosEvento/strava2.jpeg"],
   },
   {
     id: 3,
@@ -335,11 +327,7 @@ const rutasIntData = [
     ubicacion: "Sierra Alta",
     descripcion:
       "Una ruta desafiante para excursionistas experimentados que te llevará hasta la impresionante Cascada Plateada. El camino incluye terreno rocoso, pendientes pronunciadas y travesías por río. La recompensa al final del camino es una majestuosa cascada de 50 metros de altura y la posibilidad de nadar en sus aguas cristalinas.",
-    imagenes: [
-      "FotosEvento/ministrava3.png",
-      "FotosEvento/ministrava3.png",
-      "FotosEvento/ministrava3.png",
-    ],
+    imagenes: ["FotosEvento/strava3.jpeg"],
   },
   {
     id: 4,
@@ -350,11 +338,7 @@ const rutasIntData = [
     ubicacion: "Parque Regional Los Pinos",
     descripcion:
       "Un recorrido corto y accesible alrededor del hermoso Lago Cristal. Esta ruta es perfecta para una escapada entre semana, ofreciendo hermosos paisajes junto al lago y la posibilidad de observar fauna local. El terreno es mayormente plano y bien mantenido, ideal para todos los niveles de condición física.",
-    imagenes: [
-      "FotosEvento/ministrava1.png",
-      "FotosEvento/ministrava2.png",
-      "FotosEvento/ministrava3.png",
-    ],
+    imagenes: ["FotosEvento/strava4.jpeg"],
   },
 ];
 
