@@ -35,18 +35,18 @@ logs
 *.tmp
 *.temp
 
-# Archivos pesados temporalmente excluidos
-fotoslifepro/
-FotosEvento/
-FotosInicio/
-FotosMembresia/
-Fotostienda/
-testcamisa/
-Videosgenerales/
-*.mp4
-*.mov
-*.avi
-*.png
-*.jpg
-*.jpeg
-*.gif 
+# Archivos pesados temporalmente excluidos (COMENTADOS PARA PERMITIR IMÁGENES)
+# fotoslifepro/
+# FotosEvento/
+# FotosInicio/
+# FotosMembresia/
+# Fotostienda/
+# testcamisa/
+# Videosgenerales/
+# *.mp4
+# *.mov
+# *.avi
+# *.png
+# *.jpg
+# *.jpeg
+# *.gif 
