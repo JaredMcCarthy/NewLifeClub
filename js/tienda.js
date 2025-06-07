@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
     clonedImage.style.height = heroRect.height + "px";
     clonedImage.style.zIndex = "1000";
     clonedImage.style.transition =
-      "all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+      "all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
     clonedImage.style.pointerEvents = "none";
 
     document.body.appendChild(clonedImage);
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => {
       settledImage.classList.add("visible");
       clonedImage.remove();
-    }, 1600);
+    }, 900);
   }
 
   // Observador para detectar cuando la sección de info es visible
