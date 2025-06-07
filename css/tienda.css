@@ -118,18 +118,7 @@ body {
 .floating-image {
   max-width: 100%;
   height: auto;
-  animation: float 3s ease-in-out infinite;
   transition: all 1s ease;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
 }
 
 .scroll-indicator {
@@ -683,6 +672,7 @@ body {
   font-weight: 700;
   min-width: 30px;
   text-align: center;
+  color: var(--color-black);
 }
 
 .add-to-cart-btn {

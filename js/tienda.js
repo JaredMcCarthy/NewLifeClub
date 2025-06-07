@@ -106,41 +106,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const settledImage = document.getElementById("settledImage");
   const infoSection = document.getElementById("infoSection");
 
-  // Función para animar la imagen del hero a la sección de info
-  function animateHeroImage() {
-    const heroRect = heroImage.getBoundingClientRect();
-    const settledRect = settledImage.getBoundingClientRect();
-
-    // Crear un clon de la imagen para la animación
-    const clonedImage = heroImage.cloneNode(true);
-    clonedImage.style.position = "fixed";
-    clonedImage.style.top = heroRect.top + "px";
-    clonedImage.style.left = heroRect.left + "px";
-    clonedImage.style.width = heroRect.width + "px";
-    clonedImage.style.height = heroRect.height + "px";
-    clonedImage.style.zIndex = "1000";
-    clonedImage.style.transition =
-      "all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
-    clonedImage.style.pointerEvents = "none";
-
-    document.body.appendChild(clonedImage);
-
-    // Ocultar la imagen original del hero
-    heroImage.style.opacity = "0.3";
-
-    // Animar al destino
-    setTimeout(() => {
-      clonedImage.style.top = settledRect.top + "px";
-      clonedImage.style.left = settledRect.left + "px";
-      clonedImage.style.width = settledRect.width + "px";
-      clonedImage.style.height = settledRect.height + "px";
-    }, 100);
-
-    // Mostrar la imagen final y limpiar
-    setTimeout(() => {
-      settledImage.classList.add("visible");
-      clonedImage.remove();
-    }, 900);
+  // Función simplificada - solo mostrar la imagen sin animación compleja
+  function showSettledImage() {
+    // Simplemente mostrar la imagen final sin animación de movimiento
+    settledImage.classList.add("visible");
   }
 
   // Observador para detectar cuando la sección de info es visible
@@ -151,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
           entry.isIntersecting &&
           !settledImage.classList.contains("visible")
         ) {
-          animateHeroImage();
+          showSettledImage();
         }
       });
     },
@@ -575,17 +544,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // ========================================
   // EFECTOS ADICIONALES
   // ========================================
-
-  // Parallax effect para el hero
-  window.addEventListener("scroll", function () {
-    const scrolled = window.pageYOffset;
-    const parallax = document.querySelector(".hero");
-    const speed = scrolled * 0.5;
-
-    if (parallax) {
-      parallax.style.transform = `translateY(${speed}px)`;
-    }
-  });
 
   // Actualizar cantidad en el reset del modal
   function resetModalQuantity() {

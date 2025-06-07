@@ -652,6 +652,19 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Compensar altura del navbar */
+}
+
+/* Optimización para scroll más rápido */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Smooth scroll con duración optimizada */
+* {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -724,7 +737,7 @@ a {
 /* ========== HERO SECTION ========== */
 .hero {
   height: 100vh;
-  background: url("/api/placeholder/1920/1080") center/cover no-repeat;
+  background: url("../fotoslifepro/bannerlifepro.png") center/cover no-repeat;
   position: relative;
   display: flex;
   align-items: center;
