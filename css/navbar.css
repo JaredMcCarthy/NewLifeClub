@@ -191,17 +191,47 @@ body.logged-in #mobile-account-btn {
 /* Estilos para los botones de usuario */
 .user-button {
   background: transparent;
-  border: none;
+  border: 2px solid #ff0080;
+  border-radius: 50%;
   color: white;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 8px;
-  border-radius: 50%;
   transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .user-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 0, 128, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Estilo específico para cart-button (para mantener compatibilidad) */
+.cart-button {
+  background: transparent;
+  border: 2px solid #ff0080;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.cart-button:hover {
+  background: rgba(255, 0, 128, 0.1);
   transform: translateY(-2px);
 }
 
@@ -215,12 +245,32 @@ body.logged-in #mobile-account-btn {
     gap: 20px;
   }
 
+  /* DESKTOP: Todos los botones con estilo consistente */
   #search-btn,
   #cart-btn,
-  #profile-btn {
+  #profile-btn,
+  .cart-button {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ff0080;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    padding: 0;
+  }
+
+  #search-btn:hover,
+  #cart-btn:hover,
+  #profile-btn:hover,
+  .cart-button:hover {
+    background: rgba(255, 0, 128, 0.1);
+    transform: translateY(-2px);
   }
 
   /* DESKTOP: Asegurar que el botón cuenta esté OCULTO */

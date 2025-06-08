@@ -58,34 +58,40 @@ window.addEventListener("cartUpdate", function (e) {
 document.addEventListener("DOMContentLoaded", function () {
   loadCartData();
 
+  // 🧹 INICIALIZACIÓN LIMPIA - Solo event listeners esenciales
   const cartBtn = document.getElementById("cart-btn");
-  const cartPanel = document.getElementById("cartPanel");
-  const cartOverlay = document.getElementById("cartOverlay");
   const closeBtn = document.querySelector(".close-btn");
-  const addToCartBtn = document.querySelector(".add-to-cart-btn");
+  const cartOverlay = document.getElementById("cartOverlay");
   const nextBtn = document.getElementById("nextBtn");
   const backBtn = document.getElementById("backBtn");
 
-  // Event listeners principales
+  // Event listeners principales (solo una vez)
   if (cartBtn) cartBtn.addEventListener("click", openCart);
   if (closeBtn) closeBtn.addEventListener("click", closeCart);
   if (cartOverlay) cartOverlay.addEventListener("click", closeCart);
   if (nextBtn) nextBtn.addEventListener("click", handleNextStep);
   if (backBtn) backBtn.addEventListener("click", handlePreviousStep);
 
-  // Event listener para agregar al carrito
+  // Event listener para agregar al carrito (solo en páginas con modal)
   document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
     btn.addEventListener("click", function () {
       const modal = document.getElementById("productModal");
+      if (!modal) return; // Salir si no hay modal en esta página
+
       const priceText =
-        document.getElementById("modalProductPrice").textContent;
+        document.getElementById("modalProductPrice")?.textContent;
+      if (!priceText) return;
+
       const productData = {
         id: modal.getAttribute("data-current-product"),
         name: document.getElementById("modalProductName").textContent,
         price: parseFloat(priceText.replace("L.", "").replace("$", "").trim()),
-        size: document.querySelector(".size-btn.active").textContent,
-        quantity: parseInt(document.querySelector(".quantity").textContent),
-        image: document.getElementById("mainProductImage").src,
+        size:
+          document.querySelector(".size-btn.active")?.textContent || "Única",
+        quantity: parseInt(
+          document.querySelector(".quantity")?.textContent || "1"
+        ),
+        image: document.getElementById("mainProductImage")?.src || "",
       };
 
       addToCart(productData);
@@ -94,25 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none";
       }, 1500);
     });
-  });
-
-  // Event listener para el botón de checkout
-  const checkoutBtn = document.getElementById("checkoutBtn");
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener("click", function () {
-      // Aquí puedes agregar la lógica para proceder al pago
-      alert("Redirigiendo al proceso de pago...");
-    });
-  }
-
-  // Escuchar eventos de sesión
-  window.addEventListener("storage", function (e) {
-    if (e.key === "userSession") {
-      if (!e.newValue) {
-        // Usuario cerró sesión
-        clearCart();
-      }
-    }
   });
 
   // Event listeners para métodos de pago
@@ -140,7 +127,20 @@ function openCart() {
   if (cartPanel && cartOverlay) {
     cartPanel.classList.add("active");
     cartOverlay.style.display = "block";
+    cartOverlay.classList.add("active");
     document.body.style.overflow = "hidden";
+
+    // En móviles, agregar clase al body para mejor control
+    if (window.innerWidth <= 768) {
+      document.body.classList.add("cart-open");
+      addMobileCloseButton();
+    }
+
+    // Focus en el carrito para accesibilidad
+    setTimeout(() => {
+      const closeBtn = cartPanel.querySelector(".close-btn");
+      if (closeBtn) closeBtn.focus();
+    }, 300);
   }
 }
 
@@ -149,30 +149,46 @@ function closeCart() {
   const cartOverlay = document.getElementById("cartOverlay");
   if (cartPanel && cartOverlay) {
     cartPanel.classList.remove("active");
+    cartOverlay.classList.remove("active");
     cartOverlay.style.display = "none";
     document.body.style.overflow = "";
+    document.body.classList.remove("cart-open");
+
+    // Remover botón móvil adicional si existe
+    const mobileCloseBtn = cartPanel.querySelector(".mobile-close-btn-extra");
+    if (mobileCloseBtn) {
+      mobileCloseBtn.remove();
+    }
   }
 }
 
-// Inicialización del carrito
+// Función auxiliar para manejar toques en móvil
+function handleCartTouch(event) {
+  // Prevenir scroll en el fondo cuando se está en el carrito
+  if (document.body.classList.contains("cart-open")) {
+    const cartPanel = document.getElementById("cartPanel");
+    if (cartPanel && !cartPanel.contains(event.target)) {
+      event.preventDefault();
+    }
+  }
+}
+
+// Inicialización del carrito (optimizada)
 function initializeCart() {
-  loadCartData();
-
-  // Asegurarse de que los event listeners estén configurados
-  const cartBtn = document.getElementById("cart-btn");
-  const closeBtn = document.querySelector(".close-btn");
-  const cartOverlay = document.getElementById("cartOverlay");
-  const nextBtn = document.getElementById("nextBtn");
-  const backBtn = document.getElementById("backBtn");
-
-  if (cartBtn) cartBtn.addEventListener("click", openCart);
-  if (closeBtn) closeBtn.addEventListener("click", closeCart);
-  if (cartOverlay) cartOverlay.addEventListener("click", closeCart);
-  if (nextBtn) nextBtn.addEventListener("click", handleNextStep);
-  if (backBtn) backBtn.addEventListener("click", handlePreviousStep);
-
-  // Actualizar el contador del carrito
+  // Solo cargar datos y configurar event listeners móviles
   updateCartCount();
+
+  // Agregar soporte táctil solo en móviles
+  if (window.innerWidth <= 768) {
+    document.addEventListener("touchmove", handleCartTouch, { passive: false });
+  }
+
+  // Re-inicializar cuando cambie el tamaño de pantalla
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+      document.body.classList.remove("cart-open");
+    }
+  });
 }
 
 function handleNextStep() {
@@ -214,6 +230,25 @@ function validateCurrentStep() {
 }
 
 function validateShippingInfo() {
+  // Si solo hay membresías (productos digitales), el envío es opcional
+  if (!cartData.requiresShipping) {
+    // Guardar información básica opcional para membresías
+    cartData.shippingInfo = {
+      name: document.getElementById("shipping-name")?.value || "Usuario",
+      lastname:
+        document.getElementById("shipping-lastname")?.value || "Digital",
+      address: "Entrega Digital",
+      city: "N/A",
+      zip: "00000",
+      phone: document.getElementById("shipping-phone")?.value || "000-0000",
+      email:
+        document.getElementById("shipping-email")?.value || "usuario@email.com",
+      isDigital: true,
+    };
+    return true;
+  }
+
+  // Para productos físicos, validar todos los campos
   const form = document.getElementById("shippingForm");
   if (!form) return false;
 
@@ -223,7 +258,7 @@ function validateShippingInfo() {
     return false;
   }
 
-  // Guardar información de envío
+  // Guardar información de envío completa
   cartData.shippingInfo = {
     name: document.getElementById("shipping-name").value,
     lastname: document.getElementById("shipping-lastname").value,
@@ -232,6 +267,7 @@ function validateShippingInfo() {
     zip: document.getElementById("shipping-zip").value,
     phone: document.getElementById("shipping-phone").value,
     email: document.getElementById("shipping-email").value,
+    isDigital: false,
   };
 
   return true;
@@ -299,6 +335,57 @@ function completeOrder() {
     summary.innerHTML = generateOrderSummaryHTML();
   }
 
+  // 🎯 AGREGAR INFORMACIÓN ESPECÍFICA SEGÚN TIPO DE PRODUCTOS
+  const step4 = document.getElementById("step4");
+  if (step4) {
+    // Buscar o crear contenedor de información adicional
+    let additionalInfo = step4.querySelector(".order-additional-info");
+    if (!additionalInfo) {
+      additionalInfo = document.createElement("div");
+      additionalInfo.className = "order-additional-info";
+      additionalInfo.style.cssText = `
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 4px solid #28a745;
+      `;
+
+      // Insertar después del resumen
+      const orderSummary = step4.querySelector("#orderSummary");
+      if (orderSummary) {
+        orderSummary.parentNode.insertBefore(
+          additionalInfo,
+          orderSummary.nextSibling
+        );
+      }
+    }
+
+    // Contenido específico según tipo de productos
+    if (!cartData.requiresShipping) {
+      additionalInfo.innerHTML = `
+        <div style="text-align: center; color: #28a745;">
+          <h4 style="margin: 0 0 10px 0;">📧 Acceso Digital</h4>
+          <p style="margin: 0; font-size: 0.9rem; color: #666;">
+            Recibirás el acceso a tus membresías por correo electrónico en los próximos minutos.
+          </p>
+        </div>
+      `;
+    } else {
+      additionalInfo.innerHTML = `
+        <div style="text-align: center; color: #ff1493;">
+          <h4 style="margin: 0 0 10px 0;">📦 Envío a Domicilio</h4>
+          <p style="margin: 0; font-size: 0.9rem; color: #666;">
+            Tus productos serán enviados a: ${cartData.shippingInfo.address}, ${cartData.shippingInfo.city}
+          </p>
+          <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">
+            Tiempo estimado de entrega: 3-5 días hábiles
+          </p>
+        </div>
+      `;
+    }
+  }
+
   // Limpiar carrito después de la orden
   setTimeout(() => {
     cartData = {
@@ -307,6 +394,8 @@ function completeOrder() {
       paymentInfo: {},
       total: 0,
       currentStep: 1,
+      requiresShipping: false,
+      shippingCost: 0,
     };
     saveCartData();
     closeCart();
@@ -372,7 +461,65 @@ function showStep(step) {
     nextBtn.textContent = step === 4 ? "Finalizar Compra" : "Continuar";
   }
 
+  // 🎯 INFORMACIÓN CONTEXTUAL PARA PASO DE ENVÍO
+  if (step === 2) {
+    showShippingInfo();
+  }
+
   updateProgressBar(step);
+}
+
+// Nueva función para mostrar información contextual sobre envío
+function showShippingInfo() {
+  const shippingStep = document.getElementById("step2");
+  if (!shippingStep) return;
+
+  // Buscar o crear el contenedor de información
+  let infoDiv = shippingStep.querySelector(".shipping-info");
+  if (!infoDiv) {
+    infoDiv = document.createElement("div");
+    infoDiv.className = "shipping-info";
+    infoDiv.style.cssText = `
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-left: 4px solid #ff1493;
+    `;
+
+    // Insertar antes del formulario
+    const form = shippingStep.querySelector("#shippingForm");
+    if (form) {
+      shippingStep.insertBefore(infoDiv, form);
+    }
+  }
+
+  // Actualizar contenido según tipo de productos
+  if (!cartData.requiresShipping) {
+    infoDiv.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px; color: #28a745;">
+        <span style="font-size: 1.2rem;">📧</span>
+        <div>
+          <h4 style="margin: 0; color: #28a745;">Entrega Digital</h4>
+          <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">
+            Solo tienes membresías digitales. El acceso se enviará por correo electrónico.
+          </p>
+        </div>
+      </div>
+    `;
+  } else {
+    infoDiv.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px; color: #ff1493;">
+        <span style="font-size: 1.2rem;">📦</span>
+        <div>
+          <h4 style="margin: 0; color: #ff1493;">Envío Físico</h4>
+          <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">
+            Tienes productos físicos que requieren envío a domicilio (L.100.00).
+          </p>
+        </div>
+      </div>
+    `;
+  }
 }
 
 function updateQuantity(index, change) {
@@ -395,15 +542,69 @@ function calculateTotal() {
 
 function updateTotal() {
   const subtotal = calculateTotal();
-  const shipping = cartData.items.length > 0 ? 100.0 : 0;
+
+  // 🎯 LÓGICA INTELIGENTE DE ENVÍOS
+  // Solo productos de tienda requieren envío, membresías NO
+  const requiresShipping = cartData.items.some((item) => {
+    const itemName = item.name.toLowerCase();
+
+    // Detectar si es merchandise (requiere envío)
+    const isMerchandise =
+      itemName.includes("top") ||
+      itemName.includes("hoodie") ||
+      itemName.includes("camiseta") ||
+      itemName.includes("camisa") ||
+      itemName.includes("playera") ||
+      itemName.includes("sudadera") ||
+      itemName.includes("jersey") ||
+      itemName.includes("polo") ||
+      itemName.includes("shorts") ||
+      itemName.includes("pantalón") ||
+      itemName.includes("gorra") ||
+      itemName.includes("cap") ||
+      itemName.includes("accesorio") ||
+      // Agregar más productos físicos según necesites
+      (item.size && item.size !== "Mensual" && item.size !== "Anual"); // Tallas físicas vs suscripciones
+
+    // Detectar si es membresía (NO requiere envío)
+    const isMembership =
+      itemName.includes("membresía") ||
+      itemName.includes("membership") ||
+      itemName.includes("suscripción") ||
+      itemName.includes("plan") ||
+      itemName.includes("básica") ||
+      itemName.includes("premium") ||
+      itemName.includes("elite") ||
+      itemName.includes("pro") ||
+      (item.size && (item.size === "Mensual" || item.size === "Anual"));
+
+    // Si es merchandise, requiere envío
+    return isMerchandise && !isMembership;
+  });
+
+  // Calcular envío: L.100 solo si hay productos físicos
+  const shipping = cartData.items.length > 0 && requiresShipping ? 100.0 : 0;
   const total = subtotal + shipping;
 
+  // Actualizar elementos del DOM
   const subtotalElement = document.getElementById("subtotal");
   const totalElement = document.getElementById("total");
   const shippingElement = document.getElementById("shipping");
 
   if (subtotalElement) subtotalElement.textContent = `L.${subtotal.toFixed(2)}`;
-  if (shippingElement) shippingElement.textContent = `L.${shipping.toFixed(2)}`;
+  if (shippingElement) {
+    shippingElement.textContent = requiresShipping
+      ? `L.${shipping.toFixed(2)}`
+      : "Gratis";
+    // Agregar indicador visual para envío gratis
+    if (!requiresShipping && cartData.items.length > 0) {
+      shippingElement.style.color = "#28a745";
+      shippingElement.style.fontWeight = "600";
+    } else {
+      shippingElement.style.color = "#333";
+      shippingElement.style.fontWeight = "normal";
+    }
+  }
   if (totalElement) totalElement.textContent = `L.${total.toFixed(2)}`;
 
   // Actualizar el contador del carrito
@@ -416,6 +617,11 @@ function updateTotal() {
     cartCount.textContent = itemCount;
     cartCount.style.display = itemCount > 0 ? "block" : "none";
   }
+
+  // Guardar información de envío en cartData para usar en otros pasos
+  cartData.requiresShipping = requiresShipping;
+  cartData.shippingCost = shipping;
+  cartData.total = total;
 }
 
 // Función para agregar al carrito
@@ -494,5 +700,102 @@ function updateCartCount() {
     );
     cartCount.textContent = itemCount;
     cartCount.style.display = itemCount > 0 ? "block" : "none";
+  }
+}
+
+// 🛠️ FUNCIÓN DE UTILIDAD PARA DEBUGGING
+function showCartDebugInfo() {
+  console.log("🛒 INFORMACIÓN DEL CARRITO:");
+  console.log("📦 Items:", cartData.items.length);
+  console.log("💰 Subtotal:", calculateTotal().toFixed(2));
+  console.log("🚚 Requiere envío:", cartData.requiresShipping);
+  console.log("💸 Costo envío:", cartData.shippingCost);
+  console.log("💯 Total:", cartData.total);
+  console.log(
+    "📋 Productos:",
+    cartData.items.map(
+      (item) => `${item.name} (${item.size}) x${item.quantity}`
+    )
+  );
+
+  return {
+    items: cartData.items.length,
+    subtotal: calculateTotal(),
+    requiresShipping: cartData.requiresShipping,
+    shippingCost: cartData.shippingCost,
+    total: cartData.total,
+    products: cartData.items,
+  };
+}
+
+// Hacer función disponible globalmente para testing
+window.showCartDebugInfo = showCartDebugInfo;
+
+// Función para agregar botón de cerrar adicional en móviles
+function addMobileCloseButton() {
+  const cartPanel = document.getElementById("cartPanel");
+  if (!cartPanel || window.innerWidth > 768) return;
+
+  // Verificar si ya existe el botón móvil
+  let mobileCloseBtn = cartPanel.querySelector(".mobile-close-btn-extra");
+
+  if (!mobileCloseBtn) {
+    mobileCloseBtn = document.createElement("button");
+    mobileCloseBtn.className = "mobile-close-btn-extra";
+    mobileCloseBtn.innerHTML = "✕";
+    mobileCloseBtn.setAttribute("aria-label", "Cerrar carrito");
+
+    // Estilos optimizados para el nuevo diseño
+    mobileCloseBtn.style.cssText = `
+      position: absolute !important;
+      top: 15px !important;
+      right: 15px !important;
+      background: white !important;
+      color: #ff1493 !important;
+      border: 2px solid #ff1493 !important;
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 50% !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      cursor: pointer !important;
+      z-index: 1002 !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s ease !important;
+      outline: none !important;
+    `;
+
+    // Event listeners mejorados
+    mobileCloseBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeCart();
+    });
+
+    mobileCloseBtn.addEventListener("touchend", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeCart();
+    });
+
+    // Efecto hover/focus
+    mobileCloseBtn.addEventListener("mouseenter", function () {
+      this.style.background = "#ff1493 !important";
+      this.style.color = "white !important";
+      this.style.transform = "scale(1.1)";
+    });
+
+    mobileCloseBtn.addEventListener("mouseleave", function () {
+      this.style.background = "white !important";
+      this.style.color = "#ff1493 !important";
+      this.style.transform = "scale(1)";
+    });
+
+    cartPanel.appendChild(mobileCloseBtn);
+
+    console.log("🔘 Botón móvil adicional agregado");
   }
 }

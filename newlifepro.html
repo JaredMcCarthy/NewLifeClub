@@ -191,6 +191,15 @@
           <a href="#" class="login-button" id="register-btn">Registrarse</a>
           <a href="#" class="login-button" id="login-btn">Iniciar Sesión</a>
 
+          <!-- Botón "Cuenta" para móvil (solo visible cuando NO está logueado) -->
+          <a
+            href="sesion.html"
+            class="mobile-account-btn"
+            id="mobile-account-btn"
+          >
+            Cuenta
+          </a>
+
           <!-- Botones para usuarios logueados (ocultos por defecto) -->
           <div class="user-actions">
             <button class="user-button" id="search-btn">🔍</button>
@@ -210,7 +219,9 @@
                 </div>
               </div>
             </div>
-            <button href="#" class="user-button" id="cart-btn">🛒</button>
+            <button class="user-button cart-button" id="cart-btn">
+              🛒<span id="cart-count" class="cart-count">0</span>
+            </button>
             <a href="Userprofile.html" class="user-button" id="profile-btn"
               >👤</a
             >
