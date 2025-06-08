@@ -270,9 +270,18 @@ document.addEventListener("DOMContentLoaded", function () {
       const planName = card.querySelector("h3").textContent;
 
       // You could add functionality here to handle plan selection
-      alert(
-        `Has seleccionado el plan ${planName}. ¡Gracias por unirte a NewLifePro Club!`
-      );
+      // Usar popup personalizado para confirmación de plan seleccionado
+      if (typeof CustomPopups !== "undefined") {
+        CustomPopups.showAlert(
+          `Has seleccionado el plan ${planName}. ¡Bienvenido a NewLifePro Club!`,
+          "success",
+          "🎯 Plan Seleccionado"
+        );
+      } else {
+        alert(
+          `Has seleccionado el plan ${planName}. ¡Gracias por unirte a NewLifePro Club!`
+        );
+      }
 
       // Redirect to registration or checkout page
       // window.location.href = '/registro?plan=' + encodeURIComponent(planName);
@@ -301,9 +310,18 @@ document.addEventListener("DOMContentLoaded", function () {
   if (editorialButton) {
     editorialButton.addEventListener("click", function () {
       // This would typically link to a blog or articles page
-      alert(
-        "Esta funcionalidad te llevaría a la página completa de artículos."
-      );
+      // Usar popup personalizado para funcionalidad editorial
+      if (typeof CustomPopups !== "undefined") {
+        CustomPopups.showAlert(
+          "Esta funcionalidad te llevaría a la página completa de artículos motivacionales.",
+          "info",
+          "📚 Editoriales"
+        );
+      } else {
+        alert(
+          "Esta funcionalidad te llevaría a la página completa de artículos."
+        );
+      }
       // window.location.href = '/articulos';
     });
   }
