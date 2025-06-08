@@ -97,18 +97,108 @@ function calculateCartTotals() {
   );
 }
 
-// Remover producto del carrito
+// ======================================
+// 🗑️ NUEVAS FUNCIONES PARA GESTIÓN DEL CARRITO
+// ======================================
+
+// Remover producto específico del carrito
 function removeFromCart(productId, size) {
-  cart.items = cart.items.filter(
-    (item) => !(item.id === productId && item.size === size)
+  console.log("🗑️ Eliminando producto:", productId, size);
+
+  const itemIndex = cart.items.findIndex(
+    (item) =>
+      item.id === productId || (item.name === productId && item.size === size)
   );
-  calculateCartTotals();
-  saveCart();
+
+  if (itemIndex !== -1) {
+    const removedItem = cart.items[itemIndex];
+    cart.items.splice(itemIndex, 1);
+    calculateCartTotals();
+    saveCart();
+
+    showNotification(`✅ ${removedItem.name} eliminado del carrito`, "success");
+
+    // Refrescar la página del checkout si estamos ahí
+    if (window.location.pathname.includes("checkout.html")) {
+      loadCartInCheckout();
+    }
+  }
+}
+
+// Eliminar una unidad de un producto (disminuir cantidad)
+function decreaseItemQuantity(productId, size) {
+  console.log("➖ Disminuyendo cantidad:", productId, size);
+
+  const itemIndex = cart.items.findIndex(
+    (item) =>
+      item.id === productId || (item.name === productId && item.size === size)
+  );
+
+  if (itemIndex !== -1) {
+    if (cart.items[itemIndex].quantity > 1) {
+      cart.items[itemIndex].quantity -= 1;
+      calculateCartTotals();
+      saveCart();
+
+      showNotification(`➖ Cantidad actualizada`, "info");
+
+      // Refrescar la página del checkout si estamos ahí
+      if (window.location.pathname.includes("checkout.html")) {
+        loadCartInCheckout();
+      }
+    } else {
+      // Si solo queda 1, eliminar completamente
+      removeFromCart(productId, size);
+    }
+  }
+}
+
+// Aumentar cantidad de un producto
+function increaseItemQuantity(productId, size) {
+  console.log("➕ Aumentando cantidad:", productId, size);
+
+  const itemIndex = cart.items.findIndex(
+    (item) =>
+      item.id === productId || (item.name === productId && item.size === size)
+  );
+
+  if (itemIndex !== -1) {
+    cart.items[itemIndex].quantity += 1;
+    calculateCartTotals();
+    saveCart();
+
+    showNotification(`➕ Cantidad aumentada`, "info");
+
+    // Refrescar la página del checkout si estamos ahí
+    if (window.location.pathname.includes("checkout.html")) {
+      loadCartInCheckout();
+    }
+  }
 }
 
 // Vaciar carrito completamente
 function clearCart() {
-  resetCart();
+  console.log("🧹 Vaciando carrito completo");
+
+  if (cart.items.length === 0) {
+    showNotification("El carrito ya está vacío", "info");
+    return;
+  }
+
+  // Confirmar antes de vaciar
+  const confirmClear = confirm(
+    "¿Estás seguro que quieres vaciar todo el carrito?"
+  );
+
+  if (confirmClear) {
+    resetCart();
+    showNotification("🧹 ¡Carrito vaciado completamente!", "success");
+
+    // Refrescar la página del checkout si estamos ahí
+    if (window.location.pathname.includes("checkout.html")) {
+      loadCartInCheckout();
+    }
+  }
 }
 
 // Función para mostrar notificación de producto agregado
@@ -192,6 +282,90 @@ function showEmptyCartMessage() {
       }
     }, 300);
   }, 3000);
+}
+
+// ======================================
+// 🔄 FUNCIÓN PARA CARGAR CARRITO EN CHECKOUT
+// ======================================
+
+// Función para cargar y mostrar el carrito en checkout.html
+function loadCartInCheckout() {
+  const cartItemsContainer = document.getElementById("cart-items");
+  const cartSummaryContainer = document.getElementById("cart-summary");
+
+  if (!cartItemsContainer) return; // No estamos en checkout.html
+
+  // Limpiar contenedor
+  cartItemsContainer.innerHTML = "";
+
+  if (cart.items.length === 0) {
+    cartItemsContainer.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: #666;">
+        <p>🛒 Tu carrito está vacío</p>
+        <a href="tienda.html" style="color: #ff69b4; text-decoration: none;">← Ir a la tienda</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Mostrar productos
+  cart.items.forEach((item) => {
+    const itemElement = document.createElement("div");
+    itemElement.className = "cart-item";
+    itemElement.innerHTML = `
+      <div class="cart-item-info">
+        <img src="${item.image || "https://via.placeholder.com/80x80"}" alt="${
+      item.name
+    }" class="cart-item-image">
+        <div class="cart-item-details">
+          <h4>${item.name}</h4>
+          <p>Talla: ${item.size}</p>
+          <p>L.${item.price.toFixed(2)}</p>
+        </div>
+      </div>
+      <div class="cart-item-controls">
+        <div class="quantity-controls">
+          <button onclick="decreaseItemQuantity('${item.id}', '${
+      item.size
+    }')" class="qty-btn">-</button>
+          <span class="quantity">${item.quantity}</span>
+          <button onclick="increaseItemQuantity('${item.id}', '${
+      item.size
+    }')" class="qty-btn">+</button>
+        </div>
+        <button onclick="removeFromCart('${item.id}', '${
+      item.size
+    }')" class="remove-btn">🗑️</button>
+      </div>
+    `;
+    cartItemsContainer.appendChild(itemElement);
+  });
+
+  // Botón para vaciar carrito
+  const clearButton = document.createElement("div");
+  clearButton.innerHTML = `
+    <button onclick="clearCart()" class="clear-cart-btn">🧹 Vaciar Carrito</button>
+  `;
+  cartItemsContainer.appendChild(clearButton);
+
+  // Actualizar resumen
+  updateCartSummary();
+}
+
+// Actualizar resumen del carrito
+function updateCartSummary() {
+  const subtotalElement = document.querySelector(".subtotal-amount");
+  const totalElement = document.querySelector(".total-amount");
+  const payButton = document.querySelector(".btn-primary");
+
+  if (subtotalElement)
+    subtotalElement.textContent = `L.${cart.total.toFixed(2)}`;
+  if (totalElement)
+    totalElement.textContent = `L.${(cart.total * 1.15).toFixed(2)}`; // +15% impuestos
+  if (payButton)
+    payButton.textContent = `Completar Pago - L.${(cart.total * 1.15).toFixed(
+      2
+    )}`;
 }
 
 // ======================================
@@ -345,6 +519,18 @@ window.clearCartForTesting = function () {
   clearCart();
   console.log("🧹 Carrito limpiado para testing");
 };
+
+// ======================================
+// 🌎 FUNCIONES GLOBALES PARA CHECKOUT
+// ======================================
+
+// Exponer funciones para uso global
+window.removeFromCart = removeFromCart;
+window.increaseItemQuantity = increaseItemQuantity;
+window.decreaseItemQuantity = decreaseItemQuantity;
+window.clearCart = clearCart;
+window.loadCartInCheckout = loadCartInCheckout;
+window.updateCartSummary = updateCartSummary;
 
 console.log("🛒 Cart Handler - Versión Checkout cargado exitosamente");
 

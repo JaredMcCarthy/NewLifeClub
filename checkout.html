@@ -722,6 +722,207 @@
           text-align: center;
         }
       }
+
+      /* Quantity Controls */
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 4px;
+      }
+
+      .qty-btn {
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 50%;
+        background: #ff69b4;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .qty-btn:hover:not(:disabled) {
+        background: #ff1493;
+        transform: scale(1.1);
+      }
+
+      .qty-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .quantity {
+        min-width: 30px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+      }
+
+      /* Cart Item Styles */
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .cart-item:last-child {
+        border-bottom: none;
+      }
+
+      .cart-item-info {
+        display: flex;
+        gap: 15px;
+        flex: 1;
+      }
+
+      .cart-item-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+
+      .cart-item-details h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .cart-item-details p {
+        margin: 2px 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .cart-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .remove-btn {
+        background: #ff4444;
+        color: white;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .remove-btn:hover {
+        background: #cc0000;
+        transform: scale(1.1);
+      }
+
+      .clear-cart-btn {
+        background: linear-gradient(135deg, #ff4444, #cc0000);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 20px;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .clear-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+      }
+
+      /* Bank Deposit Styles */
+      .bank-deposit-info {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 20px 0;
+      }
+
+      .bank-deposit-info h3 {
+        color: #495057;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .bank-accounts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .bank-account {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.2s ease;
+      }
+
+      .bank-account:hover {
+        border-color: #ff69b4;
+        box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+      }
+
+      .bank-account h4 {
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .bank-account p {
+        margin: 4px 0;
+        font-size: 14px;
+        color: #6c757d;
+      }
+
+      .bank-account strong {
+        color: #495057;
+      }
+
+      .deposit-instructions {
+        background: rgba(255, 105, 180, 0.1);
+        border: 1px solid rgba(255, 105, 180, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+      }
+
+      .deposit-instructions h4 {
+        color: #ff1493;
+        margin-bottom: 10px;
+      }
+
+      .deposit-instructions ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .deposit-instructions li {
+        margin: 5px 0;
+        color: #495057;
+      }
     </style>
   </head>
   <body>
@@ -906,24 +1107,27 @@
           <div class="payment-methods">
             <div
               class="payment-option selected"
-              onclick="selectPayment(this, 'credit')"
+              onclick="selectPayment(this, 'card')"
             >
               <div class="payment-left">
                 <div class="payment-icon">💳</div>
                 <div class="payment-info">
-                  <h4>Tarjeta de Crédito</h4>
+                  <h4>Tarjeta de Crédito/Débito</h4>
                   <p>Visa, MasterCard, American Express</p>
                 </div>
               </div>
               <div class="radio-custom"></div>
             </div>
 
-            <div class="payment-option" onclick="selectPayment(this, 'debit')">
+            <div
+              class="payment-option"
+              onclick="selectPayment(this, 'bank-deposit')"
+            >
               <div class="payment-left">
-                <div class="payment-icon">💰</div>
+                <div class="payment-icon">🏦</div>
                 <div class="payment-info">
-                  <h4>Tarjeta de Débito</h4>
-                  <p>Débito directo desde tu cuenta bancaria</p>
+                  <h4>Depósito a Cuenta Bancaria</h4>
+                  <p>Deposita directamente a nuestras cuentas</p>
                 </div>
               </div>
               <div class="radio-custom"></div>
@@ -973,6 +1177,55 @@
                   maxlength="4"
                   required
                 />
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles de depósito bancario (oculto por defecto) -->
+          <div id="bank-deposit-details" style="display: none">
+            <div class="bank-deposit-info">
+              <h3>📋 Información para Depósito</h3>
+              <p>
+                Realiza tu depósito a cualquiera de nuestras cuentas bancarias:
+              </p>
+
+              <div class="bank-accounts">
+                <div class="bank-account">
+                  <h4>🏦 BAC Honduras</h4>
+                  <p><strong>Número de cuenta:</strong> 123445-BAC-001</p>
+                  <p><strong>Tipo:</strong> Cuenta Corriente</p>
+                </div>
+
+                <div class="bank-account">
+                  <h4>🏦 Banco Fichosa</h4>
+                  <p><strong>Número de cuenta:</strong> 123445-FCH-002</p>
+                  <p><strong>Tipo:</strong> Cuenta de Ahorros</p>
+                </div>
+
+                <div class="bank-account">
+                  <h4>🏦 Banco Atlántida</h4>
+                  <p><strong>Número de cuenta:</strong> 123445-ATL-003</p>
+                  <p><strong>Tipo:</strong> Cuenta Corriente</p>
+                </div>
+
+                <div class="bank-account">
+                  <h4>🏦 Banpais</h4>
+                  <p><strong>Número de cuenta:</strong> 123445-BNP-004</p>
+                  <p><strong>Tipo:</strong> Cuenta de Ahorros</p>
+                </div>
+              </div>
+
+              <div class="deposit-instructions">
+                <h4>📝 Instrucciones:</h4>
+                <ol>
+                  <li>Realiza el depósito por el monto total mostrado</li>
+                  <li>Conserva el comprobante de depósito</li>
+                  <li>
+                    Envía foto del comprobante a:
+                    <strong>info@newliferun.com</strong>
+                  </li>
+                  <li>Tu pedido será procesado en 24-48 horas</li>
+                </ol>
               </div>
             </div>
           </div>
@@ -1077,7 +1330,10 @@
       <div class="order-summary">
         <h3 class="summary-title">Resumen del Pedido</h3>
 
-        <!-- Los productos se cargarán dinámicamente aquí -->
+        <!-- Productos del carrito -->
+        <div id="cart-items">
+          <!-- Los productos se cargarán dinámicamente aquí -->
+        </div>
 
         <div class="promo-code">
           <div class="promo-input">
@@ -1086,12 +1342,29 @@
               placeholder="Código de descuento"
               id="promo-input"
             />
-            <button class="promo-btn" id="promo-btn">Aplicar</button>
+            <button class="promo-btn" onclick="applyPromoCode()">
+              Aplicar
+            </button>
           </div>
         </div>
 
-        <div class="summary-totals">
-          <!-- Los totales se calcularán dinámicamente aquí -->
+        <div class="summary-totals" id="cart-summary">
+          <div class="total-row">
+            <span>Subtotal:</span>
+            <span class="subtotal-amount">L.0.00</span>
+          </div>
+          <div class="total-row">
+            <span>Envío:</span>
+            <span class="shipping-amount">GRATIS</span>
+          </div>
+          <div class="total-row">
+            <span>Impuestos (15%):</span>
+            <span class="tax-amount">L.0.00</span>
+          </div>
+          <div class="total-row total-final">
+            <span>Total:</span>
+            <span class="total-amount">L.0.00</span>
+          </div>
         </div>
 
         <div class="security-features">
@@ -1117,9 +1390,12 @@
     <!-- Agregar script de checkout dinámico -->
     <script src="js/checkout-handler.js"></script>
 
+    <!-- Scripts necesarios -->
+    <script src="js/cart-handler.js"></script>
+
     <script>
       let currentStep = 1;
-      let selectedPaymentMethod = "credit";
+      let selectedPaymentMethod = "card";
 
       function nextStep(step) {
         // Validar paso actual antes de continuar
@@ -1237,6 +1513,18 @@
         // Seleccionar nueva opción
         option.classList.add("selected");
         selectedPaymentMethod = method;
+
+        // Mostrar/ocultar detalles según el método
+        const cardDetails = document.getElementById("card-details");
+        const bankDetails = document.getElementById("bank-deposit-details");
+
+        if (method === "card") {
+          cardDetails.style.display = "block";
+          bankDetails.style.display = "none";
+        } else if (method === "bank-deposit") {
+          cardDetails.style.display = "none";
+          bankDetails.style.display = "block";
+        }
       }
 
       function processPayment() {
@@ -1247,11 +1535,17 @@
         const btn = event.target;
         const originalText = btn.textContent;
 
-        // Mostrar estado de carga
+        // Si es depósito bancario, mostrar mensaje especial
+        if (selectedPaymentMethod === "bank-deposit") {
+          handleBankDepositPayment();
+          return;
+        }
+
+        // Mostrar estado de carga para tarjeta
         btn.classList.add("btn-loading");
         btn.disabled = true;
 
-        // Simular procesamiento de pago
+        // Simular procesamiento de pago con tarjeta
         setTimeout(() => {
           // Generar token único
           const token = generateOrderToken();
@@ -1267,7 +1561,81 @@
           btn.classList.remove("btn-loading");
           btn.disabled = false;
           btn.textContent = originalText;
+
+          // Limpiar carrito después del pago exitoso
+          clearCartAfterPurchase();
         }, 3000);
+      }
+
+      function handleBankDepositPayment() {
+        // Generar token único para depósito bancario
+        const token = generateOrderToken();
+
+        // Mostrar mensaje de confirmación para depósito
+        const message = `
+          ¡Gracias por agendar tu pedido!
+          
+          Por favor deposita a cualquiera de nuestras cuentas bancarias:
+          
+          🏦 BAC Honduras: 123445-BAC-001
+          🏦 Banco Fichosa: 123445-FCH-002  
+          🏦 Banco Atlántida: 123445-ATL-003
+          🏦 Banpais: 123445-BNP-004
+          
+          Token de pedido: ${token}
+          
+          Envía el comprobante a: info@newliferun.com
+        `;
+
+        alert(message);
+
+        // Actualizar token en la página
+        document.getElementById("purchase-token").textContent = token;
+
+        // Ir al paso de confirmación
+        nextStep(4);
+
+        // Limpiar carrito después del pedido
+        clearCartAfterPurchase();
+      }
+
+      function clearCartAfterPurchase() {
+        // Limpiar carrito del localStorage
+        localStorage.removeItem("newlife_cart");
+        console.log("🛒 Carrito limpiado después de la compra");
+      }
+
+      function applyPromoCode() {
+        const promoInput = document.getElementById("promo-input");
+        const promoCode = promoInput.value.trim().toUpperCase();
+
+        if (!promoCode) {
+          showNotification("Por favor ingresa un código válido", "error");
+          return;
+        }
+
+        // Códigos de descuento válidos
+        const validCodes = {
+          NEWLIFE10: 0.1,
+          FIRST20: 0.2,
+          RUNNER15: 0.15,
+        };
+
+        if (validCodes[promoCode]) {
+          const discount = validCodes[promoCode];
+          showNotification(
+            `✅ Código aplicado! ${discount * 100}% de descuento`,
+            "success"
+          );
+
+          // Aquí puedes agregar lógica para aplicar el descuento
+          // updateCartSummary() con el descuento aplicado
+
+          promoInput.disabled = true;
+          promoInput.value = `${promoCode} - APLICADO`;
+        } else {
+          showNotification("Código de descuento no válido", "error");
+        }
       }
 
       function generateOrderToken() {
@@ -1403,6 +1771,25 @@
       // Inicializar
       document.addEventListener("DOMContentLoaded", function () {
         console.log("NewLifeRun Club Checkout - Inicializado");
+
+        // Cargar carrito al iniciar
+        setTimeout(() => {
+          if (typeof loadCartInCheckout === "function") {
+            loadCartInCheckout();
+          }
+
+          // Verificar si hay productos en el carrito
+          const cartInfo = getCartInfo();
+          if (cartInfo.count === 0) {
+            showNotification(
+              "Tu carrito está vacío. Redirigiendo a la tienda...",
+              "info"
+            );
+            setTimeout(() => {
+              window.location.href = "tienda.html";
+            }, 3000);
+          }
+        }, 200);
       });
     </script>
   </body>
