@@ -154,10 +154,33 @@ body.logged-in #mobile-account-btn {
   display: none !important;
 }
 
-/* Botón móvil de cuenta (oculto en escritorio) */
-#mobile-account-btn,
-.mobile-only {
+/* NUEVO: Botón "Cuenta" para móvil - OCULTO por defecto */
+.mobile-account-btn {
   display: none !important;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 2px solid #ff0080;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 0;
+  text-decoration: none;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mobile-account-btn:hover {
+  background: rgba(255, 0, 128, 0.1);
+  transform: translateY(-2px);
+  color: #ff69b4;
 }
 
 /* Menú hamburguesa (oculto en escritorio) */
@@ -198,6 +221,16 @@ body.logged-in #mobile-account-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* DESKTOP: Asegurar que el botón cuenta esté OCULTO */
+  .mobile-account-btn {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
   }
 }
 
@@ -250,7 +283,7 @@ body.logged-in #mobile-account-btn {
 }
 
 /* 📱 MÓVILES: Reorganización completa - LIMPIO Y FUNCIONAL */
-@media (max-width: 992px) {
+@media (max-width: 768px) {
   .nav-container {
     display: flex;
     justify-content: space-between;
@@ -336,24 +369,33 @@ body.logged-in #mobile-account-btn {
     gap: 10px;
   }
 
-  .user-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* Ocultar botones innecesarios */
-  #logout-btn,
-  #search-btn,
+  /* MÓVIL: Ocultar botones de login/register siempre */
   #login-btn,
   #register-btn,
   .login-button {
     display: none !important;
   }
 
-  /* Estilo unificado para botones de carrito y perfil */
+  /* MÓVIL: Lógica de botones según estado de sesión */
+
+  /* Estado NO logueado: Mostrar solo botón "Cuenta" */
+  .mobile-account-btn {
+    display: flex !important;
+  }
+
+  /* Ocultar carrito y perfil cuando NO esté logueado */
   .cart-button,
   #profile-btn {
+    display: none !important;
+  }
+
+  /* Estado LOGUEADO: Mostrar carrito y perfil, ocultar "Cuenta" */
+  body.logged-in .mobile-account-btn {
+    display: none !important;
+  }
+
+  body.logged-in .cart-button,
+  body.logged-in #profile-btn {
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -373,21 +415,27 @@ body.logged-in #mobile-account-btn {
     line-height: 1;
   }
 
-  /* Hover effect */
-  .cart-button:hover,
-  #profile-btn:hover {
+  /* Hover effect para botones logueados */
+  body.logged-in .cart-button:hover,
+  body.logged-in #profile-btn:hover {
     background: rgba(255, 0, 128, 0.1);
     transform: translateY(-2px);
   }
 
   /* Asegurar que los iconos estén centrados */
-  .cart-button span,
-  #profile-btn span {
+  body.logged-in .cart-button span,
+  body.logged-in #profile-btn span {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
+  }
+
+  /* Ocultar otros elementos innecesarios en móvil */
+  #logout-btn,
+  #search-btn {
+    display: none !important;
   }
 }
 
@@ -416,8 +464,16 @@ body.logged-in #mobile-account-btn {
     gap: 10px;
   }
 
-  .cart-button,
-  #profile-btn {
+  .mobile-account-btn {
+    width: 35px !important;
+    height: 35px !important;
+    min-width: 35px !important;
+    min-height: 35px !important;
+    font-size: 0.7rem !important;
+  }
+
+  body.logged-in .cart-button,
+  body.logged-in #profile-btn {
     width: 35px !important;
     height: 35px !important;
     min-width: 35px !important;
@@ -480,84 +536,5 @@ body {
   .user-button {
     font-size: 0.9rem;
     padding: 8px 16px;
-  }
-}
-
-/* Estilos específicos para móvil */
-@media screen and (max-width: 768px) {
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .user-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .login-button {
-    display: none; /* Ocultar botones de login/register en móvil */
-  }
-
-  #profile-btn,
-  .cart-button {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    padding: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  #search-btn {
-    display: none; /* Ocultar búsqueda en móvil */
-  }
-
-  .menu-toggle {
-    display: flex;
-    margin-left: 15px;
-  }
-
-  .nav-center {
-    position: fixed;
-    top: 80px;
-    left: -100%;
-    width: 80%;
-    height: calc(100vh - 80px);
-    background: rgba(0, 0, 0, 0.95);
-    flex-direction: column;
-    padding: 20px;
-    transition: left 0.3s ease;
-  }
-
-  .nav-center.open {
-    left: 0;
-  }
-}
-
-/* Botón móvil de cuenta (oculto en escritorio) */
-.mobile-only-button {
-  display: none !important;
-}
-
-/* Menú hamburguesa (oculto en escritorio) */
-.menu-toggle {
-  display: none;
-}
-
-/* --- REGLA ULTRA FUERTE: OCULTAR BOTÓN CUENTA EN ESCRITORIO --- */
-@media screen and (min-width: 769px) {
-  #mobile-account-btn {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    position: absolute !important;
-    left: -9999px !important;
   }
 }

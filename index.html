@@ -58,6 +58,15 @@
             >Iniciar Sesión</a
           >
 
+          <!-- Botón "Cuenta" para móvil (solo visible cuando NO está logueado) -->
+          <a
+            href="sesion.html"
+            class="mobile-account-btn"
+            id="mobile-account-btn"
+          >
+            Cuenta
+          </a>
+
           <!-- Botones para usuarios logueados -->
           <div class="user-actions">
             <button class="user-button" id="search-btn">🔍</button>
@@ -313,6 +322,11 @@
         overflow: hidden;
         width: 100%;
         position: relative;
+        /* PROTECCIÓN CONTRA MOBILE-NAV.CSS */
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        max-width: 100% !important;
       }
 
       .ticker-content {
@@ -322,11 +336,21 @@
         display: flex;
         font-size: 1rem;
         will-change: transform;
+        /* PROTECCIÓN CONTRA MOBILE-NAV.CSS */
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        transform: none; /* Reset any conflicting transforms */
       }
 
       .ticker-text {
         padding-right: 50px;
         flex-shrink: 0;
+        /* PROTECCIÓN CONTRA MOBILE-NAV.CSS */
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        line-height: normal !important;
       }
 
       /* Animación continua - de 0% a -50% para loop perfecto */
@@ -339,26 +363,41 @@
         }
       }
 
-      /* Media queries para móviles */
+      /* Media queries para móviles - MEJORADAS */
       @media (max-width: 768px) {
         .ticker-wrapper {
-          padding: 0.6rem 0;
+          padding: 0.6rem 0 !important;
+          /* Asegurar altura mínima */
+          min-height: 40px !important;
+          /* Asegurar que no sea afectado por padding-top del body */
+          position: relative !important;
+          z-index: 10 !important;
         }
         .ticker-content {
           font-size: 0.8rem !important;
           font-weight: 500 !important;
-          animation: ticker-scroll 25s linear infinite;
+          animation: ticker-scroll 25s linear infinite !important;
+          /* Asegurar altura y centrado */
+          line-height: 1.2 !important;
+          align-items: center !important;
+        }
+        .ticker-text {
+          /* Asegurar que el texto se vea completo */
+          display: inline-block !important;
+          vertical-align: middle !important;
         }
       }
 
       @media (max-width: 480px) {
         .ticker-wrapper {
-          padding: 0.5rem 0;
+          padding: 0.5rem 0 !important;
+          min-height: 35px !important;
         }
         .ticker-content {
           font-size: 0.7rem !important;
           font-weight: 500 !important;
-          animation: ticker-scroll 30s linear infinite;
+          animation: ticker-scroll 30s linear infinite !important;
+          line-height: 1.1 !important;
         }
       }
     </style>
@@ -880,7 +919,7 @@
     <section class="benefits-wrapper" id="benefitsSection">
       <section class="benefits-section">
         <div class="benefits-header">
-          <h2>Descubre los Beneficios Exclusivos de NewLifeRun Club</h2>
+          <h2>Descubre los Beneficios Exclusivos</h2>
           <p>
             Al unirte a nuestra comunidad, no solo correrás, ¡disfrutarás de un
             mundo de ventajas!
@@ -1101,18 +1140,18 @@
           <h3>Desarrollo Comunitario</h3>
           <p>
             Organizamos eventos benéficos y carreras solidarias que han
-            recaudado más de $50,000 para proyectos locales. Nuestras
-            iniciativas han beneficiado a escuelas, centros deportivos y
-            programas juveniles en comunidades desatendidas.
+            recaudado fondos para los mas necesitados. Nuestras iniciativas han
+            beneficiado a escuelas, centros deportivos y programas juveniles en
+            comunidades desatendidas.
           </p>
         </div>
         <div class="impact-card fade-in">
-          <h3>Medio Ambiente</h3>
+          <h3>Apoyo a la comunidad</h3>
           <p>
-            Nuestro compromiso con la sostenibilidad incluye carreras "plogging"
-            mensuales donde recogemos residuos en rutas naturales, programas de
-            reciclaje de zapatillas usadas y campañas de concientización sobre
-            la huella ambiental.
+            Nuestro compromiso con la sostenibilidad incluye carreras "rutas"
+            semanales donde conocemos muchas personas, programas de
+            entrenamiento para ayudar la salud y campañas de concientización
+            sobre la huella ambiental.
           </p>
         </div>
         <div class="impact-card fade-in">
