@@ -305,7 +305,7 @@
 
     <!-- 2. LÍNEA TICKER - DE NUEVOINICIO.HTML -->
     <style>
-      /* CSS para el ticker - ARREGLADO */
+      /* CSS para el ticker - LOOP CONTINUO */
       .ticker-wrapper {
         background: #ff69b4;
         color: white;
@@ -319,18 +319,23 @@
         animation: ticker-scroll 20s linear infinite;
         white-space: nowrap;
         font-weight: 600;
-        display: inline-block;
+        display: flex;
         font-size: 1rem;
         will-change: transform;
       }
 
-      /* Animación del ticker - nombre único */
+      .ticker-text {
+        padding-right: 50px;
+        flex-shrink: 0;
+      }
+
+      /* Animación continua - de 0% a -50% para loop perfecto */
       @keyframes ticker-scroll {
         0% {
-          transform: translateX(100%);
+          transform: translateX(0%);
         }
         100% {
-          transform: translateX(-100%);
+          transform: translateX(-50%);
         }
       }
 
@@ -360,11 +365,20 @@
 
     <div class="ticker-wrapper">
       <div class="ticker-content">
-        📱 Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
-        Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
-        entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y recomendaciones
-        💡 Editoriales 📚 Eventos exclusivos 🎉 Comunidad activa 👥 Ropa
-        deportiva premium 👕 Entrenamientos personalizados 💪
+        <div class="ticker-text">
+          📱 Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
+          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
+          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
+          recomendaciones 💡 Editoriales 📚 Eventos exclusivos 🎉 Comunidad
+          activa 👥 Ropa deportiva premium 👕 Entrenamientos personalizados 💪
+        </div>
+        <div class="ticker-text">
+          📱 Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
+          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
+          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
+          recomendaciones 💡 Editoriales 📚 Eventos exclusivos 🎉 Comunidad
+          activa 👥 Ropa deportiva premium 👕 Entrenamientos personalizados 💪
+        </div>
       </div>
     </div>
 
