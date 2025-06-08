@@ -179,25 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Proteger botón del carrito SOLO en móvil
-  if (cartBtn) {
-    cartBtn.addEventListener("click", function (e) {
-      if (isMobile()) {
-        e.preventDefault();
-        requireLogin(() => {
-          // Abrir carrito normalmente
-          const cartPanel = document.getElementById("cartPanel");
-          const cartOverlay = document.getElementById("cartOverlay");
-          if (cartPanel && cartOverlay) {
-            cartPanel.classList.add("active");
-            cartOverlay.style.display = "block";
-            document.body.style.overflow = "hidden";
-          }
-        });
-      }
-      // En desktop, funciona normal sin restricción
-    });
-  }
+  // NOTA: La protección del carrito se eliminó - ahora se maneja en cart-handler.js
+  // El botón del carrito ahora redirige directamente a checkout.html
 
   // Proteger botón del perfil SOLO en móvil
   if (profileBtn) {
