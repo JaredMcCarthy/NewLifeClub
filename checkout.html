@@ -1689,7 +1689,22 @@
       function clearCartAfterPurchase() {
         // Limpiar carrito del localStorage
         localStorage.removeItem("newlife_cart");
-        console.log("🛒 Carrito limpiado después de la compra");
+
+        // También limpiar el contador del carrito en la interfaz
+        if (typeof updateCartDisplay === "function") {
+          updateCartDisplay();
+        }
+
+        // Actualizar contador visualmente si existe
+        const cartCounters = document.querySelectorAll(
+          ".cart-count, #cart-count"
+        );
+        cartCounters.forEach((counter) => {
+          counter.textContent = "0";
+          counter.style.display = "none";
+        });
+
+        console.log("🛒 Carrito limpiado completamente después de la compra");
       }
 
       function applyPromoCode() {
@@ -1756,9 +1771,17 @@
       }
 
       function goHome() {
-        showNotification("¡Gracias por tu compra! Redirigiendo...", "success");
+        showNotification(
+          "¡Gracias por tu compra! Redirigiendo al inicio...",
+          "success"
+        );
+
+        // Asegurar limpieza final del carrito
+        clearCartAfterPurchase();
+
         setTimeout(() => {
-          window.location.href = "/";
+          // Redireccionar específicamente a index.html
+          window.location.href = "index.html";
         }, 2000);
       }
 
