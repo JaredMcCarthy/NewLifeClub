@@ -200,6 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const comprasBtn = document.querySelector('[data-target="my-purchases"]');
   if (comprasBtn) {
     console.log("✅ Botón 'Mis Compras' configurado");
+
+    // Cargar compras cuando se hace clic en el botón
+    comprasBtn.addEventListener("click", () => {
+      console.log("🛍️ Cargando historial de compras...");
+      loadPurchaseHistory();
+    });
   }
 
   // ========== BOTÓN CERRAR SESIÓN - MEJORADO ==========
@@ -272,4 +278,315 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   console.log("🎯 Perfil de usuario completamente configurado");
+
+  // 🛍️ CARGAR HISTORIAL AUTOMÁTICAMENTE AL INICIO
+  setTimeout(() => {
+    const comprasSection = document.getElementById("my-purchases");
+    if (comprasSection) {
+      loadPurchaseHistory();
+      console.log("🛍️ Historial de compras cargado automáticamente");
+    }
+  }, 500);
 });
+
+// 🛍️ NUEVA FUNCIÓN: Cargar historial de compras
+function loadPurchaseHistory() {
+  const purchasesSection = document.getElementById("my-purchases");
+  if (!purchasesSection) return;
+
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) {
+    purchasesSection.innerHTML = `
+      <h3>Mis Compras</h3>
+      <p class="no-purchases">Debes iniciar sesión para ver tu historial de compras.</p>
+    `;
+    return;
+  }
+
+  // Obtener historial del usuario
+  const historyKey = `purchaseHistory_${userEmail}`;
+  const userHistory = JSON.parse(localStorage.getItem(historyKey)) || [];
+
+  if (userHistory.length === 0) {
+    purchasesSection.innerHTML = `
+      <h3>Mis Compras</h3>
+      <div style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;">🛒</div>
+        <p style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">Aún no tienes compras registradas</p>
+        <p style="color: #999; font-size: 0.9rem;">Tus futuras compras aparecerán aquí</p>
+        <a href="tienda.html" style="
+          display: inline-block;
+          background: linear-gradient(45deg, #ff69b4, #ff0080);
+          color: white;
+          padding: 12px 24px;
+          border-radius: 25px;
+          text-decoration: none;
+          font-weight: 600;
+          margin-top: 20px;
+          transition: transform 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          🛍️ Ir a la Tienda
+        </a>
+      </div>
+    `;
+    return;
+  }
+
+  // Generar HTML del historial
+  let purchasesHTML = `
+    <h3>Mis Compras</h3>
+    <p style="color: #666; margin-bottom: 25px;">
+      Historial completo de tus compras en NewLifeRun Club (${
+        userHistory.length
+      } compra${userHistory.length > 1 ? "s" : ""})
+    </p>
+  `;
+
+  userHistory.forEach((purchase, index) => {
+    const statusColor =
+      purchase.estado === "Procesado"
+        ? "#4CAF50"
+        : purchase.estado === "Pendiente de Confirmación"
+        ? "#ff9800"
+        : "#666";
+
+    const statusIcon =
+      purchase.estado === "Procesado"
+        ? "✅"
+        : purchase.estado === "Pendiente de Confirmación"
+        ? "⏳"
+        : "📦";
+
+    purchasesHTML += `
+      <div class="purchase-card" style="
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
+        
+        <!-- Header de la compra -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+          <div>
+            <h4 style="
+              color: #333;
+              margin: 0 0 5px 0;
+              font-size: 1.1rem;
+              font-weight: 700;
+            ">Pedido #${purchase.id}</h4>
+            <p style="
+              color: #666;
+              margin: 0;
+              font-size: 0.9rem;
+            ">${purchase.fecha} • ${purchase.hora}</p>
+          </div>
+          <div style="text-align: right;">
+            <span style="
+              background: ${statusColor};
+              color: white;
+              padding: 6px 12px;
+              border-radius: 20px;
+              font-size: 0.8rem;
+              font-weight: 600;
+              display: inline-flex;
+              align-items: center;
+              gap: 5px;
+            ">
+              ${statusIcon} ${purchase.estado}
+            </span>
+          </div>
+        </div>
+
+        <!-- Productos -->
+        <div style="margin-bottom: 15px;">
+          <h5 style="color: #333; margin-bottom: 10px; font-size: 0.95rem; font-weight: 600;">Productos (${purchase.productos.length}):</h5>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+    `;
+
+    purchase.productos.forEach((producto) => {
+      purchasesHTML += `
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 8px;
+          background: rgba(255, 105, 180, 0.05);
+          border-radius: 8px;
+          border-left: 3px solid #ff69b4;
+        ">
+          <img src="${producto.imagen}" alt="${producto.nombre}" style="
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #e9ecef;
+          ">
+          <div style="flex: 1;">
+            <p style="
+              margin: 0;
+              font-weight: 600;
+              color: #333;
+              font-size: 0.9rem;
+              line-height: 1.3;
+            ">${producto.nombre}</p>
+            <p style="
+              margin: 0;
+              color: #666;
+              font-size: 0.8rem;
+            ">${producto.categoria} • Cant: ${producto.cantidad}</p>
+          </div>
+          <div style="
+            font-weight: 700;
+            color: #ff69b4;
+            font-size: 0.9rem;
+          ">L.${producto.precio}</div>
+        </div>
+      `;
+    });
+
+    purchasesHTML += `
+          </div>
+        </div>
+
+        <!-- Footer de la compra -->
+        <div style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 15px;
+          border-top: 1px solid #e9ecef;
+        ">
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.9rem;
+          ">
+            💳 ${purchase.metodoPago}
+          </div>
+          <div style="
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #333;
+          ">
+            Total: <span style="color: #ff69b4;">L.${purchase.total}</span>
+          </div>
+        </div>
+
+        <!-- Decoración -->
+        <div style="
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(45deg, #ff69b4, #ff0080);
+          border-radius: 50%;
+          opacity: 0.1;
+        "></div>
+      </div>
+    `;
+  });
+
+  purchasesSection.innerHTML = purchasesHTML;
+}
+
+// 🧪 FUNCIÓN DE TESTING: Generar compras de prueba
+window.generateTestPurchases = function () {
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) {
+    alert("Debes estar loggeado para generar compras de prueba");
+    return;
+  }
+
+  const testPurchases = [
+    {
+      id: "NRC-250123-TEST1",
+      fecha: "23/01/2025",
+      hora: "14:30",
+      productos: [
+        {
+          nombre: "Membresía Elite NewLife",
+          precio: "500.00",
+          cantidad: 1,
+          categoria: "Membresías",
+          imagen: "https://via.placeholder.com/60x60/ff69b4/FFFFFF?text=ME",
+        },
+        {
+          nombre: "Camiseta Running Pro",
+          precio: "350.00",
+          cantidad: 2,
+          categoria: "Ropa Deportiva",
+          imagen: "https://via.placeholder.com/60x60/1a1a1a/FFFFFF?text=RP",
+        },
+      ],
+      total: "1200.00",
+      metodoPago: "Tarjeta de Crédito",
+      estado: "Procesado",
+      userEmail: userEmail,
+    },
+    {
+      id: "NRC-220123-TEST2",
+      fecha: "22/01/2025",
+      hora: "09:15",
+      productos: [
+        {
+          nombre: "Plan de Entrenamiento 21K",
+          precio: "800.00",
+          cantidad: 1,
+          categoria: "Planes de Entrenamiento",
+          imagen: "https://via.placeholder.com/60x60/ff0080/FFFFFF?text=21K",
+        },
+      ],
+      total: "800.00",
+      metodoPago: "Depósito Bancario",
+      estado: "Pendiente de Confirmación",
+      userEmail: userEmail,
+    },
+  ];
+
+  // Guardar en localStorage
+  const historyKey = `purchaseHistory_${userEmail}`;
+  localStorage.setItem(historyKey, JSON.stringify(testPurchases));
+
+  // Recargar historial
+  loadPurchaseHistory();
+
+  console.log("🧪 Compras de prueba generadas");
+  if (typeof CustomPopups !== "undefined") {
+    CustomPopups.showAlert(
+      "¡Compras de prueba generadas exitosamente!",
+      "success",
+      "🧪 Testing"
+    );
+  } else {
+    alert("¡Compras de prueba generadas!");
+  }
+};
+
+// 🧹 FUNCIÓN DE TESTING: Limpiar historial
+window.clearTestPurchases = function () {
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) return;
+
+  const historyKey = `purchaseHistory_${userEmail}`;
+  localStorage.removeItem(historyKey);
+  loadPurchaseHistory();
+
+  console.log("🧹 Historial limpiado");
+  if (typeof CustomPopups !== "undefined") {
+    CustomPopups.showAlert(
+      "Historial de compras limpiado",
+      "info",
+      "🧹 Limpieza"
+    );
+  } else {
+    alert("Historial limpiado");
+  }
+};

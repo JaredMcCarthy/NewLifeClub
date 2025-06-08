@@ -1553,6 +1553,9 @@
           const token = generateOrderToken();
           document.getElementById("purchase-token").textContent = token;
 
+          // 🛍️ GUARDAR COMPRA EN HISTORIAL
+          savePurchaseToHistory(token, "Tarjeta de Crédito");
+
           // Mostrar notificación de éxito
           showNotification("¡Pago procesado exitosamente!", "success");
 
@@ -1572,6 +1575,9 @@
       async function handleBankDepositPayment() {
         // Generar token único para depósito bancario
         const token = generateOrderToken();
+
+        // 🛍️ GUARDAR COMPRA EN HISTORIAL
+        savePurchaseToHistory(token, "Depósito Bancario");
 
         // Mostrar mensaje de confirmación para depósito
         const message = `
@@ -1599,6 +1605,85 @@
 
         // Limpiar carrito después del pedido
         clearCartAfterPurchase();
+      }
+
+      // 🛍️ NUEVA FUNCIÓN: Guardar compra en historial del usuario
+      function savePurchaseToHistory(orderToken, paymentMethod) {
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) {
+          console.log("⚠️ No hay usuario loggeado, no se guarda el historial");
+          return;
+        }
+
+        // Obtener información del carrito
+        const cartItems = getCartItems();
+        if (!cartItems || cartItems.length === 0) {
+          console.log("⚠️ No hay productos en el carrito");
+          return;
+        }
+
+        // Calcular total
+        let total = 0;
+        cartItems.forEach((item) => {
+          total += parseFloat(item.price) * item.quantity;
+        });
+
+        // Crear objeto de compra
+        const purchase = {
+          id: orderToken,
+          fecha: new Date().toLocaleDateString("es-HN"),
+          hora: new Date().toLocaleTimeString("es-HN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          productos: cartItems.map((item) => ({
+            nombre: item.name,
+            precio: item.price,
+            cantidad: item.quantity,
+            categoria: item.category || "General",
+            imagen:
+              item.image ||
+              "https://via.placeholder.com/60x60/ff69b4/FFFFFF?text=NL",
+          })),
+          total: total.toFixed(2),
+          metodoPago: paymentMethod,
+          estado:
+            paymentMethod === "Depósito Bancario"
+              ? "Pendiente de Confirmación"
+              : "Procesado",
+          userEmail: userEmail,
+        };
+
+        // Obtener historial existente del usuario
+        const historyKey = `purchaseHistory_${userEmail}`;
+        let userHistory = JSON.parse(localStorage.getItem(historyKey)) || [];
+
+        // Agregar nueva compra al inicio
+        userHistory.unshift(purchase);
+
+        // Limitar a las últimas 50 compras
+        if (userHistory.length > 50) {
+          userHistory = userHistory.slice(0, 50);
+        }
+
+        // Guardar historial actualizado
+        localStorage.setItem(historyKey, JSON.stringify(userHistory));
+
+        console.log("🛍️ Compra guardada en historial:", purchase);
+      }
+
+      // 🛍️ FUNCIÓN AUXILIAR: Obtener items del carrito
+      function getCartItems() {
+        try {
+          const cartData = localStorage.getItem("newlife_cart");
+          if (!cartData) return [];
+
+          const cart = JSON.parse(cartData);
+          return cart.items || [];
+        } catch (error) {
+          console.error("Error al obtener items del carrito:", error);
+          return [];
+        }
       }
 
       function clearCartAfterPurchase() {
