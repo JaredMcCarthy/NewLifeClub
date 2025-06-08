@@ -304,6 +304,23 @@
     </section>
 
     <!-- 2. LÍNEA TICKER - DE NUEVOINICIO.HTML -->
+    <style>
+      /* CSS específico para el ticker móvil */
+      @media (max-width: 768px) {
+        .ticker-content {
+          font-size: 0.85rem !important; /* Más pequeño en móviles */
+          font-weight: 500 !important; /* Un poco menos bold */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .ticker-content {
+          font-size: 0.75rem !important; /* Aún más pequeño en móviles muy pequeños */
+          font-weight: 500 !important;
+        }
+      }
+    </style>
+
     <div
       style="
         background: #ff69b4;
@@ -313,6 +330,7 @@
       "
     >
       <div
+        class="ticker-content"
         style="
           animation: scroll 8s linear infinite;
           white-space: nowrap;
