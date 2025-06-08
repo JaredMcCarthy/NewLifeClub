@@ -47,8 +47,24 @@ function updateCartCount() {
 function addToCart(productData) {
   console.log("🛒 Agregando al carrito:", productData);
 
+  // 🔍 Auto-detectar source si no está definido
+  if (!productData.source || productData.source === "unknown") {
+    const currentPage = window.location.pathname;
+    if (currentPage.includes("tienda.html")) {
+      productData.source = "tienda";
+    } else if (currentPage.includes("membresias.html")) {
+      productData.source = "membresias";
+    } else if (currentPage.includes("newlifepro.html")) {
+      productData.source = "newlifepro";
+    } else {
+      productData.source = "unknown";
+    }
+    console.log("🎯 Source auto-detectado:", productData.source);
+  }
+
   // Verificar restricciones de membresías y planes
   const productType = detectProductType(productData);
+  console.log("📦 Tipo de producto detectado:", productType);
 
   if (productType === "membership" || productType === "plan") {
     handleMembershipOrPlan(productData, productType);
@@ -359,20 +375,29 @@ function loadCartInCheckout() {
 
     // Usar múltiples identificadores para mayor compatibilidad
     const itemId = item.id || item.name || index;
-    const itemSize = item.size || "Digital";
+    const itemSize = item.size || "Talla única";
     const productType = detectProductType(item);
 
+    console.log("🔍 Item type detected:", productType, "for:", item.name); // Debug extra
+
+    // Determinar si es digital o físico
+    const isDigital = productType === "membership" || productType === "plan";
+
     // Para membresías y planes, ocultar botones de cantidad y solo mostrar eliminar
-    const quantityControls =
-      productType === "membership" || productType === "plan"
-        ? `<span class="quantity">1</span>`
-        : `
+    const quantityControls = isDigital
+      ? `<span class="quantity">1</span>`
+      : `
         <div class="quantity-controls">
           <button onclick="decreaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">-</button>
           <span class="quantity">${item.quantity}</span>
           <button onclick="increaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">+</button>
         </div>
       `;
+
+    // Etiqueta de tipo de producto
+    const productLabel = isDigital
+      ? '<span style="color: #ff69b4; font-size: 12px; font-weight: 600;">• Digital</span>'
+      : '<span style="color: #28a745; font-size: 12px; font-weight: 600;">• Físico</span>';
 
     itemElement.innerHTML = `
       <div class="cart-item-info">
@@ -383,11 +408,7 @@ function loadCartInCheckout() {
           <h4>${item.name}</h4>
           <p>Talla: ${itemSize}</p>
           <p>L.${item.price.toFixed(2)}</p>
-          ${
-            productType !== "physical"
-              ? '<span style="color: #ff69b4; font-size: 12px;">• Digital</span>'
-              : ""
-          }
+          ${productLabel}
         </div>
       </div>
       <div class="cart-item-controls">
@@ -597,27 +618,60 @@ console.log("🛒 Cart Handler - Versión Checkout cargado exitosamente");
 
 // Detectar tipo de producto
 function detectProductType(product) {
-  const name = product.name.toLowerCase();
+  console.log("🔍 Detectando tipo de producto:", product); // Debug
 
-  // Membresías
-  const membershipKeywords = [
-    "membresía",
-    "membership",
-    "básica",
-    "premium",
-    "elite",
-  ];
-  if (membershipKeywords.some((keyword) => name.includes(keyword))) {
+  const name = product.name.toLowerCase();
+  const source = product.source || "";
+
+  // 🏪 PRODUCTOS FÍSICOS: Todo lo que viene de tienda.html
+  if (source === "tienda" || source === "store" || source === "shop") {
+    console.log("📦 Producto físico detectado por source:", source);
+    return "physical";
+  }
+
+  // 💼 MEMBRESÍAS: De membresias.html o keywords específicas de membresía
+  if (source === "membresias" || source === "membership") {
+    console.log("🎫 Membresía detectada por source:", source);
     return "membership";
   }
 
-  // Planes (NewLife Pro, entrenamientos, etc.)
-  const planKeywords = ["plan", "pro", "entrenamiento", "coaching", "programa"];
-  if (planKeywords.some((keyword) => name.includes(keyword))) {
+  // 🚀 PLANES PRO: De newlifepro.html o keywords específicas de planes
+  if (source === "newlifepro" || source === "pro" || source === "plan") {
+    console.log("🚀 Plan detectado por source:", source);
     return "plan";
   }
 
-  // Productos físicos
+  // Fallback: Detección por keywords más específicas
+
+  // Membresías (solo palabras muy específicas)
+  const membershipKeywords = [
+    "membresía básica",
+    "membresía premium",
+    "membresía elite",
+    "membership básica",
+    "membership premium",
+    "membership elite",
+  ];
+  if (membershipKeywords.some((keyword) => name.includes(keyword))) {
+    console.log("🎫 Membresía detectada por keyword:", name);
+    return "membership";
+  }
+
+  // Planes (palabras muy específicas de servicios)
+  const planKeywords = [
+    "newlife pro",
+    "plan de entrenamiento",
+    "coaching personal",
+    "programa digital",
+    "entrenamiento personalizado",
+  ];
+  if (planKeywords.some((keyword) => name.includes(keyword))) {
+    console.log("🚀 Plan detectado por keyword:", name);
+    return "plan";
+  }
+
+  // Por defecto: productos físicos (ropa, accesorios, etc.)
+  console.log("📦 Producto físico por defecto:", name);
   return "physical";
 }
 
