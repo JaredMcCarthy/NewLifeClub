@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="css/carrito.css" />
     <link rel="stylesheet" href="css/search.css" />
     <link rel="stylesheet" href="css/membresias.css" />
+    <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
+    <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -480,6 +482,8 @@
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
     <script src="js/navbar-session.js"></script>
+    <!-- 🎨 CUSTOM POPUPS SYSTEM -->
+    <script src="js/custom-popups.js?v=1.0"></script>
 
     <!-- Script específico para agregar membresía básica al carrito -->
     <script>
@@ -489,7 +493,7 @@
         );
 
         if (basicMembershipBtn) {
-          basicMembershipBtn.addEventListener("click", function (e) {
+          basicMembershipBtn.addEventListener("click", async function (e) {
             e.preventDefault();
 
             // Datos de la membresía básica
@@ -501,6 +505,7 @@
               quantity: 1,
               image: "FotosMembresia/basic-membership.png", // Imagen por defecto
               type: "membership",
+              source: "membresias",
             };
 
             // Agregar al carrito usando la función existente
@@ -508,11 +513,10 @@
               addToCart(membershipData);
 
               // Mostrar mensaje de confirmación
-              if (typeof showToast === "function") {
-                showToast("¡Membresía Básica agregada al carrito!");
-              } else {
-                alert("¡Membresía Básica agregada al carrito!");
-              }
+              await showAlert(
+                "¡Membresía Básica agregada al carrito!",
+                "success"
+              );
 
               // Opcional: abrir el carrito automáticamente
               setTimeout(() => {
@@ -522,7 +526,7 @@
               }, 1000);
             } else {
               console.error("La función addToCart no está disponible");
-              alert("Error al agregar la membresía al carrito");
+              await showServerError("Error al agregar la membresía al carrito");
             }
           });
         }
@@ -537,7 +541,7 @@
         );
 
         if (premiumMembershipBtn) {
-          premiumMembershipBtn.addEventListener("click", function (e) {
+          premiumMembershipBtn.addEventListener("click", async function (e) {
             e.preventDefault();
 
             // Datos de la membresía premium
@@ -549,6 +553,7 @@
               quantity: 1,
               image: "FotosMembresia/premium-membership.png", // Imagen por defecto
               type: "membership",
+              source: "membresias",
             };
 
             // Agregar al carrito usando la función existente
@@ -556,11 +561,10 @@
               addToCart(membershipData);
 
               // Mostrar mensaje de confirmación
-              if (typeof showToast === "function") {
-                showToast("¡Membresía Premium agregada al carrito!");
-              } else {
-                alert("¡Membresía Premium agregada al carrito!");
-              }
+              await showAlert(
+                "¡Membresía Premium agregada al carrito!",
+                "success"
+              );
 
               // Opcional: abrir el carrito automáticamente
               setTimeout(() => {
@@ -570,7 +574,7 @@
               }, 1000);
             } else {
               console.error("La función addToCart no está disponible");
-              alert("Error al agregar la membresía al carrito");
+              await showServerError("Error al agregar la membresía al carrito");
             }
           });
         }
@@ -585,7 +589,7 @@
         );
 
         if (eliteMembershipBtn) {
-          eliteMembershipBtn.addEventListener("click", function (e) {
+          eliteMembershipBtn.addEventListener("click", async function (e) {
             e.preventDefault();
 
             // Datos de la membresía élite
@@ -597,6 +601,7 @@
               quantity: 1,
               image: "FotosMembresia/elite-membership.png", // Imagen por defecto
               type: "membership",
+              source: "membresias",
             };
 
             // Agregar al carrito usando la función existente
@@ -604,11 +609,10 @@
               addToCart(membershipData);
 
               // Mostrar mensaje de confirmación
-              if (typeof showToast === "function") {
-                showToast("¡Membresía Élite agregada al carrito!");
-              } else {
-                alert("¡Membresía Élite agregada al carrito!");
-              }
+              await showAlert(
+                "¡Membresía Élite agregada al carrito!",
+                "success"
+              );
 
               // Opcional: abrir el carrito automáticamente
               setTimeout(() => {
@@ -618,7 +622,7 @@
               }, 1000);
             } else {
               console.error("La función addToCart no está disponible");
-              alert("Error al agregar la membresía al carrito");
+              await showServerError("Error al agregar la membresía al carrito");
             }
           });
         }

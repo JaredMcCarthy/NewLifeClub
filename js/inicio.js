@@ -88,8 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
         this.querySelector("#mensaje");
 
       if (!nombreField || !correoField || !asuntoField || !mensajeField) {
-        alert(
-          "Error: No se pudieron encontrar todos los campos del formulario"
+        await showServerError(
+          "No se pudieron encontrar todos los campos del formulario"
         );
         return;
       }
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         !formData.asunto ||
         !formData.mensaje
       ) {
-        alert("Por favor, completa todos los campos");
+        await showValidationError("Por favor, completa todos los campos");
         return;
       }
 
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 300);
       } catch (error) {
         console.error("Error:", error);
-        alert(
+        await showServerError(
           error.message ||
             "Error al enviar el mensaje. Por favor, intenta de nuevo."
         );

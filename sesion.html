@@ -11,6 +11,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iniciar Sesión/Registrarse</title>
+    <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
+    <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
     <style>
       * {
         margin: 0;
@@ -956,14 +958,15 @@
       document.addEventListener("DOMContentLoaded", function () {
         const forgotLink = document.querySelector(".forgot-password a");
         if (forgotLink) {
-          forgotLink.addEventListener("click", function (e) {
+          forgotLink.addEventListener("click", async function (e) {
             e.preventDefault();
-            const email = prompt(
-              "Ingresa tu correo electrónico para recuperar tu contraseña:"
+            const email = await showPrompt(
+              "Ingresa tu correo electrónico para recuperar tu contraseña:",
+              "",
+              "🔑 Recuperar Contraseña"
             );
             if (email) {
-              alert(`📧 Se ha enviado un enlace de recuperación a ${email}`);
-              // Aquí puedes agregar la lógica de recuperación de contraseña
+              await showPasswordRecovery(email);
             }
           });
         }
@@ -1086,6 +1089,21 @@
           }, 300);
         }, 5000);
       }
+
+      // Simular envío del enlace de recuperación
+      function showPasswordRecovery(email) {
+        // Aquí puedes implementar la lógica para mostrar un modal de recuperación de contraseña
+        // y enviar el correo de recuperación
+        console.log("📧 Se ha enviado un enlace de recuperación a:", email);
+        // Cerrar modal después de 3 segundos
+        setTimeout(() => {
+          closeModal();
+        }, 3000);
+      }
+
+      // ... existing code ...
     </script>
+    <!-- 🎨 CUSTOM POPUPS SYSTEM -->
+    <script src="js/custom-popups.js?v=1.0"></script>
   </body>
 </html>

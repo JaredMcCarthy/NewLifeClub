@@ -243,20 +243,18 @@ function clearCart() {
     return;
   }
 
-  // Confirmar antes de vaciar
-  const confirmClear = confirm(
-    "¿Estás seguro que quieres vaciar todo el carrito?"
-  );
+  // Confirmar antes de vaciar usando popup personalizado
+  confirmClearCart().then((confirmed) => {
+    if (confirmed) {
+      resetCart();
+      showNotification("🧹 ¡Carrito vaciado completamente!", "success");
 
-  if (confirmClear) {
-    resetCart();
-    showNotification("🧹 ¡Carrito vaciado completamente!", "success");
-
-    // Refrescar la página del checkout si estamos ahí
-    if (window.location.pathname.includes("checkout.html")) {
-      loadCartInCheckout();
+      // Refrescar la página del checkout si estamos ahí
+      if (window.location.pathname.includes("checkout.html")) {
+        loadCartInCheckout();
+      }
     }
-  }
+  });
 }
 
 // Función para mostrar notificación de producto agregado
@@ -692,30 +690,41 @@ function handleMembershipOrPlan(productData, type) {
       existingItem.quantity += 1;
       showNotification(`Cantidad actualizada: ${productData.name}`, "success");
     } else {
-      // Si es diferente, mostrar opción de reemplazar
-      const confirmReplace = confirm(
-        `Ya tienes "${existingItem.name}" en tu carrito. ¿Quieres reemplazarla con "${productData.name}"?`
-      );
+      // Si es diferente, mostrar opción de reemplazar usando popup personalizado
+      confirmReplaceMembership(existingItem.name, productData.name).then(
+        (confirmReplace) => {
+          if (confirmReplace) {
+            // Reemplazar la membresía/plan existente
+            cart.items[existingIndex] = {
+              id: Date.now(),
+              name: productData.name,
+              price: productData.price,
+              size: productData.size || "Digital",
+              quantity: 1,
+              image: productData.image || "",
+              source: productData.source || "unknown",
+            };
+            showNotification(
+              `${typeLabel} reemplazada: ${productData.name}`,
+              "success"
+            );
 
-      if (confirmReplace) {
-        // Reemplazar la membresía/plan existente
-        cart.items[existingIndex] = {
-          id: Date.now(),
-          name: productData.name,
-          price: productData.price,
-          size: productData.size || "Digital",
-          quantity: 1,
-          image: productData.image || "",
-          source: productData.source || "unknown",
-        };
-        showNotification(
-          `${typeLabel} reemplazada: ${productData.name}`,
-          "success"
-        );
-      } else {
-        showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
-        return; // No agregar nada
-      }
+            // Actualizar contadores después de reemplazar
+            cart.count = cart.items.reduce(
+              (sum, item) => sum + item.quantity,
+              0
+            );
+            cart.total = cart.items.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
+            );
+            saveCart();
+          } else {
+            showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
+          }
+        }
+      );
+      return; // Importante: salir aquí para no continuar con el procesamiento
     }
   } else {
     // No existe ninguna membresía/plan del tipo, agregar normalmente
