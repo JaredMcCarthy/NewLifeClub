@@ -1,0 +1,40 @@
+{
+  "discountCodes": {
+    "WELCOME10": {
+      "percentage": 10,
+      "description": "Descuento de bienvenida",
+      "active": true,
+      "minAmount": 0
+    },
+    "NEWLIFE15": {
+      "percentage": 15,
+      "description": "Descuento NewLife Club",
+      "active": true,
+      "minAmount": 50
+    },
+    "RUNNER20": {
+      "percentage": 20,
+      "description": "Descuento especial runner",
+      "active": true,
+      "minAmount": 100
+    },
+    "VIP25": {
+      "percentage": 25,
+      "description": "Descuento VIP",
+      "active": true,
+      "minAmount": 150
+    },
+    "SAVE10": {
+      "percentage": 10,
+      "description": "Ahorra 10%",
+      "active": true,
+      "minAmount": 30
+    },
+    "MEGA15": {
+      "percentage": 15,
+      "description": "Mega descuento",
+      "active": true,
+      "minAmount": 75
+    }
+  }
+}

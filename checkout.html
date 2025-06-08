@@ -683,7 +683,7 @@
     <!-- Header -->
     <header class="header">
       <div class="header-content">
-        <a href="#" class="logo">NewLifeRun Club</a>
+        <a href="index.html" class="logo">NewLifeRun Club</a>
         <div class="security-badges">
           <div class="security-badge"><span>🔒</span> Pago Seguro</div>
           <div class="security-badge"><span>🛡️</span> SSL Certificado</div>
@@ -1032,50 +1032,21 @@
       <div class="order-summary">
         <h3 class="summary-title">Resumen del Pedido</h3>
 
-        <div class="product-item">
-          <div class="product-img">NIKE</div>
-          <div class="product-details">
-            <div class="product-name">Nike Air Max 270</div>
-            <div class="product-specs">Talla: 42 • Color: Negro/Blanco</div>
-            <div class="product-price">$150.00</div>
-          </div>
-          <div class="quantity-badge">1</div>
-        </div>
-
-        <div class="product-item">
-          <div class="product-img">NIKE</div>
-          <div class="product-details">
-            <div class="product-name">Nike Dri-FIT Running Shirt</div>
-            <div class="product-specs">Talla: L • Color: Azul</div>
-            <div class="product-price">$35.00</div>
-          </div>
-          <div class="quantity-badge">2</div>
-        </div>
+        <!-- Los productos se cargarán dinámicamente aquí -->
 
         <div class="promo-code">
           <div class="promo-input">
-            <input type="text" placeholder="Código de descuento" />
-            <button class="promo-btn">Aplicar</button>
+            <input
+              type="text"
+              placeholder="Código de descuento"
+              id="promo-input"
+            />
+            <button class="promo-btn" id="promo-btn">Aplicar</button>
           </div>
         </div>
 
         <div class="summary-totals">
-          <div class="total-row">
-            <span>Subtotal:</span>
-            <span>$220.00</span>
-          </div>
-          <div class="total-row">
-            <span>Envío:</span>
-            <span>$15.00</span>
-          </div>
-          <div class="total-row">
-            <span>Impuestos:</span>
-            <span>$18.80</span>
-          </div>
-          <div class="total-row total-final">
-            <span>TOTAL:</span>
-            <span>$253.80</span>
-          </div>
+          <!-- Los totales se calcularán dinámicamente aquí -->
         </div>
 
         <div class="security-features">
@@ -1097,6 +1068,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Agregar script de checkout dinámico -->
+    <script src="js/checkout-handler.js"></script>
 
     <script>
       let currentStep = 1;
