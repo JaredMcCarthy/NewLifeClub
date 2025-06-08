@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const userActions = document.querySelector(".user-actions");
   const cartBtn = document.querySelector(".cart-button");
   const profileBtn = document.getElementById("profile-btn");
+  const mobileAccountBtn = document.getElementById("mobile-account-btn");
+
+  console.log("🔍 Elementos encontrados:", {
+    loginBtn: !!loginBtn,
+    registerBtn: !!registerBtn,
+    userActions: !!userActions,
+    cartBtn: !!cartBtn,
+    profileBtn: !!profileBtn,
+    mobileAccountBtn: !!mobileAccountBtn,
+  });
 
   // Sistema de expiración de sesión
   const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutos en milliseconds
@@ -67,16 +77,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateNavigation() {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const isMobile = window.innerWidth <= 768;
 
-    if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
-    if (registerBtn) registerBtn.style.display = isLoggedIn ? "none" : "block";
-    if (userActions) userActions.style.display = isLoggedIn ? "flex" : "none";
+    console.log("🔄 Actualizando navegación:", { isLoggedIn, isMobile });
 
-    // En móvil, asegurarse que los botones de cuenta estén visibles
-    if (window.innerWidth <= 768) {
-      if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
-      if (registerBtn)
+    // Actualizar estado del body para CSS
+    if (isLoggedIn) {
+      document.body.classList.add("logged-in");
+      console.log("✅ Clase 'logged-in' agregada al body");
+    } else {
+      document.body.classList.remove("logged-in");
+      console.log("❌ Clase 'logged-in' removida del body");
+    }
+
+    // DESKTOP: Comportamiento original
+    if (!isMobile) {
+      console.log("🖥️ Modo DESKTOP detectado");
+      if (loginBtn) {
+        loginBtn.style.display = isLoggedIn ? "none" : "block";
+        console.log(`🔲 Login btn: ${isLoggedIn ? "OCULTO" : "VISIBLE"}`);
+      }
+      if (registerBtn) {
         registerBtn.style.display = isLoggedIn ? "none" : "block";
+        console.log(`🔲 Register btn: ${isLoggedIn ? "OCULTO" : "VISIBLE"}`);
+      }
+      if (userActions) {
+        userActions.style.display = isLoggedIn ? "flex" : "none";
+        console.log(`🔲 User actions: ${isLoggedIn ? "VISIBLE" : "OCULTO"}`);
+      }
+      // Asegurar que el botón móvil esté oculto en desktop
+      if (mobileAccountBtn) {
+        mobileAccountBtn.style.display = "none";
+        console.log("🔲 Botón móvil FORZADO A OCULTO en desktop");
+      }
+    }
+    // MÓVIL: Nueva lógica
+    else {
+      console.log("📱 Modo MÓVIL detectado");
+      // Ocultar botones de login/register siempre en móvil
+      if (loginBtn) {
+        loginBtn.style.display = "none";
+        console.log("🔲 Login btn: OCULTO en móvil");
+      }
+      if (registerBtn) {
+        registerBtn.style.display = "none";
+        console.log("🔲 Register btn: OCULTO en móvil");
+      }
+
+      if (isLoggedIn) {
+        // Usuario logueado en móvil: mostrar carrito/perfil, ocultar "Cuenta"
+        console.log("📱✅ Móvil LOGUEADO: mostrando carrito/perfil");
+        if (mobileAccountBtn) {
+          mobileAccountBtn.style.display = "none";
+          console.log("🔲 Botón Cuenta: OCULTO");
+        }
+        if (userActions) {
+          userActions.style.display = "flex";
+          console.log("🔲 User actions: VISIBLE");
+        }
+      } else {
+        // Usuario NO logueado en móvil: mostrar "Cuenta", ocultar carrito/perfil
+        console.log("📱❌ Móvil NO LOGUEADO: mostrando botón Cuenta");
+        if (mobileAccountBtn) {
+          mobileAccountBtn.style.display = "flex";
+          console.log("🔲 Botón Cuenta: VISIBLE");
+        }
+        if (userActions) {
+          userActions.style.display = "none";
+          console.log("🔲 User actions: OCULTO");
+        }
+      }
     }
 
     // Inicializar timer de sesión si está logueado
@@ -143,12 +213,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // DEBUGGING: Forzar actualización inicial después de 100ms
+  setTimeout(() => {
+    console.log("🔄 Forzando actualización inicial...");
+    updateNavigation();
+  }, 100);
+
   // Actualizar al cargar la página
   updateNavigation();
+
+  // Actualizar cuando cambie el tamaño de pantalla
+  window.addEventListener("resize", () => {
+    console.log("📏 Resize detectado - actualizando navegación");
+    updateNavigation();
+  });
 
   // Actualizar cuando cambie el localStorage
   window.addEventListener("storage", function (e) {
     if (e.key === "isLoggedIn") {
+      console.log("💾 Cambio en localStorage detectado");
       updateNavigation();
     }
   });
@@ -159,5 +242,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
       logout();
     }
+  };
+
+  // DEBUGGING: Función global para testing manual
+  window.testMobileButton = function () {
+    console.log("🧪 TEST: Estado actual");
+    console.log("Window width:", window.innerWidth);
+    console.log("Is mobile:", window.innerWidth <= 768);
+    console.log("Is logged in:", localStorage.getItem("isLoggedIn"));
+    console.log("Mobile account btn display:", mobileAccountBtn?.style.display);
+    console.log("User actions display:", userActions?.style.display);
   };
 });

@@ -1,10 +1,15 @@
 /* ========== CSS MÓVIL EMPRESARIAL - SIMPLE Y ROBUSTO ========== */
 
 /* Ocultar elementos mobile-only en desktop */
-.mobile-only,
+.mobile-only {
+  display: none !important;
+}
+
+/* COMENTADO: Ya no forzamos ocultar el botón cuenta - ahora lo maneja navbar.css
 #mobile-account-btn {
   display: none !important;
 }
+*/
 
 .mobile-only-button {
   display: none !important;
@@ -25,10 +30,10 @@ body {
 
 /* Eliminar cualquier border, shadow o outline problemático */
 @media screen and (max-width: 768px) {
-  /* Resetear cualquier elemento que pueda causar líneas */
-  *,
-  *::before,
-  *::after {
+  /* Resetear cualquier elemento que pueda causar líneas - EXCEPTO TICKER */
+  *:not(.ticker-wrapper):not(.ticker-content):not(.ticker-text),
+  *:not(.ticker-wrapper):not(.ticker-content):not(.ticker-text)::before,
+  *:not(.ticker-wrapper):not(.ticker-content):not(.ticker-text)::after {
     border-left: none !important;
     border-right: none !important;
     box-shadow: none !important;
@@ -46,11 +51,11 @@ body {
     max-width: 100vw !important;
   }
 
-  /* Eliminar cualquier contenedor problemático */
-  .container,
-  .main-container,
-  section,
-  div {
+  /* Eliminar cualquier contenedor problemático - EXCEPTO TICKER */
+  .container:not(.ticker-wrapper),
+  .main-container:not(.ticker-wrapper),
+  section:not(.ticker-wrapper),
+  div:not(.ticker-wrapper):not(.ticker-content):not(.ticker-text) {
     border-left: none !important;
     border-right: none !important;
     box-shadow: none !important;
@@ -199,7 +204,9 @@ body {
     display: none !important;
   }
 
-  /* Botones de usuario móvil */
+  /* COMENTADO: Ya no forzamos mostrar botones - ahora lo maneja navbar.css según sesión
+  
+  // Botones de usuario móvil
   .user-actions {
     display: flex !important;
     align-items: center !important;
@@ -210,7 +217,7 @@ body {
     display: none !important;
   }
 
-  /* Botones carrito y perfil - SIMPLES */
+  // Botones carrito y perfil - SIMPLES
   .cart-button,
   #cart-btn,
   #profile-btn {
@@ -235,8 +242,10 @@ body {
     background: rgba(255, 105, 180, 0.2) !important;
     transform: scale(1.1) !important;
   }
+  
+  */
 
-  /* Contador carrito */
+  /* Contador carrito - mantenemos este */
   .cart-count {
     position: absolute !important;
     top: -5px !important;
@@ -275,6 +284,13 @@ body {
   /* ===== ASEGURAR FUNCIONAMIENTO ===== */
   body {
     padding-top: 60px !important;
+  }
+
+  /* EXCEPCIÓN: El ticker no debe ser afectado por el padding del body */
+  .ticker-wrapper {
+    margin-top: -60px !important;
+    position: relative !important;
+    z-index: 10 !important;
   }
 
   body.menu-open {
