@@ -305,7 +305,6 @@
 
     <!-- 2. LÍNEA TICKER - DE NUEVOINICIO.HTML -->
     <div
-      class="newlife-ticker"
       style="
         background: #ff69b4;
         color: white;
@@ -315,13 +314,24 @@
     >
       <div
         style="
-          animation: scroll 15s linear infinite;
+          animation: scroll 8s linear infinite;
           white-space: nowrap;
           font-weight: 600;
+          display: flex;
         "
       >
-        NewLife Pro • NewLife Club • NewLife Memories • NewLife Memberships •
-        NewLife Pro • NewLife Club • NewLife Memories • NewLife Memberships •
+        <span style="padding-right: 50px">
+          Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
+          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
+          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
+          recomendaciones 💡 Editoriales 📚
+        </span>
+        <span>
+          Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
+          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
+          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
+          recomendaciones 💡 Editoriales 📚
+        </span>
       </div>
     </div>
 
@@ -329,7 +339,7 @@
     <section
       class="testimonials-section"
       style="
-        background: linear-gradient(135deg, #ff69b4 0%, #1a1a1a 100%);
+        background: linear-gradient(135deg, #ff69b4 0%, #4c4a4a 100%);
         padding: 5rem 1rem;
       "
     >
@@ -520,290 +530,521 @@
       </div>
     </section>
 
-    <!-- 5. ROPA DEPORTIVA DINÁMICA - DE NUEVOINICIO.HTML -->
-    <section
-      class="newlife-section"
-      style="
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        padding: 4rem 1rem;
+    <!-- 5. BENEFICIOS EXCLUSIVOS - SLIDESHOW AUTOMÁTICO -->
+    <style>
+      /* Sistema de slideshow automático para sección de beneficios */
+      .benefits-wrapper {
+        position: relative;
+        height: 100vh;
         overflow: hidden;
-      "
-    >
-      <div class="newlife-container" style="max-width: 1200px; margin: 0 auto">
-        <h2
-          style="
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 900;
-            margin-bottom: 3rem;
-            color: #ff69b4;
-            text-align: center;
-            letter-spacing: -1px;
-          "
-        >
-          NewLife Club Community
-        </h2>
+      }
 
-        <div
-          class="carousel-container"
-          style="
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-          "
-        >
-          <button
-            class="carousel-btn prev-btn"
-            onclick="moveCarousel(-1)"
-            style="
-              background: #ff69b4;
-              border: none;
-              width: 50px;
-              height: 50px;
-              border-radius: 50%;
-              color: white;
-              font-size: 1.5rem;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              z-index: 10;
-            "
-          >
-            ←
-          </button>
+      .benefits-section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          #2a2a2a 0%,
+          #000000 50%,
+          #1a1a1a 100%
+        );
+      }
 
-          <div
-            class="carousel-wrapper"
-            style="flex: 1; overflow: hidden; border-radius: 15px"
-          >
-            <div
-              class="carousel-track"
-              id="clothingCarousel"
-              style="display: flex; transition: transform 0.5s ease; gap: 1rem"
-            >
-              <!-- 🎯 FOTO 1 - FotosInicio/foto1.jpeg -->
-              <div
-                class="carousel-item"
-                style="
-                  min-width: 95%;
-                  height: 600px;
-                  border-radius: 15px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  position: relative;
-                "
-              >
-                <img
-                  src="FotosInicio/Carrusel1.jpeg"
-                  alt="Ropa Deportiva NewLife 1"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 15px;
-                  "
-                />
+      .benefits-header {
+        text-align: center;
+        margin-bottom: 50px;
+        color: #ffffff;
+        padding: 0 20px;
+        z-index: 100;
+      }
+
+      .benefits-header h2 {
+        font-size: 3.5em;
+        margin-bottom: 10px;
+        line-height: 1.1;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .benefits-header p {
+        font-size: 1.3em;
+        max-width: 800px;
+        margin: 0 auto;
+        color: #ffffff;
+        opacity: 0.9;
+      }
+
+      .benefits-cards-container {
+        position: relative;
+        width: 90%;
+        max-width: 1000px;
+        height: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .benefit-card {
+        position: absolute;
+        width: 70%;
+        max-width: 800px;
+        height: 400px;
+        background-color: #1a1a1a;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(255, 105, 180, 0.2);
+        display: flex;
+        overflow: hidden;
+        top: 50%;
+        left: 50%;
+        border: 2px solid #ff69b4;
+
+        /* TODAS las cartas empiezan ocultas */
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 1;
+      }
+
+      /* Solo UNA carta visible a la vez */
+      .benefit-card.active {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        z-index: 10;
+      }
+
+      .benefit-card-text {
+        flex: 1; /* Exactamente la mitad izquierda */
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        text-align: left;
+        color: #ffffff;
+      }
+
+      .benefit-card-text .tags {
+        font-size: 0.9em;
+        color: #ff69b4;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .benefit-card-text .tags span {
+        background-color: #ff69b4;
+        color: #1a1a1a;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.8em;
+      }
+
+      .benefit-card-text h3 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+        color: #ffffff;
+        line-height: 1.2;
+      }
+
+      .benefit-card-text p {
+        font-size: 1em;
+        line-height: 1.6;
+        color: #ffffff;
+        opacity: 0.9;
+      }
+
+      .benefit-card-image {
+        flex: 1; /* Exactamente la mitad derecha */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
+
+      /* Indicador de progreso más elegante */
+      .cards-progress {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+      }
+
+      .progress-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.5s ease;
+        position: relative;
+      }
+
+      .progress-dot.active {
+        background: #ff69b4;
+        transform: scale(1.2);
+      }
+
+      /* Barra de progreso dentro del dot activo */
+      .progress-dot.active::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ffffff;
+        animation: progress-fill 4s linear; /* Sincronizado con 4 segundos */
+      }
+
+      @keyframes progress-fill {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .benefits-header h2 {
+          font-size: 2.8em;
+        }
+        .benefits-header p {
+          font-size: 1.1em;
+        }
+        .benefit-card {
+          width: 85%;
+          height: 320px;
+        }
+        .benefit-card-text {
+          padding: 25px;
+        }
+        .benefit-card-text h3 {
+          font-size: 1.8em;
+        }
+        .benefit-card-text p {
+          font-size: 0.9em;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .benefits-header h2 {
+          font-size: 2.2em;
+          margin-bottom: 15px;
+        }
+        .benefits-header p {
+          font-size: 1.1em;
+        }
+        .benefits-cards-container {
+          width: 100%;
+          height: 450px;
+        }
+        .benefit-card {
+          width: 88% !important;
+          max-width: 380px !important;
+          height: 350px !important; /* Más alto para layout vertical */
+          flex-direction: column; /* Layout vertical en móvil */
+        }
+
+        /* En móvil: imagen arriba */
+        .benefit-card-image {
+          width: 100%;
+          height: 180px; /* Imagen más grande arriba */
+          border-radius: 0;
+          border-top-left-radius: 12px;
+          border-top-right-radius: 12px;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+        /* En móvil: texto abajo */
+        .benefit-card-text {
+          padding: 20px;
+          width: 100%;
+          height: 170px; /* Altura fija para texto */
+          justify-content: flex-start; /* Alinear contenido al inicio */
+        }
+
+        .benefit-card-text h3 {
+          font-size: 1.4em;
+          margin-bottom: 10px;
+          line-height: 1.1;
+        }
+
+        .benefit-card-text p {
+          font-size: 0.9em;
+          line-height: 1.4;
+          margin-bottom: 0;
+        }
+
+        .benefit-card-text .tags {
+          margin-bottom: 10px;
+        }
+
+        .benefit-card-text .tags span {
+          padding: 4px 8px;
+          font-size: 0.7em;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .benefits-header h2 {
+          font-size: 1.8em;
+        }
+        .benefit-card {
+          width: 92% !important;
+          max-width: 320px !important;
+          height: 320px !important;
+        }
+
+        .benefit-card-image {
+          height: 160px; /* Imagen un poco más pequeña en móviles muy pequeños */
+        }
+
+        .benefit-card-text {
+          padding: 16px;
+          height: 160px;
+        }
+
+        .benefit-card-text h3 {
+          font-size: 1.2em;
+          margin-bottom: 8px;
+        }
+
+        .benefit-card-text p {
+          font-size: 0.8em;
+        }
+      }
+    </style>
+
+    <section class="benefits-wrapper" id="benefitsSection">
+      <section class="benefits-section">
+        <div class="benefits-header">
+          <h2>Descubre los Beneficios Exclusivos de NewLifeRun Club</h2>
+          <p>
+            Al unirte a nuestra comunidad, no solo correrás, ¡disfrutarás de un
+            mundo de ventajas!
+          </p>
+        </div>
+
+        <div class="benefits-cards-container">
+          <div class="benefit-card active" data-card-index="0">
+            <div class="benefit-card-text">
+              <div class="tags">
+                <span>Compras</span>
+                <span>Seguridad</span>
               </div>
-
-              <!-- 🎯 FOTO 2 - FotosInicio/foto2.jpeg -->
-              <div
-                class="carousel-item"
-                style="
-                  min-width: 95%;
-                  height: 600px;
-                  border-radius: 15px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  position: relative;
-                "
-              >
-                <img
-                  src="FotosInicio/Carrusel2.jpeg"
-                  alt="Ropa Deportiva NewLife 2"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 15px;
-                  "
-                />
-              </div>
-
-              <!-- 🎯 FOTO 3 - FotosInicio/foto3.jpeg -->
-              <div
-                class="carousel-item"
-                style="
-                  min-width: 95%;
-                  height: 600px;
-                  border-radius: 15px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  position: relative;
-                "
-              >
-                <img
-                  src="FotosInicio/Carrusel3.jpeg"
-                  alt="Ropa Deportiva NewLife 3"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 15px;
-                  "
-                />
-              </div>
-
-              <!-- 🎯 FOTO 4 - FotosInicio/foto4.jpeg -->
-              <div
-                class="carousel-item"
-                style="
-                  min-width: 95%;
-                  height: 600px;
-                  border-radius: 15px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  position: relative;
-                "
-              >
-                <img
-                  src="FotosInicio/Carrusel4.jpeg"
-                  alt="Ropa Deportiva NewLife 4"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 15px;
-                  "
-                />
-              </div>
-
-              <!-- 🎯 FOTO 5 - FotosInicio/foto5.jpeg -->
-              <div
-                class="carousel-item"
-                style="
-                  min-width: 95%;
-                  height: 600px;
-                  border-radius: 15px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  position: relative;
-                "
-              >
-                <img
-                  src="FotosInicio/Carrusel5.jpeg"
-                  alt="Ropa Deportiva NewLife 5"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 15px;
-                  "
-                />
-              </div>
+              <h3>Compras Seguras y Rápidas</h3>
+              <p>
+                Adquiere tu equipamiento y merch del club con total confianza y
+                agilidad, con opciones de pago seguras y envíos eficientes a tu
+                puerta.
+              </p>
             </div>
+            <div
+              class="benefit-card-image"
+              style="
+                background-image: url('https://via.placeholder.com/400x500/FF8C42/FFFFFF?text=Compras+Seguras');
+              "
+            ></div>
           </div>
 
-          <button
-            class="carousel-btn next-btn"
-            onclick="moveCarousel(1)"
-            style="
-              background: #ff69b4;
-              border: none;
-              width: 50px;
-              height: 50px;
-              border-radius: 50%;
-              color: white;
-              font-size: 1.5rem;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              z-index: 10;
-            "
-          >
-            →
-          </button>
+          <div class="benefit-card" data-card-index="1">
+            <div class="benefit-card-text">
+              <div class="tags">
+                <span>Eventos</span>
+                <span>Comunidad</span>
+              </div>
+              <h3>Eventos y Rutas Exclusivas</h3>
+              <p>
+                Participa en encuentros especiales, entrenamientos guiados y
+                explora nuevas rutas diseñadas solo para miembros de NewLifeRun
+                Club.
+              </p>
+            </div>
+            <div
+              class="benefit-card-image"
+              style="
+                background-image: url('https://via.placeholder.com/400x500/FF69B4/FFFFFF?text=Rutas+Exclusivas');
+              "
+            ></div>
+          </div>
+
+          <div class="benefit-card" data-card-index="2">
+            <div class="benefit-card-text">
+              <div class="tags">
+                <span>Membresías</span>
+                <span>Descuentos</span>
+              </div>
+              <h3>Membresías con Descuentos</h3>
+              <p>
+                Accede a precios especiales en nuestra tienda, promociones
+                exclusivas con marcas aliadas y códigos de regalo para tus
+                próximas compras.
+              </p>
+            </div>
+            <div
+              class="benefit-card-image"
+              style="
+                background-image: url('https://via.placeholder.com/400x500/1A1A1A/FFFFFF?text=Descuentos');
+              "
+            ></div>
+          </div>
+
+          <div class="benefit-card" data-card-index="3">
+            <div class="benefit-card-text">
+              <div class="tags">
+                <span>Notificaciones</span>
+                <span>Novedades</span>
+              </div>
+              <h3>Alertas Personalizadas</h3>
+              <p>
+                Recibe notificaciones automáticas por correo cada vez que
+                tengamos nueva merch, mejores beneficios, rutas o eventos
+                especiales.
+              </p>
+            </div>
+            <div
+              class="benefit-card-image"
+              style="
+                background-image: url('https://via.placeholder.com/400x500/FF8C42/FFFFFF?text=Alertas+Mail');
+              "
+            ></div>
+          </div>
         </div>
 
-        <div
-          class="carousel-indicators"
-          style="
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-          "
-        >
-          <span
-            class="indicator active"
-            onclick="goToSlide(0)"
-            style="
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #ff69b4;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-          ></span>
-          <span
-            class="indicator"
-            onclick="goToSlide(1)"
-            style="
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #666;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-          ></span>
-          <span
-            class="indicator"
-            onclick="goToSlide(2)"
-            style="
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #666;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-          ></span>
-          <span
-            class="indicator"
-            onclick="goToSlide(3)"
-            style="
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #666;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-          ></span>
-          <span
-            class="indicator"
-            onclick="goToSlide(4)"
-            style="
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #666;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-          ></span>
+        <!-- Indicador de progreso con animación -->
+        <div class="cards-progress">
+          <div class="progress-dot active" data-target="0"></div>
+          <div class="progress-dot" data-target="1"></div>
+          <div class="progress-dot" data-target="2"></div>
+          <div class="progress-dot" data-target="3"></div>
         </div>
-      </div>
+      </section>
     </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Slideshow iniciando...");
+
+        const cards = document.querySelectorAll(".benefit-card");
+        const progressDots = document.querySelectorAll(".progress-dot");
+
+        console.log(`📋 Cartas encontradas: ${cards.length}`);
+        console.log(`🎯 Dots encontrados: ${progressDots.length}`);
+
+        let currentCardIndex = 0;
+        let slideInterval;
+
+        // Función para actualizar tarjetas
+        const updateCards = () => {
+          console.log(`🔄 Cambiando a carta: ${currentCardIndex + 1}`);
+
+          cards.forEach((card, index) => {
+            card.classList.remove("active");
+            if (index === currentCardIndex) {
+              card.classList.add("active");
+            }
+          });
+
+          // Actualizar indicadores de progreso
+          progressDots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === currentCardIndex);
+          });
+        };
+
+        // Función para ir a la siguiente tarjeta
+        const nextCard = () => {
+          currentCardIndex = (currentCardIndex + 1) % cards.length;
+          console.log(
+            `⏭️ Siguiente carta: ${currentCardIndex + 1} de ${cards.length}`
+          );
+          updateCards();
+        };
+
+        // Iniciar slideshow automático
+        const startSlideshow = () => {
+          console.log("▶️ Iniciando slideshow automático (4 segundos)");
+          // Limpiar cualquier intervalo previo
+          if (slideInterval) {
+            clearInterval(slideInterval);
+          }
+          slideInterval = setInterval(() => {
+            console.log("⏰ Timer ejecutado - cambiando carta");
+            nextCard();
+          }, 4000); // 4 segundos
+        };
+
+        // Detener slideshow
+        const stopSlideshow = () => {
+          console.log("⏸️ Deteniendo slideshow");
+          if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+          }
+        };
+
+        // Reiniciar slideshow
+        const restartSlideshow = () => {
+          console.log("🔄 Reiniciando slideshow");
+          stopSlideshow();
+          startSlideshow();
+        };
+
+        // Click en indicadores de progreso
+        progressDots.forEach((dot, index) => {
+          dot.addEventListener("click", () => {
+            console.log(`👆 Click en dot ${index + 1}`);
+            currentCardIndex = index;
+            updateCards();
+            restartSlideshow();
+          });
+        });
+
+        // Pausar en hover (opcional)
+        const benefitsSection = document.getElementById("benefitsSection");
+        if (benefitsSection) {
+          benefitsSection.addEventListener("mouseenter", () => {
+            console.log("🐭 Mouse entró - pausando slideshow");
+            stopSlideshow();
+          });
+          benefitsSection.addEventListener("mouseleave", () => {
+            console.log("🐭 Mouse salió - reanudando slideshow");
+            startSlideshow();
+          });
+        }
+
+        // Inicialización
+        console.log("🏁 Inicializando slideshow");
+        updateCards();
+        startSlideshow();
+
+        // Test manual para verificar
+        window.testSlideshow = () => {
+          console.log("🧪 Test manual - siguiente carta");
+          nextCard();
+        };
+
+        // Cleanup al salir de la página
+        window.addEventListener("beforeunload", () => {
+          console.log("👋 Limpiando slideshow antes de salir");
+          stopSlideshow();
+        });
+      });
+    </script>
 
     <!-- 6. NUESTRO IMPACTO - DE INDEX.HTML -->
     <section class="impact-section">
@@ -1381,43 +1622,5 @@
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
     <script src="js/navbar-session.js"></script>
-    <script>
-      let currentSlide = 0;
-      const totalSlides = 5;
-
-      function moveCarousel(direction) {
-        currentSlide += direction;
-        if (currentSlide >= totalSlides) currentSlide = 0;
-        if (currentSlide < 0) currentSlide = totalSlides - 1;
-        updateCarousel();
-      }
-
-      function goToSlide(slideIndex) {
-        currentSlide = slideIndex;
-        updateCarousel();
-      }
-
-      function updateCarousel() {
-        const carousel = document.getElementById("clothingCarousel");
-        const indicators = document.querySelectorAll(".indicator");
-        if (!carousel) return;
-        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
-        indicators.forEach((indicator, index) => {
-          if (index === currentSlide) {
-            indicator.style.background = "#ff69b4";
-          } else {
-            indicator.style.background = "#666";
-          }
-        });
-      }
-
-      // Auto-slide cada 5 segundos
-      setInterval(() => {
-        moveCarousel(1);
-      }, 5000);
-
-      // Inicializar carrusel al cargar
-      document.addEventListener("DOMContentLoaded", updateCarousel);
-    </script>
   </body>
 </html>
