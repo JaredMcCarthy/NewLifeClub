@@ -426,4 +426,53 @@ window.showPasswordRecovery = function (email) {
   return customPopups.showPasswordRecovery(email);
 };
 
+// =================================
+// FUNCIONES ESPECÍFICAS ADICIONALES
+// =================================
+
+// Para mostrar cuando se agrega un plan de entrenamiento
+window.showTrainingPlanAdded = async function (planName) {
+  return await customPopups.customAlert(
+    `¡Plan de entrenamiento "${planName}" agregado exitosamente! Ahora puedes seguir tu rutina personalizada.`,
+    "success",
+    "🏃‍♂️ Plan Agregado"
+  );
+};
+
+// Para mostrar confirmación de biografía guardada
+window.showBiographySaved = async function () {
+  return await customPopups.customAlert(
+    "Tu biografía ha sido guardada correctamente en tu perfil",
+    "success",
+    "📝 Biografía Guardada"
+  );
+};
+
+// Para mostrar confirmación de información personal guardada
+window.showPersonalInfoSaved = async function () {
+  return await customPopups.customAlert(
+    "Tu información personal ha sido actualizada exitosamente",
+    "success",
+    "💾 Información Guardada"
+  );
+};
+
+// Para confirmación de selección de plan NewLifePro
+window.showPlanSelected = async function (planName) {
+  return await customPopups.customAlert(
+    `¡Excelente elección! Has seleccionado el plan "${planName}". Bienvenido a NewLifePro Club.`,
+    "success",
+    "🎯 Plan Seleccionado"
+  );
+};
+
+// Para funcionalidad de editoriales
+window.showEditorialInfo = async function () {
+  return await customPopups.customAlert(
+    "Esta funcionalidad te llevaría a la página completa de artículos motivacionales y contenido exclusivo.",
+    "info",
+    "📚 Editoriales NewLifePro"
+  );
+};
+
 console.log("🎨 Custom Popups System cargado exitosamente");

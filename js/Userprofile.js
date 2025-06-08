@@ -154,11 +154,30 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        alert("¡Información personal guardada!");
+        // Usar popup personalizado para información personal guardada
+        if (typeof CustomPopups !== "undefined") {
+          CustomPopups.showAlert(
+            "Información personal guardada exitosamente",
+            "success",
+            "💾 Información Guardada"
+          );
+        } else {
+          alert("¡Información personal guardada!");
+        }
       } else if (section === "my-bio") {
         const newBiography = biographyTextarea?.value.trim() || "";
         localStorage.setItem(`userBiography_${currentUserEmail}`, newBiography);
-        alert("¡Biografía guardada!");
+
+        // Usar popup personalizado para biografía guardada
+        if (typeof CustomPopups !== "undefined") {
+          CustomPopups.showAlert(
+            "Tu biografía ha sido guardada correctamente",
+            "success",
+            "📝 Biografía Guardada"
+          );
+        } else {
+          alert("¡Biografía guardada!");
+        }
       }
     });
   });
@@ -188,9 +207,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutButton = document.querySelector(".logout-button");
 
   // Función para cerrar sesión
-  function cerrarSesion() {
+  async function cerrarSesion() {
     console.log("🚪 Intentando cerrar sesión...");
-    if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
+
+    // Usar popup personalizado para confirmar cierre de sesión
+    let confirmed = false;
+    if (typeof CustomPopups !== "undefined") {
+      confirmed = await CustomPopups.confirmLogout();
+    } else {
+      confirmed = confirm("¿Estás seguro que quieres cerrar sesión?");
+    }
+
+    if (confirmed) {
       console.log("✅ Usuario confirmó cierre de sesión");
 
       // Limpiar datos de sesión
@@ -199,8 +227,16 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("userName");
       localStorage.removeItem("token");
 
-      // Mostrar mensaje de confirmación
-      alert("Sesión cerrada exitosamente");
+      // Mostrar mensaje de confirmación con popup personalizado
+      if (typeof CustomPopups !== "undefined") {
+        await CustomPopups.showAlert(
+          "Sesión cerrada exitosamente",
+          "success",
+          "✅ Sesión Cerrada"
+        );
+      } else {
+        alert("Sesión cerrada exitosamente");
+      }
 
       // Redireccionar al inicio
       console.log("🏠 Redirigiendo a inicio...");
