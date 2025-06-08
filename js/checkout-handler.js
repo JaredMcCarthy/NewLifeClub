@@ -264,7 +264,7 @@ function renderCartItems() {
   }
 
   // Renderizar cada producto
-  checkoutData.cart.items.forEach((item) => {
+  checkoutData.cart.items.forEach((item, index) => {
     const productElement = document.createElement("div");
     productElement.className = "product-item";
 
@@ -291,7 +291,13 @@ function renderCartItems() {
         </div>
         <div class="product-price">L.${item.price.toFixed(2)}</div>
       </div>
-      <div class="quantity-badge">${item.quantity}</div>
+      <div class="quantity-controls">
+        <button class="qty-control-btn minus" onclick="updateQuantity(${index}, -1)" ${
+      item.quantity <= 1 ? "disabled" : ""
+    }>-</button>
+        <span class="quantity-display">${item.quantity}</span>
+        <button class="qty-control-btn plus" onclick="updateQuantity(${index}, 1)">+</button>
+      </div>
     `;
 
     productsContainer.appendChild(productElement);
@@ -488,3 +494,65 @@ window.debugCheckout = function () {
 };
 
 console.log("🛒 Checkout Handler cargado exitosamente");
+
+// ======================================
+// 🔧 FUNCIONES DE MANEJO DE CANTIDAD
+// ======================================
+
+// Actualizar cantidad de un producto
+function updateQuantity(itemIndex, change) {
+  if (itemIndex < 0 || itemIndex >= checkoutData.cart.items.length) return;
+
+  const item = checkoutData.cart.items[itemIndex];
+  const newQuantity = item.quantity + change;
+
+  if (newQuantity <= 0) {
+    // Eliminar producto si la cantidad llega a 0
+    removeItem(itemIndex);
+  } else {
+    // Actualizar cantidad
+    checkoutData.cart.items[itemIndex].quantity = newQuantity;
+
+    // Actualizar el contador total
+    checkoutData.cart.count = checkoutData.cart.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+    // Guardar en localStorage
+    localStorage.setItem("newlife_cart", JSON.stringify(checkoutData.cart));
+
+    // Recalcular y renderizar
+    recalculateAll();
+    renderCartItems();
+    renderTotals();
+
+    showNotification(`Cantidad actualizada: ${item.name}`, "success");
+  }
+}
+
+// Eliminar un producto completamente
+function removeItem(itemIndex) {
+  if (itemIndex < 0 || itemIndex >= checkoutData.cart.items.length) return;
+
+  const item = checkoutData.cart.items[itemIndex];
+
+  // Remover del array
+  checkoutData.cart.items.splice(itemIndex, 1);
+
+  // Actualizar contador
+  checkoutData.cart.count = checkoutData.cart.items.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+
+  // Guardar en localStorage
+  localStorage.setItem("newlife_cart", JSON.stringify(checkoutData.cart));
+
+  // Recalcular y renderizar
+  recalculateAll();
+  renderCartItems();
+  renderTotals();
+
+  showNotification(`${item.name} eliminado del carrito`, "info");
+}

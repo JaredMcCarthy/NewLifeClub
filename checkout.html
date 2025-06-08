@@ -495,6 +495,51 @@
         font-weight: bold;
       }
 
+      /* Controles de cantidad para checkout */
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 4px;
+      }
+
+      .qty-control-btn {
+        width: 24px;
+        height: 24px;
+        border: none;
+        border-radius: 50%;
+        background: #000;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .qty-control-btn:hover:not(:disabled) {
+        background: #333;
+        transform: scale(1.1);
+      }
+
+      .qty-control-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .quantity-display {
+        min-width: 20px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+      }
+
       .summary-totals {
         padding: 25px 0;
       }

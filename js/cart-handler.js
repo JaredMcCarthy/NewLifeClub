@@ -43,35 +43,48 @@ function updateCartCount() {
   }
 }
 
-// Función principal para agregar productos al carrito
+// Agregar producto al carrito
 function addToCart(productData) {
-  if (!productData || !productData.id) return;
+  console.log("🛒 Agregando al carrito:", productData);
 
-  // Buscar si el producto ya existe
-  const existingIndex = cart.items.findIndex(
-    (item) => item.id === productData.id && item.size === productData.size
-  );
+  // Verificar restricciones de membresías y planes
+  const productType = detectProductType(productData);
 
-  if (existingIndex >= 0) {
-    // Si existe, aumentar cantidad
-    cart.items[existingIndex].quantity += productData.quantity || 1;
-  } else {
-    // Si no existe, agregar nuevo
-    cart.items.push({
-      id: productData.id,
-      name: productData.name,
-      price: productData.price,
-      size: productData.size || "Única",
-      quantity: productData.quantity || 1,
-      image: productData.image || "",
-    });
+  if (productType === "membership" || productType === "plan") {
+    handleMembershipOrPlan(productData, productType);
+    return;
   }
 
-  // Recalcular totales
-  calculateCartTotals();
-  saveCart();
+  // Para productos regulares (ropa, accesorios)
+  const existingItemIndex = cart.items.findIndex(
+    (item) => item.name === productData.name && item.size === productData.size
+  );
 
-  // Mostrar notificación
+  if (existingItemIndex !== -1) {
+    // Si ya existe, aumentar cantidad
+    cart.items[existingItemIndex].quantity += 1;
+  } else {
+    // Si no existe, agregarlo como nuevo
+    const newItem = {
+      id: Date.now(),
+      name: productData.name,
+      price: productData.price,
+      size: productData.size || "Talla única",
+      quantity: 1,
+      image: productData.image || "",
+      source: productData.source || "unknown",
+    };
+    cart.items.push(newItem);
+  }
+
+  // Actualizar contadores
+  cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  cart.total = cart.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  saveCart();
   showAddToCartNotification();
 }
 
@@ -334,3 +347,157 @@ window.clearCartForTesting = function () {
 };
 
 console.log("🛒 Cart Handler - Versión Checkout cargado exitosamente");
+
+// ======================================
+// 🎯 FUNCIONES DE DETECCIÓN Y RESTRICCIÓN
+// ======================================
+
+// Detectar tipo de producto
+function detectProductType(product) {
+  const name = product.name.toLowerCase();
+
+  // Membresías
+  const membershipKeywords = [
+    "membresía",
+    "membership",
+    "básica",
+    "premium",
+    "elite",
+  ];
+  if (membershipKeywords.some((keyword) => name.includes(keyword))) {
+    return "membership";
+  }
+
+  // Planes (NewLife Pro, entrenamientos, etc.)
+  const planKeywords = ["plan", "pro", "entrenamiento", "coaching", "programa"];
+  if (planKeywords.some((keyword) => name.includes(keyword))) {
+    return "plan";
+  }
+
+  // Productos físicos
+  return "physical";
+}
+
+// Manejar membresías y planes con restricciones
+function handleMembershipOrPlan(productData, type) {
+  const typeLabel = type === "membership" ? "membresía" : "plan";
+
+  // Buscar si ya existe una membresía o plan del mismo tipo
+  const existingIndex = cart.items.findIndex(
+    (item) => detectProductType(item) === type
+  );
+
+  if (existingIndex !== -1) {
+    const existingItem = cart.items[existingIndex];
+
+    // Si es exactamente el mismo producto, aumentar cantidad
+    if (existingItem.name === productData.name) {
+      existingItem.quantity += 1;
+      showNotification(`Cantidad actualizada: ${productData.name}`, "success");
+    } else {
+      // Si es diferente, mostrar opción de reemplazar
+      const confirmReplace = confirm(
+        `Ya tienes "${existingItem.name}" en tu carrito. ¿Quieres reemplazarla con "${productData.name}"?`
+      );
+
+      if (confirmReplace) {
+        // Reemplazar la membresía/plan existente
+        cart.items[existingIndex] = {
+          id: Date.now(),
+          name: productData.name,
+          price: productData.price,
+          size: productData.size || "Digital",
+          quantity: 1,
+          image: productData.image || "",
+          source: productData.source || "unknown",
+        };
+        showNotification(
+          `${typeLabel} reemplazada: ${productData.name}`,
+          "success"
+        );
+      } else {
+        showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
+        return; // No agregar nada
+      }
+    }
+  } else {
+    // No existe ninguna membresía/plan del tipo, agregar normalmente
+    const newItem = {
+      id: Date.now(),
+      name: productData.name,
+      price: productData.price,
+      size: productData.size || "Digital",
+      quantity: 1,
+      image: productData.image || "",
+      source: productData.source || "unknown",
+    };
+    cart.items.push(newItem);
+    showNotification(`${typeLabel} agregada: ${productData.name}`, "success");
+  }
+
+  // Actualizar contadores
+  cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  cart.total = cart.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  saveCart();
+}
+
+// ======================================
+// 🔔 FUNCIÓN DE NOTIFICACIONES
+// ======================================
+
+// Función para mostrar notificaciones
+function showNotification(message, type = "info") {
+  const notification = document.createElement("div");
+  notification.className = `cart-notification notification-${type}`;
+  notification.textContent = message;
+
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${
+      type === "error" ? "#ff4444" : type === "success" ? "#4CAF50" : "#333"
+    };
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 300px;
+    font-size: 14px;
+  `;
+
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.animation = "slideOutRight 0.3s ease-in";
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 4000);
+
+  // Agregar estilos de animación si no existen
+  if (!document.querySelector("#cart-notification-styles")) {
+    const style = document.createElement("style");
+    style.id = "cart-notification-styles";
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
