@@ -105,10 +105,15 @@ function calculateCartTotals() {
 function removeFromCart(productId, size) {
   console.log("🗑️ Eliminando producto:", productId, size);
 
-  const itemIndex = cart.items.findIndex(
-    (item) =>
-      item.id === productId || (item.name === productId && item.size === size)
-  );
+  const itemIndex = cart.items.findIndex((item) => {
+    // Buscar por múltiples criterios para mayor compatibilidad
+    return (
+      item.id == productId ||
+      item.name === productId ||
+      (item.name === productId && item.size === size) ||
+      (item.id == productId && item.size === size)
+    );
+  });
 
   if (itemIndex !== -1) {
     const removedItem = cart.items[itemIndex];
@@ -122,6 +127,9 @@ function removeFromCart(productId, size) {
     if (window.location.pathname.includes("checkout.html")) {
       loadCartInCheckout();
     }
+  } else {
+    console.log("🚨 Producto no encontrado para eliminar:", productId, size);
+    showNotification("Error: Producto no encontrado", "error");
   }
 }
 
@@ -129,14 +137,28 @@ function removeFromCart(productId, size) {
 function decreaseItemQuantity(productId, size) {
   console.log("➖ Disminuyendo cantidad:", productId, size);
 
-  const itemIndex = cart.items.findIndex(
-    (item) =>
-      item.id === productId || (item.name === productId && item.size === size)
-  );
+  const itemIndex = cart.items.findIndex((item) => {
+    return (
+      item.id == productId ||
+      item.name === productId ||
+      (item.name === productId && item.size === size) ||
+      (item.id == productId && item.size === size)
+    );
+  });
 
   if (itemIndex !== -1) {
-    if (cart.items[itemIndex].quantity > 1) {
-      cart.items[itemIndex].quantity -= 1;
+    const item = cart.items[itemIndex];
+    const productType = detectProductType(item);
+
+    // Para membresías y planes, solo permitir 1 cantidad máximo
+    if (productType === "membership" || productType === "plan") {
+      // Si es membresía/plan, eliminar directamente
+      removeFromCart(productId, size);
+      return;
+    }
+
+    if (item.quantity > 1) {
+      item.quantity -= 1;
       calculateCartTotals();
       saveCart();
 
@@ -150,6 +172,8 @@ function decreaseItemQuantity(productId, size) {
       // Si solo queda 1, eliminar completamente
       removeFromCart(productId, size);
     }
+  } else {
+    console.log("🚨 Producto no encontrado para disminuir:", productId, size);
   }
 }
 
@@ -157,13 +181,29 @@ function decreaseItemQuantity(productId, size) {
 function increaseItemQuantity(productId, size) {
   console.log("➕ Aumentando cantidad:", productId, size);
 
-  const itemIndex = cart.items.findIndex(
-    (item) =>
-      item.id === productId || (item.name === productId && item.size === size)
-  );
+  const itemIndex = cart.items.findIndex((item) => {
+    return (
+      item.id == productId ||
+      item.name === productId ||
+      (item.name === productId && item.size === size) ||
+      (item.id == productId && item.size === size)
+    );
+  });
 
   if (itemIndex !== -1) {
-    cart.items[itemIndex].quantity += 1;
+    const item = cart.items[itemIndex];
+    const productType = detectProductType(item);
+
+    // Para membresías y planes, no permitir más de 1
+    if (productType === "membership" || productType === "plan") {
+      showNotification(
+        "Las membresías y planes solo pueden tener cantidad 1",
+        "info"
+      );
+      return;
+    }
+
+    item.quantity += 1;
     calculateCartTotals();
     saveCart();
 
@@ -173,6 +213,8 @@ function increaseItemQuantity(productId, size) {
     if (window.location.pathname.includes("checkout.html")) {
       loadCartInCheckout();
     }
+  } else {
+    console.log("🚨 Producto no encontrado para aumentar:", productId, size);
   }
 }
 
@@ -309,9 +351,29 @@ function loadCartInCheckout() {
   }
 
   // Mostrar productos
-  cart.items.forEach((item) => {
+  cart.items.forEach((item, index) => {
+    console.log("🛒 Cargando item:", item); // Debug
+
     const itemElement = document.createElement("div");
     itemElement.className = "cart-item";
+
+    // Usar múltiples identificadores para mayor compatibilidad
+    const itemId = item.id || item.name || index;
+    const itemSize = item.size || "Digital";
+    const productType = detectProductType(item);
+
+    // Para membresías y planes, ocultar botones de cantidad y solo mostrar eliminar
+    const quantityControls =
+      productType === "membership" || productType === "plan"
+        ? `<span class="quantity">1</span>`
+        : `
+        <div class="quantity-controls">
+          <button onclick="decreaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">-</button>
+          <span class="quantity">${item.quantity}</span>
+          <button onclick="increaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">+</button>
+        </div>
+      `;
+
     itemElement.innerHTML = `
       <div class="cart-item-info">
         <img src="${item.image || "https://via.placeholder.com/80x80"}" alt="${
@@ -319,23 +381,18 @@ function loadCartInCheckout() {
     }" class="cart-item-image">
         <div class="cart-item-details">
           <h4>${item.name}</h4>
-          <p>Talla: ${item.size}</p>
+          <p>Talla: ${itemSize}</p>
           <p>L.${item.price.toFixed(2)}</p>
+          ${
+            productType !== "physical"
+              ? '<span style="color: #ff69b4; font-size: 12px;">• Digital</span>'
+              : ""
+          }
         </div>
       </div>
       <div class="cart-item-controls">
-        <div class="quantity-controls">
-          <button onclick="decreaseItemQuantity('${item.id}', '${
-      item.size
-    }')" class="qty-btn">-</button>
-          <span class="quantity">${item.quantity}</span>
-          <button onclick="increaseItemQuantity('${item.id}', '${
-      item.size
-    }')" class="qty-btn">+</button>
-        </div>
-        <button onclick="removeFromCart('${item.id}', '${
-      item.size
-    }')" class="remove-btn">🗑️</button>
+        ${quantityControls}
+        <button onclick="removeFromCart('${itemId}', '${itemSize}')" class="remove-btn">🗑️</button>
       </div>
     `;
     cartItemsContainer.appendChild(itemElement);
