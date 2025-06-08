@@ -305,51 +305,66 @@
 
     <!-- 2. LÍNEA TICKER - DE NUEVOINICIO.HTML -->
     <style>
-      /* CSS específico para el ticker móvil */
+      /* CSS para el ticker - ARREGLADO */
+      .ticker-wrapper {
+        background: #ff69b4;
+        color: white;
+        padding: 0.8rem 0;
+        overflow: hidden;
+        width: 100%;
+        position: relative;
+      }
+
+      .ticker-content {
+        animation: ticker-scroll 20s linear infinite;
+        white-space: nowrap;
+        font-weight: 600;
+        display: inline-block;
+        font-size: 1rem;
+        will-change: transform;
+      }
+
+      /* Animación del ticker - nombre único */
+      @keyframes ticker-scroll {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* Media queries para móviles */
       @media (max-width: 768px) {
+        .ticker-wrapper {
+          padding: 0.6rem 0;
+        }
         .ticker-content {
-          font-size: 0.85rem !important; /* Más pequeño en móviles */
-          font-weight: 500 !important; /* Un poco menos bold */
+          font-size: 0.8rem !important;
+          font-weight: 500 !important;
+          animation: ticker-scroll 25s linear infinite;
         }
       }
 
       @media (max-width: 480px) {
+        .ticker-wrapper {
+          padding: 0.5rem 0;
+        }
         .ticker-content {
-          font-size: 0.75rem !important; /* Aún más pequeño en móviles muy pequeños */
+          font-size: 0.7rem !important;
           font-weight: 500 !important;
+          animation: ticker-scroll 30s linear infinite;
         }
       }
     </style>
 
-    <div
-      style="
-        background: #ff69b4;
-        color: white;
-        padding: 0.6rem 0;
-        overflow: hidden;
-      "
-    >
-      <div
-        class="ticker-content"
-        style="
-          animation: scroll 8s linear infinite;
-          white-space: nowrap;
-          font-weight: 600;
-          display: flex;
-        "
-      >
-        <span style="padding-right: 50px">
-          Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
-          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
-          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
-          recomendaciones 💡 Editoriales 📚
-        </span>
-        <span>
-          Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
-          Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
-          entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y
-          recomendaciones 💡 Editoriales 📚
-        </span>
+    <div class="ticker-wrapper">
+      <div class="ticker-content">
+        📱 Pagos seguros en cada compra 💳 Envios rapidos y confiables 📦
+        Descuentos y Promo Codes 🛒 GiftCards Y Regalos 🎁 Planes de
+        entrenamiento 🏋️‍♀️ Membresias con Beneficios 🚀 Consejos y recomendaciones
+        💡 Editoriales 📚 Eventos exclusivos 🎉 Comunidad activa 👥 Ropa
+        deportiva premium 👕 Entrenamientos personalizados 💪
       </div>
     </div>
 
