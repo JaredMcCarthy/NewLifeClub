@@ -685,10 +685,10 @@ body {
 
 @keyframes scroll {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
@@ -1313,5 +1313,19 @@ body {
   .contact-form textarea {
     -webkit-appearance: none;
     -webkit-border-radius: 10px;
+  }
+}
+
+/* Optimización del ticker para móviles */
+@media (max-width: 768px) {
+  [style*="animation: scroll"] {
+    animation: scroll 6s linear infinite !important;
+  }
+}
+
+/* Optimización para reducir motion sickness */
+@media (prefers-reduced-motion: reduce) {
+  [style*="animation: scroll"] {
+    animation: scroll 12s linear infinite !important;
   }
 }
