@@ -42,9 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
     if (isLoggedIn) {
-      sessionTimer = setTimeout(() => {
-        alert(
-          "Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente."
+      sessionTimer = setTimeout(async () => {
+        await showAlert(
+          "Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente.",
+          "warning",
+          "⏰ Sesión Expirada"
         );
         logout();
       }, SESSION_TIMEOUT);
@@ -170,8 +172,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // Si NO está loggeado, mostrar popup SOLO en móvil
       if (isMobile()) {
-        alert("Debes iniciar sesión para acceder a esta función");
-        window.location.href = "sesion.html";
+        showAlert(
+          "Debes iniciar sesión para acceder a esta función",
+          "warning"
+        );
+        setTimeout(() => {
+          window.location.href = "sesion.html";
+        }, 2000);
       } else {
         // En desktop, permitir acceso normal
         callback();
@@ -221,8 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ========== FUNCIÓN GLOBAL PARA CERRAR SESIÓN ==========
   // Para que funcione desde cualquier página
-  window.cerrarSesion = function () {
-    if (confirm("¿Estás seguro que quieres cerrar sesión?")) {
+  window.cerrarSesion = async function () {
+    const confirmed = await confirmLogout();
+    if (confirmed) {
       logout();
     }
   };

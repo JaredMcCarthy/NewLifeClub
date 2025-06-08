@@ -59,17 +59,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Validación mejorada en frontend
       if (!nombre || !correo || !contraseña) {
-        return alert("⚠️ Por favor completa todos los campos");
+        return await showValidationError(
+          "⚠️ Por favor completa todos los campos"
+        );
       }
 
       // Validación de email en frontend (adicional al backend)
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-        return alert("❌ Ingresa un correo válido (ej: usuario@dominio.com)");
+        return await showValidationError(
+          "❌ Ingresa un correo válido (ej: usuario@dominio.com)"
+        );
       }
 
       // Validación de contraseña en frontend
       if (contraseña.length < 8) {
-        return alert("❌ La contraseña debe tener al menos 8 caracteres");
+        return await showValidationError(
+          "❌ La contraseña debe tener al menos 8 caracteres"
+        );
       }
 
       try {
@@ -119,12 +125,12 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("token", loginData.token);
         localStorage.setItem("userEmail", correo);
         localStorage.setItem("isLoggedIn", "true");
-        alert("🎉 ¡Registro exitoso! Iniciando sesión...");
+        await showRegistrationSuccess(correo);
         closeLoginForm();
         window.location.href = "index.html";
       } catch (error) {
         console.error("Error:", error);
-        alert(`❌ ${error.message}`);
+        await showServerError(error.message);
       }
     });
   }
@@ -138,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const password = document.getElementById("login-password").value;
 
       if (!email || !password) {
-        return alert("⚠️ Completa ambos campos");
+        return await showValidationError("⚠️ Completa ambos campos");
       }
 
       try {
@@ -164,12 +170,12 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("token", data.token);
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", email);
-        alert("🔑 ¡Bienvenido! Iniciando sesión...");
+        await showLoginSuccess(data.usuario?.nombre || "Usuario");
         closeLoginForm();
         window.location.href = "index.html";
       } catch (error) {
         console.error("Error:", error);
-        alert(`❌ ${error.message}`);
+        await showServerError(error.message);
       }
     });
   }

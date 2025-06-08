@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout - NewLifeRun Club</title>
+    <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
+    <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
     <style>
       * {
         margin: 0;
@@ -1527,7 +1529,7 @@
         }
       }
 
-      function processPayment() {
+      async function processPayment() {
         if (!validateCurrentStep()) {
           return;
         }
@@ -1537,7 +1539,7 @@
 
         // Si es depósito bancario, mostrar mensaje especial
         if (selectedPaymentMethod === "bank-deposit") {
-          handleBankDepositPayment();
+          await handleBankDepositPayment();
           return;
         }
 
@@ -1567,27 +1569,27 @@
         }, 3000);
       }
 
-      function handleBankDepositPayment() {
+      async function handleBankDepositPayment() {
         // Generar token único para depósito bancario
         const token = generateOrderToken();
 
         // Mostrar mensaje de confirmación para depósito
         const message = `
-          ¡Gracias por agendar tu pedido!
-          
-          Por favor deposita a cualquiera de nuestras cuentas bancarias:
-          
+          🏦 DEPÓSITO BANCARIO CONFIRMADO
+
+          Realiza tu depósito en cualquiera de estas cuentas:
+
           🏦 BAC Honduras: 123445-BAC-001
-          🏦 Banco Fichosa: 123445-FCH-002  
+          🏦 Banco Fichosa: 123445-FCH-002
           🏦 Banco Atlántida: 123445-ATL-003
           🏦 Banpais: 123445-BNP-004
-          
+
           Token de pedido: ${token}
-          
+
           Envía el comprobante a: info@newliferun.com
         `;
 
-        alert(message);
+        await showAlert(message, "info", "🏦 Información de Depósito");
 
         // Actualizar token en la página
         document.getElementById("purchase-token").textContent = token;
@@ -1754,7 +1756,7 @@
                     opacity: 1;
                 }
             }
-            
+
             @keyframes slideOutRight {
                 from {
                     transform: translateX(0);
@@ -1791,6 +1793,19 @@
           }
         }, 200);
       });
+
+      // Función para procesamiento de tarjeta
+      async function processCardPayment() {
+        // Aquí iría la integración con la pasarela de pagos real
+        await showAlert(
+          "Procesando pago con tarjeta...\n\nEsta es una demo. En producción se integrará con la pasarela de pagos real.",
+          "info",
+          "💳 Procesando Pago"
+        );
+        return true;
+      }
     </script>
+    <!-- 🎨 CUSTOM POPUPS SYSTEM -->
+    <script src="js/custom-popups.js?v=1.0"></script>
   </body>
 </html>
