@@ -551,37 +551,73 @@ function updateCartSummary() {
 document.addEventListener("DOMContentLoaded", function () {
   console.log("🛒 Cart Handler - Modo Checkout iniciado");
 
-  // 🧹 LIMPIEZA INICIAL AGRESIVA
-  console.log("🧹 EJECUTANDO LIMPIEZA AGRESIVA AL INICIAR");
+  // 🔍 VERIFICACIÓN INTELIGENTE - NO LIMPIEZA AGRESIVA
+  console.log(
+    "🔍 VERIFICANDO INTEGRIDAD DEL CARRITO (SIN LIMPIAR PRODUCTOS VÁLIDOS)"
+  );
 
-  // Eliminar TODOS los datos relacionados con carrito
-  const keysToRemove = [
-    "newlife_cart",
-    "cart_data",
-    "checkout_data",
-    "cart_items",
-  ];
-  keysToRemove.forEach((key) => {
-    localStorage.removeItem(key);
-    console.log(`🗑️ Eliminado: ${key}`);
-  });
+  // Solo verificar integridad, NO eliminar automáticamente
+  const carritoGuardado = localStorage.getItem("newlife_cart");
 
-  // Forzar carrito vacío
-  cart = { items: [], count: 0, total: 0 };
-  console.log("✅ CARRITO FORZADO A ESTADO VACÍO");
+  if (carritoGuardado) {
+    try {
+      const carritoParseado = JSON.parse(carritoGuardado);
 
-  // Solo en checkout: mostrar inmediatamente estado vacío
+      // Si los datos están bien estructurados, cargarlos normalmente
+      if (carritoParseado && Array.isArray(carritoParseado.items)) {
+        cart = carritoParseado;
+        console.log(
+          "✅ CARRITO VÁLIDO CARGADO - Productos:",
+          cart.items.length
+        );
+
+        // Si hay productos, no hacer nada más
+        if (cart.items.length > 0) {
+          console.log("🛒 Productos encontrados - CONSERVANDO CARRITO");
+          updateCartCount();
+          return; // IMPORTANTE: Salir aquí para no limpiar
+        }
+      } else {
+        // Solo si los datos están realmente corruptos, limpiar
+        console.log("⚠️ Datos corruptos detectados - limpiando solo corruptos");
+        const keysToRemove = [
+          "newlife_cart",
+          "cart_data",
+          "checkout_data",
+          "cart_items",
+        ];
+        keysToRemove.forEach((key) => {
+          localStorage.removeItem(key);
+          console.log(`🗑️ Eliminado dato corrupto: ${key}`);
+        });
+        cart = { items: [], count: 0, total: 0 };
+      }
+    } catch (e) {
+      console.log("❌ Error parseando carrito - limpiando datos dañados");
+      localStorage.removeItem("newlife_cart");
+      localStorage.removeItem("cart_data");
+      localStorage.removeItem("checkout_data");
+      cart = { items: [], count: 0, total: 0 };
+    }
+  } else {
+    // No hay carrito, inicializar vacío normalmente
+    console.log("📝 No hay carrito guardado - iniciando limpio");
+    cart = { items: [], count: 0, total: 0 };
+  }
+
+  // Solo en checkout: cargar productos SI EXISTEN
   if (window.location.pathname.includes("checkout.html")) {
     setTimeout(() => {
       const cartItemsContainer = document.getElementById("cart-items");
       if (cartItemsContainer) {
-        showEmptyCartInCheckout(cartItemsContainer);
-        console.log("🛒 Checkout inicializado con carrito vacío");
+        // Cargar carrito normalmente - ya no forzar vacío
+        loadCartInCheckout();
+        console.log("🛒 Checkout cargado con carrito actual");
       }
 
-      // 🎯 CRÍTICO: Actualizar totales inmediatamente
+      // Actualizar totales
       updateCartSummary();
-      console.log("💰 Totales sincronizados al iniciar");
+      console.log("💰 Totales actualizados");
     }, 100);
   }
 
