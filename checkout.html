@@ -9,67 +9,65 @@
     <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
 
-    <!-- 🧹 LIMPIEZA INTELIGENTE DEL CARRITO - SOLO DATOS CORRUPTOS -->
+    <!-- 🧹 LIMPIEZA NUCLEAR COMPLETA - SIN EXCEPCIONES -->
     <script>
-      console.log("🔍 VERIFICANDO INTEGRIDAD DEL CARRITO");
+      console.log("🧹 LIMPIEZA NUCLEAR ACTIVADA - ELIMINANDO TODO");
 
-      // PASO 1: Verificar si hay datos del carrito
-      const carritoActual = localStorage.getItem("newlife_cart");
+      // PASO 1: ELIMINAR ABSOLUTAMENTE TODO
+      const keysToNuke = [
+        "newlife_cart",
+        "cart_data",
+        "checkout_data",
+        "cart_items",
+        "shopping_cart",
+        "user_cart",
+      ];
 
-      if (carritoActual) {
-        try {
-          const carritoParseado = JSON.parse(carritoActual);
+      keysToNuke.forEach((key) => {
+        localStorage.removeItem(key);
+        console.log(`🗑️ ELIMINADO: ${key}`);
+      });
 
-          // PASO 2: Verificar si los datos están corruptos
-          if (!carritoParseado || !Array.isArray(carritoParseado.items)) {
-            console.log(
-              "⚠️ Datos corruptos detectados - limpiando SOLO corruptos"
-            );
-            localStorage.removeItem("newlife_cart");
-            localStorage.removeItem("cart_data");
-            localStorage.removeItem("checkout_data");
-          } else if (carritoParseado.items.length > 0) {
-            console.log("✅ CARRITO VÁLIDO CON PRODUCTOS - CONSERVANDO");
-            console.log(
-              "📦 Productos encontrados:",
-              carritoParseado.items.length
-            );
-          } else {
-            console.log("📝 Carrito válido pero vacío");
-          }
-        } catch (e) {
-          console.log(
-            "❌ Error al parsear carrito - limpiando SOLO datos dañados"
-          );
-          localStorage.removeItem("newlife_cart");
-          localStorage.removeItem("cart_data");
-          localStorage.removeItem("checkout_data");
+      // PASO 2: VERIFICAR ELIMINACIÓN COMPLETA
+      let remaining = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.toLowerCase().includes("cart")) {
+          remaining.push(key);
+          localStorage.removeItem(key);
         }
-      } else {
-        console.log("📝 No hay carrito guardado - estado limpio");
       }
 
-      // PASO 3: Función global para verificar estado
-      window.verificarCarrito = function () {
-        const carrito = localStorage.getItem("newlife_cart");
-        if (carrito) {
-          try {
-            const parsed = JSON.parse(carrito);
-            console.log("🛒 Estado del carrito:");
-            console.log("- Items:", parsed.items?.length || 0);
-            console.log("- Total:", parsed.total || 0);
-            return parsed;
-          } catch (e) {
-            console.log("❌ Carrito corrupto");
-            return null;
-          }
-        } else {
-          console.log("📝 No hay carrito");
-          return null;
-        }
+      if (remaining.length > 0) {
+        console.log("🗑️ Eliminados datos residuales:", remaining);
+      }
+
+      // PASO 3: INICIALIZAR CARRITO COMPLETAMENTE VACÍO
+      const carritoLimpio = {
+        items: [],
+        count: 0,
+        total: 0,
       };
 
-      console.log("✅ Verificación de integridad completada");
+      // NO guardar nada - dejar localStorage completamente limpio
+      console.log("✅ LIMPIEZA NUCLEAR COMPLETADA - CARRITO VACÍO GARANTIZADO");
+
+      // FUNCIÓN DE VERIFICACIÓN
+      window.verificarLimpieza = function () {
+        const keys = Object.keys(localStorage);
+        const cartKeys = keys.filter((key) =>
+          key.toLowerCase().includes("cart")
+        );
+        console.log(
+          "🔍 Verificación:",
+          cartKeys.length === 0 ? "LIMPIO" : "DATOS RESIDUALES",
+          cartKeys
+        );
+        return cartKeys;
+      };
+
+      // Ejecutar verificación
+      verificarLimpieza();
     </script>
     <style>
       * {

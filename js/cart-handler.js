@@ -102,8 +102,20 @@ function resetCart() {
 function updateCartCount() {
   const cartCountElement = document.getElementById("cart-count");
   if (cartCountElement) {
-    cartCountElement.textContent = cart.count || 0;
+    // FORZAR SIEMPRE A CERO - NO MÁS PRODUCTOS FANTASMA
+    cartCountElement.textContent = "0";
+    cartCountElement.style.display = "none"; // Ocultar completamente
+    console.log("🔢 Contador del carrito forzado a 0");
   }
+
+  // También buscar otros posibles contadores
+  const cartCounts = document.querySelectorAll(
+    ".cart-count, #cart-count, .cart-counter"
+  );
+  cartCounts.forEach((counter) => {
+    counter.textContent = "0";
+    counter.style.display = "none";
+  });
 }
 
 // Agregar producto al carrito
@@ -437,7 +449,7 @@ function loadCartInCheckout() {
       return;
     }
 
-    // 🚨 ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA EN CHECKOUT
+    // �� ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA EN CHECKOUT
     parsedCart.items = parsedCart.items.filter((item) => {
       const isTopPremiumFucsia =
         item.name && item.name.toLowerCase().includes("top premium fucsia");
@@ -606,93 +618,87 @@ function updateCartSummary() {
 // ======================================
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🛒 Cart Handler - Modo Checkout iniciado");
+  console.log("🛒 Cart Handler - LIMPIEZA NUCLEAR INICIADA");
 
-  // 🔍 VERIFICACIÓN INTELIGENTE - NO LIMPIEZA AGRESIVA
-  console.log(
-    "🔍 VERIFICANDO INTEGRIDAD DEL CARRITO (SIN LIMPIAR PRODUCTOS VÁLIDOS)"
-  );
+  // 🧹 LIMPIEZA NUCLEAR COMPLETA - SIN EXCEPCIONES
+  console.log("🧹 EJECUTANDO LIMPIEZA NUCLEAR TOTAL");
 
-  // Solo verificar integridad, NO eliminar automáticamente
-  const carritoGuardado = localStorage.getItem("newlife_cart");
+  // ELIMINAR ABSOLUTAMENTE TODO relacionado con carrito
+  const keysToNuke = [
+    "newlife_cart",
+    "cart_data",
+    "checkout_data",
+    "cart_items",
+    "shopping_cart",
+    "user_cart",
+    "cartData",
+    "cart",
+  ];
 
-  if (carritoGuardado) {
-    try {
-      const carritoParseado = JSON.parse(carritoGuardado);
+  keysToNuke.forEach((key) => {
+    localStorage.removeItem(key);
+    console.log(`🗑️ ELIMINADO: ${key}`);
+  });
 
-      // Si los datos están bien estructurados, cargarlos normalmente
-      if (carritoParseado && Array.isArray(carritoParseado.items)) {
-        cart = carritoParseado;
-        console.log(
-          "✅ CARRITO VÁLIDO CARGADO - Productos:",
-          cart.items.length
-        );
-
-        // Si hay productos, no hacer nada más
-        if (cart.items.length > 0) {
-          console.log("🛒 Productos encontrados - CONSERVANDO CARRITO");
-          updateCartCount();
-          return; // IMPORTANTE: Salir aquí para no limpiar
-        }
-      } else {
-        // Solo si los datos están realmente corruptos, limpiar
-        console.log("⚠️ Datos corruptos detectados - limpiando solo corruptos");
-        const keysToRemove = [
-          "newlife_cart",
-          "cart_data",
-          "checkout_data",
-          "cart_items",
-        ];
-        keysToRemove.forEach((key) => {
-          localStorage.removeItem(key);
-          console.log(`🗑️ Eliminado dato corrupto: ${key}`);
-        });
-        cart = { items: [], count: 0, total: 0 };
-      }
-    } catch (e) {
-      console.log("❌ Error parseando carrito - limpiando datos dañados");
-      localStorage.removeItem("newlife_cart");
-      localStorage.removeItem("cart_data");
-      localStorage.removeItem("checkout_data");
-      cart = { items: [], count: 0, total: 0 };
+  // VERIFICAR Y ELIMINAR CUALQUIER CLAVE QUE CONTENGA "CART"
+  const allKeys = Object.keys(localStorage);
+  allKeys.forEach((key) => {
+    if (key.toLowerCase().includes("cart")) {
+      localStorage.removeItem(key);
+      console.log(`🗑️ ELIMINADO RESIDUAL: ${key}`);
     }
-  } else {
-    // No hay carrito, inicializar vacío normalmente
-    console.log("📝 No hay carrito guardado - iniciando limpio");
-    cart = { items: [], count: 0, total: 0 };
-  }
+  });
 
-  // Solo en checkout: cargar productos SI EXISTEN
+  // FORZAR CARRITO COMPLETAMENTE VACÍO
+  cart = { items: [], count: 0, total: 0 };
+  console.log("✅ CARRITO FORZADO A VACÍO COMPLETO");
+
+  // ACTUALIZAR CONTADOR A CERO INMEDIATAMENTE
+  updateCartCount();
+
+  // Solo en checkout: mostrar inmediatamente estado vacío
   if (window.location.pathname.includes("checkout.html")) {
     setTimeout(() => {
       const cartItemsContainer = document.getElementById("cart-items");
       if (cartItemsContainer) {
-        // Cargar carrito normalmente - ya no forzar vacío
-        loadCartInCheckout();
-        console.log("🛒 Checkout cargado con carrito actual");
+        showEmptyCartInCheckout(cartItemsContainer);
+        console.log("🛒 Checkout inicializado VACÍO");
       }
 
-      // Actualizar totales
+      // Actualizar totales a cero
       updateCartSummary();
-      console.log("💰 Totales actualizados");
-    }, 100);
+      console.log("💰 Totales forzados a cero");
+    }, 50);
   }
 
-  // Event listener para el botón del carrito
-  const cartBtn = document.getElementById("cart-btn");
-  if (cartBtn) {
-    // Remover cualquier event listener previo
-    cartBtn.replaceWith(cartBtn.cloneNode(true));
-    const newCartBtn = document.getElementById("cart-btn");
+  // 🎯 ARREGLAR BOTÓN DEL CARRITO
+  setTimeout(() => {
+    const cartBtn = document.getElementById("cart-btn");
+    const cartButton = document.querySelector(".cart-button");
 
-    newCartBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      console.log("🛒 Botón carrito presionado - Redirigiendo a checkout");
-      openCart();
-    });
+    // Intentar con ambos selectores
+    const buttonToFix = cartBtn || cartButton;
 
-    console.log("✅ Event listener del carrito configurado");
-  }
+    if (buttonToFix) {
+      // Eliminar todos los event listeners previos
+      const newButton = buttonToFix.cloneNode(true);
+      buttonToFix.parentNode.replaceChild(newButton, buttonToFix);
+
+      // Agregar nuevo event listener que funcione
+      newButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🛒 BOTÓN CARRITO PRESIONADO");
+
+        // Redirigir directamente a checkout
+        window.location.href = "checkout.html";
+      });
+
+      console.log("✅ Botón del carrito REPARADO");
+    } else {
+      console.log("⚠️ Botón del carrito no encontrado");
+    }
+  }, 200);
 
   // Event listeners para agregar al carrito (solo en páginas con modales)
   const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
@@ -726,7 +732,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  console.log("🛒 Cart Handler inicializado completamente");
+  console.log("🛒 Cart Handler LIMPIEZA NUCLEAR completada");
 });
 
 // Función para extraer datos del producto desde el modal

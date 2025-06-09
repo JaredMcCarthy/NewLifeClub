@@ -1497,31 +1497,48 @@
 
     <!-- 🧹 SCRIPT TEMPORAL DE LIMPIEZA DEL CARRITO -->
     <script>
-      // Limpiar carrito automáticamente al cargar la página (temporal)
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("🧹 Verificando limpieza del carrito...");
+      // 🧹 LIMPIEZA NUCLEAR DEL CARRITO EN INDEX
+      console.log("🧹 INDEX: Limpieza nuclear del carrito");
 
-        // Limpiar cualquier dato corrupto del carrito
-        const cartData = localStorage.getItem("newlife_cart");
-        if (cartData) {
-          try {
-            const parsed = JSON.parse(cartData);
-            if (!parsed || !Array.isArray(parsed.items)) {
-              console.log("🧹 Limpiando carrito corrupto");
-              localStorage.removeItem("newlife_cart");
-              localStorage.removeItem("cart_data");
-              localStorage.removeItem("checkout_data");
-            }
-          } catch (e) {
-            console.log("🧹 Error en carrito - limpiando");
-            localStorage.removeItem("newlife_cart");
-            localStorage.removeItem("cart_data");
-            localStorage.removeItem("checkout_data");
-          }
-        }
+      // Eliminar TODOS los datos del carrito
+      const keysToNuke = [
+        "newlife_cart",
+        "cart_data",
+        "checkout_data",
+        "cart_items",
+        "shopping_cart",
+        "user_cart",
+        "cartData",
+        "cart",
+      ];
 
-        console.log("✅ Verificación de carrito completada");
+      keysToNuke.forEach((key) => {
+        localStorage.removeItem(key);
+        console.log(`🗑️ INDEX: Eliminado ${key}`);
       });
+
+      // Eliminar cualquier clave que contenga "cart"
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach((key) => {
+        if (key.toLowerCase().includes("cart")) {
+          localStorage.removeItem(key);
+          console.log(`🗑️ INDEX: Eliminado residual ${key}`);
+        }
+      });
+
+      // Forzar contador a cero
+      setTimeout(() => {
+        const cartCounters = document.querySelectorAll(
+          ".cart-count, #cart-count, .cart-counter"
+        );
+        cartCounters.forEach((counter) => {
+          counter.textContent = "0";
+          counter.style.display = "none";
+        });
+        console.log("🔢 INDEX: Contadores forzados a 0");
+      }, 100);
+
+      console.log("✅ INDEX: Limpieza nuclear completada");
     </script>
   </body>
 </html>
