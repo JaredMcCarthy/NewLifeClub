@@ -190,12 +190,14 @@ document.addEventListener("DOMContentLoaded", function () {
       name: "Top Premium Fucsia",
       price: "L.500",
       description:
-        "Top deportivo en vibrante color fucsia, ideal para entrenamientos o looks casuales. Tejido transpirable y elástico que se adapta perfectamente al cuerpo.",
+        "Top deportivo premium en vibrante color fucsia, ideal para entrenamientos intensos. Tejido transpirable y elástico que se adapta perfectamente al cuerpo. Producto físico con envío incluido.",
       images: [
         "Fotostienda/mujer2.png",
         "Fotostienda/mujer2.png",
         "Fotostienda/mujer2.png",
       ],
+      isPhysical: true,
+      source: "tienda",
     },
     "camisa-mujer-3": {
       name: "Camisa Clásica Blanca",
