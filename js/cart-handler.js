@@ -37,7 +37,36 @@ function loadCart() {
       // 🔍 VALIDACIÓN ESTRICTA: Solo cargar si tiene estructura válida
       if (parsedCart && Array.isArray(parsedCart.items)) {
         cart = parsedCart;
-        console.log("✅ Carrito cargado:", cart.items.length, "productos");
+
+        // 🚨 ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA
+        cart.items = cart.items.filter((item) => {
+          // Eliminar "Top Premium Fucsia" que esté marcado como digital/fantasma
+          const isTopPremiumFucsia =
+            item.name && item.name.toLowerCase().includes("top premium fucsia");
+          const isDigital =
+            item.source === "unknown" ||
+            !item.source ||
+            detectProductType(item) === "membership" ||
+            detectProductType(item) === "plan";
+
+          if (isTopPremiumFucsia && isDigital) {
+            console.log(
+              "🗑️ ELIMINANDO PRODUCTO FANTASMA:",
+              item.name,
+              "- Tipo:",
+              detectProductType(item)
+            );
+            return false; // Eliminar este item
+          }
+
+          return true; // Conservar otros items
+        });
+
+        console.log(
+          "✅ Carrito cargado:",
+          cart.items.length,
+          "productos (fantasmas eliminados)"
+        );
       } else {
         console.log("⚠️ Datos de carrito inválidos - reseteando");
         resetCart();
@@ -51,7 +80,10 @@ function loadCart() {
     resetCart();
   }
 
+  // Recalcular totales después de la limpieza
+  calculateCartTotals();
   updateCartCount();
+  saveCart(); // Guardar carrito limpio
 }
 
 // Guardar carrito en localStorage
@@ -405,8 +437,33 @@ function loadCartInCheckout() {
       return;
     }
 
-    // Solo si hay productos REALES, mostrarlos
+    // 🚨 ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA EN CHECKOUT
+    parsedCart.items = parsedCart.items.filter((item) => {
+      const isTopPremiumFucsia =
+        item.name && item.name.toLowerCase().includes("top premium fucsia");
+      const isDigital =
+        item.source === "unknown" ||
+        !item.source ||
+        detectProductType(item) === "membership" ||
+        detectProductType(item) === "plan";
+
+      if (isTopPremiumFucsia && isDigital) {
+        console.log("🗑️ CHECKOUT: Eliminando producto fantasma:", item.name);
+        return false;
+      }
+
+      return true;
+    });
+
+    // Solo si hay productos REALES después de la limpieza, mostrarlos
     cart = parsedCart;
+
+    // Recalcular totales después de la limpieza
+    calculateCartTotals();
+
+    // Guardar carrito limpio
+    saveCart();
+
     console.log("📦 Productos válidos encontrados:", cart.items.length);
   } catch (e) {
     console.log("❌ Error parseando carrito - mostrando vacío");
@@ -1085,4 +1142,70 @@ window.syncTotals = function () {
     taxes: cart.total * 0.15,
     total: cart.total * 1.15,
   };
+};
+
+// 🚨 FUNCIÓN DE EMERGENCIA: Eliminar producto fantasma específico
+window.eliminarProductoFantasma = function () {
+  console.log("🚨 ELIMINACIÓN DE EMERGENCIA: Top Premium Fucsia fantasma");
+
+  const cartData = localStorage.getItem("newlife_cart");
+  if (!cartData) {
+    console.log("No hay carrito para limpiar");
+    return;
+  }
+
+  try {
+    const cart = JSON.parse(cartData);
+    const originalCount = cart.items.length;
+
+    // Eliminar ESPECÍFICAMENTE el Top Premium Fucsia digital/fantasma
+    cart.items = cart.items.filter((item) => {
+      const isTopPremiumFucsia =
+        item.name && item.name.toLowerCase().includes("top premium fucsia");
+      const isDigital =
+        item.source === "unknown" ||
+        !item.source ||
+        item.size === "Única" ||
+        item.size === "Digital" ||
+        detectProductType(item) === "membership" ||
+        detectProductType(item) === "plan";
+
+      if (isTopPremiumFucsia && isDigital) {
+        console.log(
+          "🗑️ ELIMINADO:",
+          item.name,
+          "Source:",
+          item.source,
+          "Tipo:",
+          detectProductType(item)
+        );
+        return false; // Eliminar
+      }
+
+      return true; // Conservar
+    });
+
+    // Recalcular totales
+    cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    cart.total = cart.items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    // Guardar carrito limpio
+    localStorage.setItem("newlife_cart", JSON.stringify(cart));
+
+    console.log(
+      `✅ Limpieza completada: ${originalCount} → ${cart.items.length} productos`
+    );
+
+    // Recargar página si estamos en checkout
+    if (window.location.pathname.includes("checkout.html")) {
+      window.location.reload();
+    }
+
+    return cart;
+  } catch (e) {
+    console.error("Error en limpieza de emergencia:", e);
+  }
 };
