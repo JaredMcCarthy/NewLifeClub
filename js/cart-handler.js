@@ -382,18 +382,48 @@ function loadCartInCheckout() {
 
   if (!cartItemsContainer) return; // No estamos en checkout.html
 
+  console.log("🛒 VERIFICANDO CARRITO EN CHECKOUT");
+
+  // 🧹 VERIFICACIÓN ESTRICTA: Solo cargar si hay datos válidos
+  const savedCart = localStorage.getItem("newlife_cart");
+
+  if (!savedCart) {
+    console.log("✅ No hay carrito guardado - mostrando vacío");
+    showEmptyCartInCheckout(cartItemsContainer);
+    return;
+  }
+
+  try {
+    const parsedCart = JSON.parse(savedCart);
+    if (
+      !parsedCart ||
+      !Array.isArray(parsedCart.items) ||
+      parsedCart.items.length === 0
+    ) {
+      console.log("✅ Carrito vacío o inválido - mostrando vacío");
+      showEmptyCartInCheckout(cartItemsContainer);
+      return;
+    }
+
+    // Solo si hay productos REALES, mostrarlos
+    cart = parsedCart;
+    console.log("📦 Productos válidos encontrados:", cart.items.length);
+  } catch (e) {
+    console.log("❌ Error parseando carrito - mostrando vacío");
+    showEmptyCartInCheckout(cartItemsContainer);
+    return;
+  }
+
   // Limpiar contenedor
   cartItemsContainer.innerHTML = "";
 
+  // Mostrar productos SOLO si hay items válidos
   if (cart.items.length === 0) {
-    cartItemsContainer.innerHTML = `
-      <div style="text-align: center; padding: 40px; color: #666;">
-        <p>🛒 Tu carrito está vacío</p>
-        <a href="tienda.html" style="color: #ff69b4; text-decoration: none;">← Ir a la tienda</a>
-      </div>
-    `;
+    showEmptyCartInCheckout(cartItemsContainer);
     return;
   }
+
+  console.log("✅ Mostrando productos del carrito:", cart.items);
 
   // Mostrar productos
   cart.items.forEach((item, index) => {
@@ -461,18 +491,57 @@ function loadCartInCheckout() {
 
 // Actualizar resumen del carrito
 function updateCartSummary() {
-  const subtotalElement = document.querySelector(".subtotal-amount");
-  const totalElement = document.querySelector(".total-amount");
-  const payButton = document.querySelector(".btn-primary");
+  console.log("🧮 Actualizando resumen del carrito");
 
-  if (subtotalElement)
-    subtotalElement.textContent = `L.${cart.total.toFixed(2)}`;
-  if (totalElement)
-    totalElement.textContent = `L.${(cart.total * 1.15).toFixed(2)}`; // +15% impuestos
-  if (payButton)
-    payButton.textContent = `Completar Pago - L.${(cart.total * 1.15).toFixed(
-      2
-    )}`;
+  // Calcular totales actualizados
+  calculateCartTotals();
+
+  const subtotal = cart.total || 0;
+  const shipping = 0; // Envío gratis
+  const taxRate = 0.15; // 15%
+  const taxes = subtotal * taxRate;
+  const finalTotal = subtotal + shipping + taxes;
+
+  console.log("💰 Cálculos:", {
+    subtotal: subtotal,
+    shipping: shipping,
+    taxes: taxes,
+    finalTotal: finalTotal,
+  });
+
+  // Actualizar elementos del resumen
+  const subtotalElement = document.querySelector(".subtotal-amount");
+  const shippingElement = document.querySelector(".shipping-amount");
+  const taxElement = document.querySelector(".tax-amount");
+  const totalElement = document.querySelector(".total-amount");
+  const payButton =
+    document.querySelector("#payment-button") ||
+    document.querySelector(".btn-primary");
+
+  if (subtotalElement) subtotalElement.textContent = `L.${subtotal.toFixed(2)}`;
+  if (shippingElement) shippingElement.textContent = "GRATIS";
+  if (taxElement) taxElement.textContent = `L.${taxes.toFixed(2)}`;
+  if (totalElement) totalElement.textContent = `L.${finalTotal.toFixed(2)}`;
+
+  // 🎯 CRÍTICO: Actualizar el botón de pago con el MISMO total
+  if (payButton) {
+    payButton.textContent = `Completar Pago - L.${finalTotal.toFixed(2)}`;
+    console.log("🔄 Botón actualizado:", payButton.textContent);
+
+    // Si el carrito está vacío, deshabilitar botón
+    if (cart.items.length === 0 || finalTotal === 0) {
+      payButton.textContent = "Carrito Vacío";
+      payButton.disabled = true;
+      payButton.style.background = "#ccc";
+      payButton.style.cursor = "not-allowed";
+    } else {
+      payButton.disabled = false;
+      payButton.style.background = "";
+      payButton.style.cursor = "";
+    }
+  }
+
+  console.log("✅ Resumen actualizado correctamente");
 }
 
 // ======================================
@@ -482,23 +551,39 @@ function updateCartSummary() {
 document.addEventListener("DOMContentLoaded", function () {
   console.log("🛒 Cart Handler - Modo Checkout iniciado");
 
-  // 🧹 LIMPIEZA INICIAL: Verificar integridad del carrito
-  const savedCart = localStorage.getItem("newlife_cart");
-  if (savedCart) {
-    try {
-      const parsedCart = JSON.parse(savedCart);
-      if (!parsedCart || !Array.isArray(parsedCart.items)) {
-        console.log("🧹 Carrito corrupto detectado - limpiando");
-        forceCleanCart();
-      }
-    } catch (e) {
-      console.log("🧹 Error en carrito - limpiando");
-      forceCleanCart();
-    }
-  }
+  // 🧹 LIMPIEZA INICIAL AGRESIVA
+  console.log("🧹 EJECUTANDO LIMPIEZA AGRESIVA AL INICIAR");
 
-  // Cargar carrito existente
-  loadCart();
+  // Eliminar TODOS los datos relacionados con carrito
+  const keysToRemove = [
+    "newlife_cart",
+    "cart_data",
+    "checkout_data",
+    "cart_items",
+  ];
+  keysToRemove.forEach((key) => {
+    localStorage.removeItem(key);
+    console.log(`🗑️ Eliminado: ${key}`);
+  });
+
+  // Forzar carrito vacío
+  cart = { items: [], count: 0, total: 0 };
+  console.log("✅ CARRITO FORZADO A ESTADO VACÍO");
+
+  // Solo en checkout: mostrar inmediatamente estado vacío
+  if (window.location.pathname.includes("checkout.html")) {
+    setTimeout(() => {
+      const cartItemsContainer = document.getElementById("cart-items");
+      if (cartItemsContainer) {
+        showEmptyCartInCheckout(cartItemsContainer);
+        console.log("🛒 Checkout inicializado con carrito vacío");
+      }
+
+      // 🎯 CRÍTICO: Actualizar totales inmediatamente
+      updateCartSummary();
+      console.log("💰 Totales sincronizados al iniciar");
+    }, 100);
+  }
 
   // Event listener para el botón del carrito
   const cartBtn = document.getElementById("cart-btn");
@@ -890,4 +975,78 @@ window.checkDuplicates = function () {
     console.log("✅ No hay productos duplicados");
     return [];
   }
+};
+
+// 🧹 NUEVA FUNCIÓN: Mostrar carrito vacío en checkout
+function showEmptyCartInCheckout(container) {
+  console.log("📝 Mostrando carrito vacío en checkout");
+
+  container.innerHTML = `
+    <div class="empty-cart-message" style="text-align: center; padding: 60px 20px; color: #666;">
+      <div style="font-size: 4rem; margin-bottom: 20px;">🛒</div>
+      <h3 style="color: #333; margin-bottom: 15px; font-size: 1.5rem;">Tu carrito está vacío</h3>
+      <p style="margin-bottom: 30px; font-size: 1.1rem;">Agrega algunos productos para proceder con tu compra</p>
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="tienda.html" style="
+          background: linear-gradient(45deg, #ff69b4, #ff0080);
+          color: white;
+          padding: 12px 25px;
+          border-radius: 25px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: transform 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          🏪 Ir a la Tienda
+        </a>
+        <a href="membresias.html" style="
+          background: linear-gradient(45deg, #333, #555);
+          color: white;
+          padding: 12px 25px;
+          border-radius: 25px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: transform 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          🎫 Ver Membresías
+        </a>
+      </div>
+    </div>
+  `;
+
+  // Actualizar resumen con valores en cero
+  const subtotalElement = document.querySelector(".subtotal-amount");
+  const totalElement = document.querySelector(".total-amount");
+  const payButton = document.querySelector(".btn-primary");
+
+  if (subtotalElement) subtotalElement.textContent = "L.0.00";
+  if (totalElement) totalElement.textContent = "L.0.00";
+  if (payButton) {
+    payButton.textContent = "Carrito Vacío";
+    payButton.disabled = true;
+    payButton.style.background = "#ccc";
+    payButton.style.cursor = "not-allowed";
+  }
+}
+
+// Función global para sincronizar totales
+window.syncTotals = function () {
+  console.log("🔄 SINCRONIZANDO TOTALES MANUALMENTE");
+
+  // Recalcular totales del carrito
+  calculateCartTotals();
+
+  // Actualizar resumen
+  updateCartSummary();
+
+  // Si estamos en checkout, actualizar también la vista
+  if (window.location.pathname.includes("checkout.html")) {
+    loadCartInCheckout();
+  }
+
+  console.log("✅ Totales sincronizados correctamente");
+  return {
+    subtotal: cart.total,
+    taxes: cart.total * 0.15,
+    total: cart.total * 1.15,
+  };
 };

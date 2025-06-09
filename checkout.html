@@ -4,8 +4,58 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout - NewLifeRun Club</title>
+    <link rel="stylesheet" href="css/checkout.css?v=2.0" />
+    <link rel="stylesheet" href="css/navbar.css?v=9.0" />
     <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
+
+    <!-- 🧹 LIMPIEZA AGRESIVA DEL CARRITO - PRIORIDAD MÁXIMA -->
+    <script>
+      console.log("🧹 INICIANDO LIMPIEZA AGRESIVA DEL CARRITO");
+
+      // PASO 1: Eliminar TODOS los datos del carrito
+      localStorage.removeItem("newlife_cart");
+      localStorage.removeItem("cart_data");
+      localStorage.removeItem("checkout_data");
+      localStorage.removeItem("cart_items");
+
+      // PASO 2: Verificar que realmente se eliminaron
+      const verificacion = localStorage.getItem("newlife_cart");
+      if (verificacion) {
+        console.log("⚠️ Datos residuales encontrados - eliminando manualmente");
+        localStorage.clear(); // Limpieza nuclear si es necesario
+        localStorage.removeItem("newlife_cart");
+      }
+
+      // PASO 3: Inicializar carrito completamente vacío
+      const carritoLimpio = {
+        items: [],
+        count: 0,
+        total: 0,
+      };
+
+      console.log("✅ CARRITO FORZADO A VACÍO - NO HAY PRODUCTOS");
+      console.log("📝 Estado inicial:", carritoLimpio);
+
+      // PASO 4: Función global para verificar limpieza
+      window.verificarLimpieza = function () {
+        const carrito = localStorage.getItem("newlife_cart");
+        console.log("🔍 Verificación de limpieza:");
+        console.log("- localStorage:", carrito);
+
+        if (!carrito) {
+          console.log("✅ CARRITO COMPLETAMENTE LIMPIO");
+          return true;
+        } else {
+          console.log("❌ AÚN HAY DATOS - LIMPIANDO DE NUEVO");
+          localStorage.removeItem("newlife_cart");
+          return false;
+        }
+      };
+
+      // Ejecutar verificación
+      verificarLimpieza();
+    </script>
     <style>
       * {
         margin: 0;
@@ -1268,8 +1318,12 @@
             </div>
           </div>
 
-          <button class="btn-primary" onclick="processPayment()">
-            Completar Pago - $253.80
+          <button
+            class="btn-primary"
+            id="payment-button"
+            onclick="processPayment()"
+          >
+            Completar Pago - L.0.00
           </button>
           <button class="btn-secondary" onclick="nextStep(2)">Regresar</button>
         </div>
