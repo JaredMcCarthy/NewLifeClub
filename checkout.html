@@ -9,52 +9,67 @@
     <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
 
-    <!-- 🧹 LIMPIEZA AGRESIVA DEL CARRITO - PRIORIDAD MÁXIMA -->
+    <!-- 🧹 LIMPIEZA INTELIGENTE DEL CARRITO - SOLO DATOS CORRUPTOS -->
     <script>
-      console.log("🧹 INICIANDO LIMPIEZA AGRESIVA DEL CARRITO");
+      console.log("🔍 VERIFICANDO INTEGRIDAD DEL CARRITO");
 
-      // PASO 1: Eliminar TODOS los datos del carrito
-      localStorage.removeItem("newlife_cart");
-      localStorage.removeItem("cart_data");
-      localStorage.removeItem("checkout_data");
-      localStorage.removeItem("cart_items");
+      // PASO 1: Verificar si hay datos del carrito
+      const carritoActual = localStorage.getItem("newlife_cart");
 
-      // PASO 2: Verificar que realmente se eliminaron
-      const verificacion = localStorage.getItem("newlife_cart");
-      if (verificacion) {
-        console.log("⚠️ Datos residuales encontrados - eliminando manualmente");
-        localStorage.clear(); // Limpieza nuclear si es necesario
-        localStorage.removeItem("newlife_cart");
+      if (carritoActual) {
+        try {
+          const carritoParseado = JSON.parse(carritoActual);
+
+          // PASO 2: Verificar si los datos están corruptos
+          if (!carritoParseado || !Array.isArray(carritoParseado.items)) {
+            console.log(
+              "⚠️ Datos corruptos detectados - limpiando SOLO corruptos"
+            );
+            localStorage.removeItem("newlife_cart");
+            localStorage.removeItem("cart_data");
+            localStorage.removeItem("checkout_data");
+          } else if (carritoParseado.items.length > 0) {
+            console.log("✅ CARRITO VÁLIDO CON PRODUCTOS - CONSERVANDO");
+            console.log(
+              "📦 Productos encontrados:",
+              carritoParseado.items.length
+            );
+          } else {
+            console.log("📝 Carrito válido pero vacío");
+          }
+        } catch (e) {
+          console.log(
+            "❌ Error al parsear carrito - limpiando SOLO datos dañados"
+          );
+          localStorage.removeItem("newlife_cart");
+          localStorage.removeItem("cart_data");
+          localStorage.removeItem("checkout_data");
+        }
+      } else {
+        console.log("📝 No hay carrito guardado - estado limpio");
       }
 
-      // PASO 3: Inicializar carrito completamente vacío
-      const carritoLimpio = {
-        items: [],
-        count: 0,
-        total: 0,
-      };
-
-      console.log("✅ CARRITO FORZADO A VACÍO - NO HAY PRODUCTOS");
-      console.log("📝 Estado inicial:", carritoLimpio);
-
-      // PASO 4: Función global para verificar limpieza
-      window.verificarLimpieza = function () {
+      // PASO 3: Función global para verificar estado
+      window.verificarCarrito = function () {
         const carrito = localStorage.getItem("newlife_cart");
-        console.log("🔍 Verificación de limpieza:");
-        console.log("- localStorage:", carrito);
-
-        if (!carrito) {
-          console.log("✅ CARRITO COMPLETAMENTE LIMPIO");
-          return true;
+        if (carrito) {
+          try {
+            const parsed = JSON.parse(carrito);
+            console.log("🛒 Estado del carrito:");
+            console.log("- Items:", parsed.items?.length || 0);
+            console.log("- Total:", parsed.total || 0);
+            return parsed;
+          } catch (e) {
+            console.log("❌ Carrito corrupto");
+            return null;
+          }
         } else {
-          console.log("❌ AÚN HAY DATOS - LIMPIANDO DE NUEVO");
-          localStorage.removeItem("newlife_cart");
-          return false;
+          console.log("📝 No hay carrito");
+          return null;
         }
       };
 
-      // Ejecutar verificación
-      verificarLimpieza();
+      console.log("✅ Verificación de integridad completada");
     </script>
     <style>
       * {
