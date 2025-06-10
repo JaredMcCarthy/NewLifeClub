@@ -477,155 +477,99 @@
       </div>
     </footer>
 
+    <!-- Scripts JavaScript -->
     <script src="js/simple-mobile-nav.js"></script>
     <script src="js/membresias.js"></script>
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
     <script src="js/navbar-session.js"></script>
-    <!-- 🎨 CUSTOM POPUPS SYSTEM -->
     <script src="js/custom-popups.js?v=1.0"></script>
 
-    <!-- Script específico para agregar membresía básica al carrito -->
+    <!-- Script para agregar membresías al carrito -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const basicMembershipBtn = document.getElementById(
-          "add-basic-membership"
-        );
-
-        if (basicMembershipBtn) {
-          basicMembershipBtn.addEventListener("click", async function (e) {
+        // Membresía Básica
+        const basicBtn = document.getElementById("add-basic-membership");
+        if (basicBtn) {
+          basicBtn.addEventListener("click", function (e) {
             e.preventDefault();
+            console.log("💎 Agregando Membresía Básica al carrito");
 
-            // Datos de la membresía básica
             const membershipData = {
               id: "membership-basic",
               name: "Membresía Básica",
               price: 500,
               size: "Mensual",
               quantity: 1,
-              image: "FotosMembresia/basic-membership.png", // Imagen por defecto
-              type: "membership",
+              image: "FotosMembresia/basic-membership.png",
               source: "membresias",
             };
 
-            // Agregar al carrito usando la función existente
             if (typeof addToCart === "function") {
               addToCart(membershipData);
-
-              // Mostrar mensaje de confirmación
-              await showAlert(
-                "¡Membresía Básica agregada al carrito!",
-                "success"
-              );
-
-              // Opcional: abrir el carrito automáticamente
-              setTimeout(() => {
-                if (typeof openCart === "function") {
-                  openCart();
-                }
-              }, 1000);
             } else {
-              console.error("La función addToCart no está disponible");
-              await showServerError("Error al agregar la membresía al carrito");
+              alert(
+                "Error: Sistema de carrito no disponible. Recarga la página."
+              );
             }
           });
         }
-      });
-    </script>
 
-    <!-- Script específico para agregar membresía premium al carrito -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const premiumMembershipBtn = document.getElementById(
-          "add-premium-membership"
-        );
-
-        if (premiumMembershipBtn) {
-          premiumMembershipBtn.addEventListener("click", async function (e) {
+        // Membresía Premium
+        const premiumBtn = document.getElementById("add-premium-membership");
+        if (premiumBtn) {
+          premiumBtn.addEventListener("click", function (e) {
             e.preventDefault();
+            console.log("💎 Agregando Membresía Premium al carrito");
 
-            // Datos de la membresía premium
             const membershipData = {
               id: "membership-premium",
               name: "Membresía Premium",
               price: 800,
               size: "Mensual",
               quantity: 1,
-              image: "FotosMembresia/premium-membership.png", // Imagen por defecto
-              type: "membership",
+              image: "FotosMembresia/premium-membership.png",
               source: "membresias",
             };
 
-            // Agregar al carrito usando la función existente
             if (typeof addToCart === "function") {
               addToCart(membershipData);
-
-              // Mostrar mensaje de confirmación
-              await showAlert(
-                "¡Membresía Premium agregada al carrito!",
-                "success"
-              );
-
-              // Opcional: abrir el carrito automáticamente
-              setTimeout(() => {
-                if (typeof openCart === "function") {
-                  openCart();
-                }
-              }, 1000);
             } else {
-              console.error("La función addToCart no está disponible");
-              await showServerError("Error al agregar la membresía al carrito");
+              alert(
+                "Error: Sistema de carrito no disponible. Recarga la página."
+              );
             }
           });
         }
-      });
-    </script>
 
-    <!-- Script específico para agregar membresía élite al carrito -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const eliteMembershipBtn = document.getElementById(
-          "add-elite-membership"
-        );
-
-        if (eliteMembershipBtn) {
-          eliteMembershipBtn.addEventListener("click", async function (e) {
+        // Membresía Élite
+        const eliteBtn = document.getElementById("add-elite-membership");
+        if (eliteBtn) {
+          eliteBtn.addEventListener("click", function (e) {
             e.preventDefault();
+            console.log("💎 Agregando Membresía Élite al carrito");
 
-            // Datos de la membresía élite
             const membershipData = {
               id: "membership-elite",
               name: "Membresía Élite",
               price: 1200,
               size: "Mensual",
               quantity: 1,
-              image: "FotosMembresia/elite-membership.png", // Imagen por defecto
-              type: "membership",
+              image: "FotosMembresia/elite-membership.png",
               source: "membresias",
             };
 
-            // Agregar al carrito usando la función existente
             if (typeof addToCart === "function") {
               addToCart(membershipData);
-
-              // Mostrar mensaje de confirmación
-              await showAlert(
-                "¡Membresía Élite agregada al carrito!",
-                "success"
-              );
-
-              // Opcional: abrir el carrito automáticamente
-              setTimeout(() => {
-                if (typeof openCart === "function") {
-                  openCart();
-                }
-              }, 1000);
             } else {
-              console.error("La función addToCart no está disponible");
-              await showServerError("Error al agregar la membresía al carrito");
+              alert(
+                "Error: Sistema de carrito no disponible. Recarga la página."
+              );
             }
           });
         }
+
+        console.log("✅ Membresías inicializadas");
       });
     </script>
   </body>

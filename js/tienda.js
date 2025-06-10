@@ -1,185 +1,30 @@
 // ========================================
-// FUNCIONALIDAD COMPLETA DE LA TIENDA
+// 🛍️ TIENDA NEWLIFE RUN CLUB
+// Sistema Simplificado que Funciona ✅
 // ========================================
-
-// ========================================
-// MENÚ MÓVIL SIMPLE - FUNCIÓN DIRECTA Y PRIORITARIA
-// ========================================
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("🍔 Inicializando menú móvil PRIORITARIO en tienda.js");
-
-  // Esperar un poco para asegurar que el DOM esté completamente listo
-  setTimeout(function () {
-    console.log("⏰ Ejecutando función del menú con delay en tienda.js");
-
-    // Función simple del menú móvil - MÁS ESPECÍFICA
-    const menuToggle = document.querySelector(".menu-toggle");
-    const navCenter = document.querySelector(".nav-center");
-    const overlay = document.querySelector(".overlay");
-
-    if (menuToggle && navCenter && overlay) {
-      console.log("✅ Elementos del menú encontrados en tienda - LISTO");
-
-      // ELIMINAR cualquier event listener previo para evitar conflictos
-      const newMenuToggle = menuToggle.cloneNode(true);
-      menuToggle.parentNode.replaceChild(newMenuToggle, menuToggle);
-
-      const newOverlay = overlay.cloneNode(true);
-      overlay.parentNode.replaceChild(newOverlay, overlay);
-
-      // Obtener referencias a los elementos nuevos
-      const cleanMenuToggle = document.querySelector(".menu-toggle");
-      const cleanOverlay = document.querySelector(".overlay");
-
-      console.log("🧹 Event listeners limpiados en tienda.js");
-
-      // Agregar nuevos event listeners
-      cleanMenuToggle.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("🍔 CLICK MENÚ TIENDA - FUNCIONANDO!");
-
-        cleanMenuToggle.classList.toggle("active");
-        navCenter.classList.toggle("show");
-        cleanOverlay.classList.toggle("show");
-        document.body.classList.toggle("menu-open");
-
-        console.log("📊 Estados:", {
-          menuActive: cleanMenuToggle.classList.contains("active"),
-          navShow: navCenter.classList.contains("show"),
-          overlayShow: cleanOverlay.classList.contains("show"),
-        });
-      });
-
-      cleanOverlay.addEventListener("click", function (e) {
-        e.preventDefault();
-        console.log("🎭 CERRANDO MENÚ POR OVERLAY - TIENDA");
-
-        cleanMenuToggle.classList.remove("active");
-        navCenter.classList.remove("show");
-        cleanOverlay.classList.remove("show");
-        document.body.classList.remove("menu-open");
-      });
-
-      // Cerrar menú cuando se hace click en links
-      const navLinks = navCenter.querySelectorAll(".nav-link");
-      navLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
-          console.log("🔗 CERRANDO MENÚ POR LINK - TIENDA");
-          cleanMenuToggle.classList.remove("active");
-          navCenter.classList.remove("show");
-          cleanOverlay.classList.remove("show");
-          document.body.classList.remove("menu-open");
-        });
-      });
-
-      console.log("✅ MENÚ MÓVIL CONFIGURADO EXITOSAMENTE EN TIENDA.JS 🎯");
-
-      // Función de debug específica para tienda
-      window.debugTiendaMenu = function () {
-        console.log("🔧 DEBUG TIENDA MENU:", {
-          menuToggle: !!cleanMenuToggle,
-          navCenter: !!navCenter,
-          overlay: !!cleanOverlay,
-          menuActive: cleanMenuToggle.classList.contains("active"),
-          navShow: navCenter.classList.contains("show"),
-          overlayShow: cleanOverlay.classList.contains("show"),
-        });
-      };
-    } else {
-      console.log("❌ NO se encontraron elementos del menú en tienda.js");
-      console.log("🔍 Elementos encontrados:", {
-        menuToggle: !!menuToggle,
-        navCenter: !!navCenter,
-        overlay: !!overlay,
-      });
-    }
-  }, 200); // Delay de 200ms para asegurar que todo esté listo
-});
 
 document.addEventListener("DOMContentLoaded", function () {
-  // ========================================
-  // ANIMACIÓN DE LA IMAGEN DEL HERO
-  // ========================================
-
-  const heroImage = document.getElementById("heroImage");
-  const settledImage = document.getElementById("settledImage");
-  const infoSection = document.getElementById("infoSection");
-
-  // Función simplificada - solo mostrar la imagen sin animación compleja
-  function showSettledImage() {
-    // Simplemente mostrar la imagen final sin animación de movimiento
-    settledImage.classList.add("visible");
-  }
-
-  // Observador para detectar cuando la sección de info es visible
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (
-          entry.isIntersecting &&
-          !settledImage.classList.contains("visible")
-        ) {
-          showSettledImage();
-        }
-      });
-    },
-    {
-      threshold: 0.3,
-    }
-  );
-
-  observer.observe(infoSection);
-
-  // ========================================
-  // NAVEGACIÓN SUAVE ENTRE CATEGORÍAS
-  // ========================================
-
-  const categoryCards = document.querySelectorAll(".category-card");
-
-  categoryCards.forEach((card) => {
-    card.addEventListener("click", function () {
-      const category = this.getAttribute("data-category");
-      const targetSection = document.getElementById(category);
-
-      if (targetSection) {
-        // Scroll suave a la sección
-        targetSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-
-        // Efecto visual en la card clickeada
-        this.style.transform = "scale(0.95)";
-        setTimeout(() => {
-          this.style.transform = "";
-        }, 150);
-      }
-    });
-  });
-
-  // ========================================
-  // FUNCIONALIDAD DEL MODAL DE PRODUCTOS
-  // ========================================
-
+  // Elementos del DOM
+  const productCards = document.querySelectorAll(".product-card");
   const modal = document.getElementById("productModal");
   const closeModal = document.querySelector(".close-modal");
-  const productCards = document.querySelectorAll(".product-card");
-  const mainProductImage = document.getElementById("mainProductImage");
   const modalProductName = document.getElementById("modalProductName");
   const modalProductPrice = document.getElementById("modalProductPrice");
   const modalProductDescription = document.getElementById(
     "modalProductDescription"
   );
+  const mainProductImage = document.getElementById("mainProductImage");
   const thumbnails = document.querySelectorAll(".thumbnail");
 
-  // Base de datos de productos (en tu implementación real, esto vendría de tu API)
+  // ========================================
+  // 📦 DATOS DE PRODUCTOS
+  // ========================================
   const productsData = {
     "camisa-mujer-1": {
       name: "Blusa Elegante Rosa",
-      price: "L.500",
+      price: "500",
       description:
-        "Blusa elegante confeccionada en algodón premium con detalles en rosa suave. Perfecta para ocasiones especiales o uso diario. Corte moderno que realza la figura femenina.",
+        "Blusa femenina en color rosa suave, ideal para el día a día. Confeccionada con materiales de primera calidad que garantizan comodidad y estilo.",
       images: [
         "Fotostienda/mujer1.png",
         "Fotostienda/mujer1.png",
@@ -188,22 +33,20 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-mujer-2": {
       name: "Top Premium Fucsia",
-      price: "L.500",
+      price: "500",
       description:
-        "Top deportivo premium en vibrante color fucsia, ideal para entrenamientos intensos. Tejido transpirable y elástico que se adapta perfectamente al cuerpo. Producto físico con envío incluido.",
+        "Top deportivo en vibrante color fucsia, perfecto para entrenamientos y actividades físicas. Tecnología de secado rápido y máxima transpirabilidad.",
       images: [
         "Fotostienda/mujer2.png",
         "Fotostienda/mujer2.png",
         "Fotostienda/mujer2.png",
       ],
-      isPhysical: true,
-      source: "tienda",
     },
     "camisa-mujer-3": {
       name: "Camisa Clásica Blanca",
-      price: "L.500",
+      price: "500",
       description:
-        "Camisa clásica en blanco puro, confeccionada en algodón egipcio. Un básico atemporal que nunca pasa de moda. Corte slim fit que estiliza la silueta.",
+        "Camisa clásica en blanco puro, versátil y elegante. Perfecta para ocasiones formales e informales. Corte favorecedor y tela de alta calidad.",
       images: [
         "Fotostienda/mujer3.png",
         "Fotostienda/mujer3.png",
@@ -212,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-hombre-1": {
       name: "Polo Deportivo Negro",
-      price: "L.500",
+      price: "500",
       description:
         "Polo deportivo en negro intenso, perfecto para el gimnasio o actividades al aire libre. Tecnología de secado rápido y protección UV.",
       images: [
@@ -223,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-hombre-2": {
       name: "Camisa Casual Blanca",
-      price: "L.500",
+      price: "500",
       description:
         "Camisa casual de manga larga en blanco clásico. Perfecta para el día a día o eventos informales. Tejido suave y cómodo.",
       images: [
@@ -234,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-hombre-3": {
       name: "Henley Premium",
-      price: "L.500",
+      price: "500",
       description:
         "Henley de manga larga en algodón orgánico premium. Estilo relajado pero sofisticado, ideal para cualquier ocasión casual.",
       images: [
@@ -245,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-unisex-1": {
       name: "Oversized Tee",
-      price: "L.500",
+      price: "500",
       description:
         "Camiseta oversized unisex con corte relajado. Perfecta para un look urbano y cómodo. Disponible en varios colores.",
       images: [
@@ -256,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-unisex-2": {
       name: "Hoodie Minimalista",
-      price: "L.500",
+      price: "500",
       description:
         "Sudadera con capucha de diseño minimalista. Confeccionada en algodón orgánico con forro polar interior. Unisex y muy cómoda.",
       images: [
@@ -267,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "camisa-unisex-3": {
       name: "Tank Top Fucsia",
-      price: "L.500",
+      price: "500",
       description:
         "Tank top en vibrante color fucsia, perfecto para entrenamientos intensos o looks veraniegos. Tejido ligero y transpirable.",
       images: [
@@ -278,7 +121,11 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   };
 
-  // Función para abrir el modal
+  // ========================================
+  // 🔧 FUNCIONES DEL MODAL
+  // ========================================
+
+  // Abrir modal con datos del producto
   function openModal(productId) {
     const product = productsData[productId];
 
@@ -286,9 +133,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const modal = document.getElementById("productModal");
       modal.setAttribute("data-current-product", productId);
 
-      // Actualizar contenido del modal
+      // Actualizar contenido
       modalProductName.textContent = product.name;
-      modalProductPrice.textContent = product.price;
+      modalProductPrice.textContent = `L.${product.price}`;
       modalProductDescription.textContent = product.description;
 
       // Actualizar imágenes
@@ -306,12 +153,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Resetear selecciones
-      document.querySelector(".size-btn.active").classList.remove("active");
-      document.querySelector('.size-btn[data-size="M"]')
-        ? document
-            .querySelector('.size-btn[data-size="M"]')
-            .classList.add("active")
-        : document.querySelector(".size-btn").classList.add("active");
+      document.querySelector(".size-btn.active")?.classList.remove("active");
+      const defaultSize =
+        document.querySelector('.size-btn[data-size="M"]') ||
+        document.querySelector(".size-btn");
+      if (defaultSize) defaultSize.classList.add("active");
 
       document.querySelector(".quantity").textContent = "1";
 
@@ -321,7 +167,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Event listeners para abrir modal
+  // Cerrar modal
+  function closeModalFunction() {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+
+  // ========================================
+  // 📱 EVENT LISTENERS PRINCIPALES
+  // ========================================
+
+  // Abrir modal al hacer clic en producto
   productCards.forEach((card) => {
     card.addEventListener("click", function () {
       const productId = this.getAttribute("data-product");
@@ -330,11 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Cerrar modal
-  function closeModalFunction() {
-    modal.style.display = "none";
-    document.body.style.overflow = "auto";
-  }
-
   closeModal.addEventListener("click", closeModalFunction);
 
   // Cerrar modal al hacer clic fuera
@@ -344,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Cerrar modal con tecla ESC
+  // Cerrar modal con ESC
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && modal.style.display === "block") {
       closeModalFunction();
@@ -352,41 +203,32 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ========================================
-  // FUNCIONALIDAD DEL MODAL - GALERÍA
+  // 🖼️ GALERÍA DE IMÁGENES
   // ========================================
 
   thumbnails.forEach((thumbnail) => {
     thumbnail.addEventListener("click", function () {
-      // Remover clase active de todos los thumbnails
       thumbnails.forEach((thumb) => thumb.classList.remove("active"));
-
-      // Añadir clase active al thumbnail clickeado
       this.classList.add("active");
-
-      // Cambiar imagen principal
       mainProductImage.src = this.src;
       mainProductImage.alt = this.alt;
     });
   });
 
   // ========================================
-  // SELECTOR DE TALLAS
+  // 👕 SELECTOR DE TALLAS
   // ========================================
 
   const sizeButtons = document.querySelectorAll(".size-btn");
-
   sizeButtons.forEach((button) => {
     button.addEventListener("click", function () {
-      // Remover clase active de todos los botones
       sizeButtons.forEach((btn) => btn.classList.remove("active"));
-
-      // Añadir clase active al botón clickeado
       this.classList.add("active");
     });
   });
 
   // ========================================
-  // CONTROL DE CANTIDAD
+  // 🔢 CONTROL DE CANTIDAD
   // ========================================
 
   const quantityDisplay = document.querySelector(".quantity");
@@ -404,161 +246,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
   plusBtn.addEventListener("click", function () {
     if (quantity < 10) {
-      // Límite máximo de 10
       quantity++;
       quantityDisplay.textContent = quantity;
     }
   });
 
   // ========================================
-  // BOTÓN AGREGAR AL CARRITO
+  // 🛒 AGREGAR AL CARRITO - FUNCIONAL ✅
   // ========================================
 
   const addToCartBtn = document.querySelector(".add-to-cart-btn");
 
   addToCartBtn.addEventListener("click", function () {
-    // Obtener datos del producto actual
-    const productName = modalProductName.textContent;
-    const productPriceText = modalProductPrice.textContent;
-    // Extraer el número del precio, funcionando con L. o $
-    const productPrice = parseFloat(
-      productPriceText.replace("L.", "").replace("$", "").trim()
-    );
-    const selectedSize = document.querySelector(".size-btn.active").textContent;
-    const selectedQuantity = parseInt(quantityDisplay.textContent);
-    const productImage = document.getElementById("mainProductImage").src;
-    const modal = document.getElementById("productModal");
+    console.log("🛒 Botón agregar al carrito clickeado");
 
-    // Crear objeto del producto para el carrito
+    // Extraer datos del modal
+    const modal = document.getElementById("productModal");
+    const productId = modal.getAttribute("data-current-product");
+    const product = productsData[productId];
+
+    if (!product) {
+      console.error("❌ Producto no encontrado:", productId);
+      alert("Error: Producto no encontrado");
+      return;
+    }
+
+    // Obtener datos seleccionados
+    const selectedSize =
+      document.querySelector(".size-btn.active")?.textContent || "M";
+    const selectedQuantity = parseInt(quantityDisplay.textContent) || 1;
+
+    // Crear objeto del producto
     const productData = {
-      id: modal.getAttribute("data-current-product"),
-      name: productName,
-      price: productPrice,
+      id: productId,
+      name: product.name,
+      price: parseFloat(product.price),
       size: selectedSize,
       quantity: selectedQuantity,
-      image: productImage,
+      image: product.images[0],
+      source: "tienda",
     };
 
-    // Agregar al carrito
-    addToCart(productData);
+    console.log("📦 Datos del producto:", productData);
 
-    // Efecto visual del botón
-    const originalText = this.textContent;
-    this.textContent = "¡Agregado!";
-    this.style.background = "linear-gradient(45deg, #00ff00, #32cd32)";
+    // Verificar que addToCart existe
+    if (typeof addToCart === "function") {
+      const success = addToCart(productData);
 
-    setTimeout(() => {
-      this.textContent = originalText;
-      this.style.background = "var(--primary-gradient)";
-      closeModalFunction();
-      // Abrir el carrito después de agregar el producto
-      const cartPanel = document.getElementById("cartPanel");
-      const cartOverlay = document.getElementById("cartOverlay");
-      if (cartPanel && cartOverlay) {
-        cartPanel.classList.add("active");
-        cartOverlay.style.display = "block";
-        document.body.style.overflow = "hidden";
+      if (success) {
+        // Efecto visual del botón
+        const originalText = this.textContent;
+        const originalBackground = this.style.background;
+
+        this.textContent = "¡Agregado! ✅";
+        this.style.background = "linear-gradient(45deg, #00ff00, #32cd32)";
+        this.disabled = true;
+
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.style.background = originalBackground;
+          this.disabled = false;
+        }, 2000);
+
+        // Cerrar modal después de 1.5 segundos
+        setTimeout(() => {
+          closeModalFunction();
+        }, 1500);
       }
-    }, 1500);
-  });
-
-  // ========================================
-  // NEWSLETTER SUBSCRIPTION
-  // ========================================
-
-  const newsletterForm = document.querySelector(".newsletter-form");
-
-  newsletterForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const email = this.querySelector('input[type="email"]').value;
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-
-    // Simular envío
-    submitBtn.textContent = "Suscribiendo...";
-    submitBtn.disabled = true;
-
-    setTimeout(() => {
-      submitBtn.textContent = "¡Suscrito!";
-      submitBtn.style.background = "linear-gradient(45deg, #00ff00, #32cd32)";
-
-      setTimeout(() => {
-        submitBtn.textContent = originalText;
-        submitBtn.style.background = "var(--primary-gradient)";
-        submitBtn.disabled = false;
-        this.querySelector('input[type="email"]').value = "";
-      }, 3000);
-    }, 1500);
-
-    console.log("Newsletter subscription:", email);
-  });
-
-  // ========================================
-  // SMOOTH SCROLLING PARA CTA BUTTON
-  // ========================================
-
-  const ctaButton = document.querySelector(".cta-button");
-
-  ctaButton.addEventListener("click", function () {
-    const categoriesSection = document.querySelector(".categories-section");
-    categoriesSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  });
-
-  // ========================================
-  // ANIMACIONES DE SCROLL
-  // ========================================
-
-  // Animación para las cards de productos al hacer scroll
-  const animateOnScroll = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = "1";
-          entry.target.style.transform = "translateY(0)";
-        }
-      });
-    },
-    {
-      threshold: 0.1,
+    } else {
+      console.error("❌ Función addToCart no disponible");
+      alert("Error: Sistema de carrito no disponible. Recarga la página.");
     }
-  );
-
-  // Aplicar animación a las cards de productos
-  productCards.forEach((card) => {
-    card.style.opacity = "0";
-    card.style.transform = "translateY(30px)";
-    card.style.transition = "all 0.6s ease";
-    animateOnScroll.observe(card);
   });
 
-  // Aplicar animación a las cards de categorías
-  categoryCards.forEach((card) => {
-    card.style.opacity = "0";
-    card.style.transform = "translateY(30px)";
-    card.style.transition = "all 0.6s ease";
-    animateOnScroll.observe(card);
-  });
-
-  // ========================================
-  // EFECTOS ADICIONALES
-  // ========================================
-
-  // Actualizar cantidad en el reset del modal
-  function resetModalQuantity() {
-    quantity = 1;
-    quantityDisplay.textContent = quantity;
-  }
-
-  // Llamar reset cuando se abre el modal
-  const originalOpenModal = openModal;
-  openModal = function (productId) {
-    originalOpenModal(productId);
-    resetModalQuantity();
-  };
+  console.log("✅ Tienda.js inicializado correctamente");
 });
 
 // ========================================

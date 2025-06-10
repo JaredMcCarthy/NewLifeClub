@@ -506,7 +506,13 @@
       }
     </script>
 
-    <!-- Script específico para agregar Plan 10K al carrito -->
+    <!-- Scripts JavaScript -->
+    <script src="js/simple-mobile-nav.js"></script>
+    <script src="js/cart-handler.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/navbar-session.js"></script>
+    <script src="js/custom-popups.js?v=1.0"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const plan10kButton = document.getElementById("add-plan10k-to-cart");
@@ -514,6 +520,7 @@
         if (plan10kButton) {
           plan10kButton.addEventListener("click", function (e) {
             e.preventDefault();
+            console.log("🏃‍♂️ Agregando Plan 10K al carrito");
 
             // Datos del Plan 10K
             const planData = {
@@ -522,50 +529,40 @@
               price: 49.99,
               size: "12 Semanas",
               quantity: 1,
-              image: "FotosPlanes/plan10k.png", // Imagen por defecto
-              type: "training-plan",
+              image: "FotosPlanes/plan10k.png",
+              source: "plan10k",
             };
 
-            // Verificar si las funciones del carrito están disponibles
+            // Agregar al carrito
             if (typeof addToCart === "function") {
-              addToCart(planData);
+              const success = addToCart(planData);
 
-              // Mostrar mensaje de confirmación
-              if (typeof showToast === "function") {
-                showToast("¡Plan 10K Elite agregado al carrito!");
-              } else {
-                alert("¡Plan 10K Elite agregado al carrito!");
+              if (success) {
+                // Efecto visual del botón
+                const originalText = this.textContent;
+                const originalBackground = this.style.background;
+
+                this.textContent = "¡Plan Agregado! ✅";
+                this.style.background =
+                  "linear-gradient(45deg, #00ff00, #32cd32)";
+                this.disabled = true;
+
+                setTimeout(() => {
+                  this.textContent = originalText;
+                  this.style.background = originalBackground;
+                  this.disabled = false;
+                }, 3000);
               }
-
-              // Opcional: abrir el carrito automáticamente
-              setTimeout(() => {
-                if (typeof openCart === "function") {
-                  openCart();
-                }
-              }, 1000);
             } else {
-              // Si no están disponibles las funciones del carrito, usar localStorage como fallback
-              let cartData = JSON.parse(localStorage.getItem("cartData")) || {
-                items: [],
-                total: 0,
-              };
-
-              // Verificar si el plan ya está en el carrito
-              const existingPlan = cartData.items.find(
-                (item) => item.id === planData.id
+              console.error("❌ Función addToCart no disponible");
+              alert(
+                "Error: Sistema de carrito no disponible. Recarga la página."
               );
-              if (!existingPlan) {
-                cartData.items.push(planData);
-                localStorage.setItem("cartData", JSON.stringify(cartData));
-                alert(
-                  "¡Plan 10K Elite agregado al carrito! Ve a la tienda para finalizar la compra."
-                );
-              } else {
-                alert("¡Este plan ya está en tu carrito!");
-              }
             }
           });
         }
+
+        console.log("✅ Plan 10K inicializado");
       });
     </script>
   </body>
