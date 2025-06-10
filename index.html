@@ -1494,51 +1494,7 @@
     <script src="js/navbar-session.js"></script>
     <!-- 🎨 CUSTOM POPUPS SYSTEM -->
     <script src="js/custom-popups.js?v=1.0"></script>
-
-    <!-- 🧹 SCRIPT TEMPORAL DE LIMPIEZA DEL CARRITO -->
-    <script>
-      // 🧹 LIMPIEZA NUCLEAR DEL CARRITO EN INDEX
-      console.log("🧹 INDEX: Limpieza nuclear del carrito");
-
-      // Eliminar TODOS los datos del carrito
-      const keysToNuke = [
-        "newlife_cart",
-        "cart_data",
-        "checkout_data",
-        "cart_items",
-        "shopping_cart",
-        "user_cart",
-        "cartData",
-        "cart",
-      ];
-
-      keysToNuke.forEach((key) => {
-        localStorage.removeItem(key);
-        console.log(`🗑️ INDEX: Eliminado ${key}`);
-      });
-
-      // Eliminar cualquier clave que contenga "cart"
-      const allKeys = Object.keys(localStorage);
-      allKeys.forEach((key) => {
-        if (key.toLowerCase().includes("cart")) {
-          localStorage.removeItem(key);
-          console.log(`🗑️ INDEX: Eliminado residual ${key}`);
-        }
-      });
-
-      // Forzar contador a cero
-      setTimeout(() => {
-        const cartCounters = document.querySelectorAll(
-          ".cart-count, #cart-count, .cart-counter"
-        );
-        cartCounters.forEach((counter) => {
-          counter.textContent = "0";
-          counter.style.display = "none";
-        });
-        console.log("🔢 INDEX: Contadores forzados a 0");
-      }, 100);
-
-      console.log("✅ INDEX: Limpieza nuclear completada");
-    </script>
+    <!-- 🔒 AUTH PROTECTION SYSTEM -->
+    <script src="js/auth-protection.js?v=1.0"></script>
   </body>
 </html>

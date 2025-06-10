@@ -227,13 +227,47 @@ function decreaseQuantity(productId) {
 }
 
 // Vaciar carrito completamente
-function clearCart() {
+async function clearCart() {
   if (cart.items.length === 0) {
     showNotification("El carrito ya está vacío", "info");
     return;
   }
 
-  if (confirm("¿Estás seguro de que quieres vaciar todo el carrito?")) {
+  // 🎨 USAR POPUP PROFESIONAL en lugar del confirm() nativo
+  let confirmed = false;
+
+  try {
+    // Intentar usar el sistema de popups personalizados
+    if (typeof showConfirm !== "undefined") {
+      confirmed = await showConfirm(
+        "Se eliminarán todos los productos de tu carrito y no podrás recuperarlos.\n\n¿Continuar con la limpieza del carrito?",
+        "🧹 ¿Vaciar Carrito Completo?"
+      );
+    } else if (
+      typeof CustomPopups !== "undefined" &&
+      CustomPopups.showConfirm
+    ) {
+      confirmed = await CustomPopups.showConfirm(
+        "Se eliminarán todos los productos de tu carrito y no podrás recuperarlos.\n\n¿Continuar con la limpieza del carrito?",
+        "🧹 ¿Vaciar Carrito Completo?"
+      );
+    } else {
+      // Fallback al confirm nativo si no hay popups personalizados
+      confirmed = confirm(
+        "¿Estás seguro de que quieres vaciar todo el carrito?"
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "⚠️ Error con popup personalizado, usando confirm nativo:",
+      error
+    );
+    confirmed = confirm("¿Estás seguro de que quieres vaciar todo el carrito?");
+  }
+
+  if (confirmed) {
+    console.log("✅ Usuario confirmó vaciar carrito");
+
     resetCart();
     saveCart();
     showNotification("🧹 ¡Carrito vaciado completamente!", "success");
@@ -241,6 +275,8 @@ function clearCart() {
     if (window.location.pathname.includes("checkout.html")) {
       loadCartInCheckout();
     }
+  } else {
+    console.log("❌ Usuario canceló vaciar carrito");
   }
 }
 
