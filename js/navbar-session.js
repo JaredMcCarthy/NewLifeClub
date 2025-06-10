@@ -54,15 +54,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function logout() {
-    console.log("🚪 Cerrando sesión...");
+    console.log("🚪 Cerrando sesión desde navbar...");
+
+    // Limpiar TODOS los datos de sesión
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("token");
-    clearTimeout(sessionTimer);
+    localStorage.removeItem("sessionStartTime");
+    localStorage.removeItem("lastActivity");
+
+    // Limpiar timer de sesión
+    if (sessionTimer) {
+      clearTimeout(sessionTimer);
+      sessionTimer = null;
+    }
+
+    // Actualizar navegación
     updateNavigation();
-    console.log("✅ Sesión cerrada exitosamente");
-    window.location.href = "index.html"; // Cambié a index.html en lugar de sesion.html
+
+    console.log("✅ Sesión cerrada exitosamente desde navbar");
+
+    // Ir al inicio
+    window.location.href = "index.html";
   }
 
   // Reiniciar timer en actividad del usuario
@@ -229,10 +243,41 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========== FUNCIÓN GLOBAL PARA CERRAR SESIÓN ==========
   // Para que funcione desde cualquier página
   window.cerrarSesion = async function () {
-    const confirmed = await confirmLogout();
-    if (confirmed) {
+    console.log("🚪 Función global cerrarSesion ejecutada");
+
+    try {
+      let confirmed = false;
+
+      // Usar la función de confirmación disponible
+      if (typeof confirmLogout !== "undefined") {
+        confirmed = await confirmLogout();
+      } else if (typeof showConfirm !== "undefined") {
+        confirmed = await showConfirm(
+          "Se cerrará tu sesión actual y tendrás que volver a iniciar sesión.",
+          "¿Cerrar Sesión?"
+        );
+      } else {
+        confirmed = confirm("¿Estás seguro que quieres cerrar sesión?");
+      }
+
+      if (confirmed) {
+        console.log("✅ Usuario confirmó cierre de sesión global");
+        logout();
+      } else {
+        console.log("❌ Usuario canceló cierre de sesión global");
+      }
+    } catch (error) {
+      console.error("❌ Error en función global cerrarSesion:", error);
+
+      // Fallback: cerrar sesión sin confirmación
       logout();
     }
+  };
+
+  // FUNCIÓN ADICIONAL: Logout inmediato sin confirmación
+  window.logoutImmediate = function () {
+    console.log("🚪 Logout inmediato ejecutado");
+    logout();
   };
 
   // DEBUGGING: Función global para testing manual

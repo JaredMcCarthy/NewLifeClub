@@ -294,6 +294,7 @@
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 5px;
+        color: #333;
       }
 
       .payment-info p {
@@ -884,11 +885,38 @@
         border-radius: 8px;
         padding: 15px;
         transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative;
       }
 
       .bank-account:hover {
         border-color: #ff69b4;
         box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .bank-account.selected {
+        border-color: #ff69b4;
+        background: rgba(255, 105, 180, 0.05);
+        box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .bank-account.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff69b4;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
       }
 
       .bank-account h4 {
@@ -1195,26 +1223,43 @@
                 Realiza tu depósito a cualquiera de nuestras cuentas bancarias:
               </p>
 
+              <p
+                style="
+                  background: rgba(255, 105, 180, 0.1);
+                  border: 1px solid #ff69b4;
+                  border-radius: 8px;
+                  padding: 10px;
+                  margin: 15px 0;
+                  color: #495057;
+                  font-weight: 600;
+                "
+              >
+                👆
+                <strong
+                  >Selecciona una cuenta bancaria haciendo clic en ella:</strong
+                >
+              </p>
+
               <div class="bank-accounts">
-                <div class="bank-account">
+                <div class="bank-account" onclick="selectBankAccount(this)">
                   <h4>🏦 BAC Honduras</h4>
                   <p><strong>Número de cuenta:</strong> 123445-BAC-001</p>
                   <p><strong>Tipo:</strong> Cuenta Corriente</p>
                 </div>
 
-                <div class="bank-account">
+                <div class="bank-account" onclick="selectBankAccount(this)">
                   <h4>🏦 Banco Fichosa</h4>
                   <p><strong>Número de cuenta:</strong> 123445-FCH-002</p>
                   <p><strong>Tipo:</strong> Cuenta de Ahorros</p>
                 </div>
 
-                <div class="bank-account">
+                <div class="bank-account" onclick="selectBankAccount(this)">
                   <h4>🏦 Banco Atlántida</h4>
                   <p><strong>Número de cuenta:</strong> 123445-ATL-003</p>
                   <p><strong>Tipo:</strong> Cuenta Corriente</p>
                 </div>
 
-                <div class="bank-account">
+                <div class="bank-account" onclick="selectBankAccount(this)">
                   <h4>🏦 Banpais</h4>
                   <p><strong>Número de cuenta:</strong> 123445-BNP-004</p>
                   <p><strong>Tipo:</strong> Cuenta de Ahorros</p>
@@ -1462,6 +1507,27 @@
         );
 
         for (let input of requiredInputs) {
+          // 🏦 SKIP VALIDATION: Si es depósito bancario, no validar campos de tarjeta
+          if (selectedPaymentMethod === "bank-deposit") {
+            const cardFields = ["card-number", "expiry"];
+            const cardNameField =
+              input.placeholder && input.placeholder.includes("tarjeta");
+            const cardCvvField =
+              input.placeholder && input.placeholder.includes("123");
+
+            if (
+              cardFields.includes(input.id) ||
+              cardNameField ||
+              cardCvvField
+            ) {
+              console.log(
+                "⚠️ Omitiendo validación de campo de tarjeta:",
+                input.id || input.placeholder
+              );
+              continue; // Saltar validación de campos de tarjeta
+            }
+          }
+
           if (!input.value.trim()) {
             input.focus();
             input.style.borderColor = "#ff4444";
@@ -1489,7 +1555,7 @@
           }
         }
 
-        if (currentStep === 3) {
+        if (currentStep === 3 && selectedPaymentMethod === "card") {
           const cardNumber = document
             .getElementById("card-number")
             .value.replace(/\s/g, "");
@@ -1506,12 +1572,42 @@
           }
         }
 
+        // 🏦 VALIDACIÓN PARA DEPÓSITO BANCARIO: Verificar que se haya seleccionado una cuenta
+        if (currentStep === 3 && selectedPaymentMethod === "bank-deposit") {
+          const selectedBank = document.querySelector(".bank-account.selected");
+          if (!selectedBank) {
+            showNotification(
+              "Por favor selecciona una cuenta bancaria para el depósito",
+              "error"
+            );
+            return false;
+          }
+        }
+
         return true;
       }
 
       function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
+      }
+
+      // 🏦 NUEVA FUNCIÓN: Seleccionar cuenta bancaria
+      function selectBankAccount(bankElement) {
+        // Remover selección anterior
+        document.querySelectorAll(".bank-account").forEach((bank) => {
+          bank.classList.remove("selected");
+        });
+
+        // Seleccionar nueva cuenta
+        bankElement.classList.add("selected");
+
+        // Obtener nombre del banco
+        const bankName = bankElement.querySelector("h4").textContent;
+        console.log("🏦 Cuenta bancaria seleccionada:", bankName);
+
+        // Mostrar notificación de selección
+        showNotification(`✅ Cuenta seleccionada: ${bankName}`, "success");
       }
 
       function selectPayment(option, method) {
@@ -1564,6 +1660,9 @@
           // 🛍️ GUARDAR COMPRA EN HISTORIAL
           savePurchaseToHistory(token, "Tarjeta de Crédito");
 
+          // Actualizar contenido para pago con tarjeta
+          updateSuccessPageForCard();
+
           // Mostrar notificación de éxito
           showNotification("¡Pago procesado exitosamente!", "success");
 
@@ -1587,32 +1686,162 @@
         // 🛍️ GUARDAR COMPRA EN HISTORIAL
         savePurchaseToHistory(token, "Depósito Bancario");
 
-        // Mostrar mensaje de confirmación para depósito
-        const message = `
-          🏦 DEPÓSITO BANCARIO CONFIRMADO
-
-          Realiza tu depósito en cualquiera de estas cuentas:
-
-          🏦 BAC Honduras: 123445-BAC-001
-          🏦 Banco Fichosa: 123445-FCH-002
-          🏦 Banco Atlántida: 123445-ATL-003
-          🏦 Banpais: 123445-BNP-004
-
-          Token de pedido: ${token}
-
-          Envía el comprobante a: info@newliferun.com
-        `;
-
-        await showAlert(message, "info", "🏦 Información de Depósito");
-
         // Actualizar token en la página
         document.getElementById("purchase-token").textContent = token;
+
+        // Actualizar contenido para depósito bancario
+        updateSuccessPageForBankDeposit();
 
         // Ir al paso de confirmación
         nextStep(4);
 
         // Limpiar carrito después del pedido
         clearCartAfterPurchase();
+      }
+
+      // 💳 NUEVA FUNCIÓN: Actualizar página de éxito para pago con tarjeta
+      function updateSuccessPageForCard() {
+        const successContainer = document.querySelector(
+          "#section-4 .success-container"
+        );
+        if (!successContainer) return;
+
+        successContainer.innerHTML = `
+          <div class="success-icon">✓</div>
+          <h2 class="section-title">¡Pago Exitoso!</h2>
+          <p class="section-subtitle">
+            Tu pedido ha sido procesado correctamente
+          </p>
+
+          <div class="token-display">
+            <div class="token-label">Token de Compra</div>
+            <div class="token-value" id="purchase-token">NRC-240608-A7X9</div>
+            <button class="token-copy" onclick="copyToken()">
+              Copiar Token
+            </button>
+          </div>
+
+          <div class="security-features">
+            <div class="security-title"><span>📧</span> ¿Qué sigue?</div>
+            <div class="security-list">
+              <div class="security-item">
+                <div class="security-icon">1</div>
+                <span
+                  >Recibirás un <strong>email de confirmación</strong> en los
+                  próximos minutos</span
+                >
+              </div>
+              <div class="security-item">
+                <div class="security-icon">2</div>
+                <span
+                  >Tu pedido será <strong>procesado en 24 horas</strong></span
+                >
+              </div>
+              <div class="security-item">
+                <div class="security-icon">3</div>
+                <span
+                  ><strong>Envío y seguimiento</strong> te llegará por
+                  SMS</span
+                >
+              </div>
+              <div class="security-item">
+                <div class="security-icon">4</div>
+                <span><strong>Entrega en 2-5 días</strong> hábiles</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="goHome()">
+            Continuar Comprando
+          </button>
+        `;
+      }
+
+      // 🏦 NUEVA FUNCIÓN: Actualizar página de éxito para depósito bancario
+      function updateSuccessPageForBankDeposit() {
+        const successContainer = document.querySelector(
+          "#section-4 .success-container"
+        );
+        if (!successContainer) return;
+
+        // Obtener cuenta bancaria seleccionada
+        const selectedBankElement = document.querySelector(
+          ".bank-account.selected"
+        );
+        const selectedBankName = selectedBankElement
+          ? selectedBankElement.querySelector("h4").textContent
+          : "🏦 Cuenta Bancaria";
+
+        successContainer.innerHTML = `
+          <div class="success-icon">✓</div>
+          <h2 class="section-title">¡Gracias por su compra!</h2>
+          <p class="section-subtitle">
+            Envíe la captura de la transferencia bancaria para procesar el envío y detalles de membresías
+          </p>
+
+          <div class="token-display">
+            <div class="token-label">Token de Compra</div>
+            <div class="token-value" id="purchase-token">NRC-240608-A7X9</div>
+            <button class="token-copy" onclick="copyToken()">
+              Copiar Token
+            </button>
+          </div>
+
+          <div class="security-features" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px solid #ff69b4; border-radius: 12px; padding: 25px; margin: 20px 0;">
+            <div class="security-title" style="color: #495057; margin-bottom: 15px; font-size: 18px;">
+              <span>🎯</span> Cuenta Seleccionada: ${selectedBankName}
+            </div>
+            <p style="color: #495057; margin-bottom: 20px;">Realiza tu depósito a la cuenta que seleccionaste:</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 BAC Honduras</h4>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-BAC-001</p>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta Corriente</p>
+              </div>
+
+              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banco Fichosa</h4>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-FCH-002</p>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta de Ahorros</p>
+              </div>
+
+              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banco Atlántida</h4>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-ATL-003</p>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta Corriente</p>
+              </div>
+
+              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banpais</h4>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-BNP-004</p>
+                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta de Ahorros</p>
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 105, 180, 0.1); border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
+              <h4 style="color: #ff1493; margin-bottom: 10px;">📝 Instrucciones Importantes:</h4>
+              <ol style="margin: 0; padding-left: 20px;">
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Realiza el depósito por el monto total mostrado</li>
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Conserva el comprobante de depósito</li>
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
+                  Envía foto del comprobante a: <strong style="color: #ff1493;">info@newliferun.com</strong>
+                </li>
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Tu pedido será procesado en 24-48 horas</li>
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
+                  <strong style="color: #ff1493;">Incluye tu token de compra en el email</strong>
+                </li>
+                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
+                  <strong style="color: #ff1493;">Deposita en: ${selectedBankName}</strong>
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="goHome()">
+            Continuar Comprando
+          </button>
+        `;
       }
 
       // 🛍️ NUEVA FUNCIÓN: Guardar compra en historial del usuario

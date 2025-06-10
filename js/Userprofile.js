@@ -212,70 +212,197 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logout-btn");
   const logoutButton = document.querySelector(".logout-button");
 
-  // Función para cerrar sesión
+  // 🔧 FUNCIÓN MEJORADA PARA CERRAR SESIÓN
   async function cerrarSesion() {
     console.log("🚪 Intentando cerrar sesión...");
 
-    // Usar popup personalizado para confirmar cierre de sesión
-    let confirmed = false;
-    if (typeof CustomPopups !== "undefined") {
-      confirmed = await CustomPopups.confirmLogout();
-    } else {
-      confirmed = confirm("¿Estás seguro que quieres cerrar sesión?");
-    }
+    try {
+      // Usar popup personalizado para confirmar cierre de sesión
+      let confirmed = false;
+      if (typeof confirmLogout !== "undefined") {
+        confirmed = await confirmLogout();
+      } else if (typeof CustomPopups !== "undefined") {
+        confirmed = await CustomPopups.confirmLogout();
+      } else {
+        confirmed = confirm("¿Estás seguro que quieres cerrar sesión?");
+      }
 
-    if (confirmed) {
-      console.log("✅ Usuario confirmó cierre de sesión");
+      if (confirmed) {
+        console.log("✅ Usuario confirmó cierre de sesión");
 
-      // Limpiar datos de sesión
+        // Limpiar TODOS los datos de sesión
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("token");
+        localStorage.removeItem("sessionStartTime");
+        localStorage.removeItem("lastActivity");
+
+        // Limpiar timers de sesión si existen
+        if (typeof clearSessionTimer !== "undefined") {
+          clearSessionTimer();
+        }
+
+        // Mostrar mensaje de confirmación con popup personalizado
+        if (typeof showAlert !== "undefined") {
+          await showAlert(
+            "Sesión cerrada exitosamente",
+            "success",
+            "✅ Sesión Cerrada"
+          );
+        } else if (typeof CustomPopups !== "undefined") {
+          await CustomPopups.showAlert(
+            "Sesión cerrada exitosamente",
+            "success",
+            "✅ Sesión Cerrada"
+          );
+        } else {
+          alert("Sesión cerrada exitosamente");
+        }
+
+        // Redireccionar al inicio
+        console.log("🏠 Redirigiendo a inicio...");
+        window.location.href = "index.html";
+      } else {
+        console.log("❌ Usuario canceló cierre de sesión");
+      }
+    } catch (error) {
+      console.error("❌ Error al cerrar sesión:", error);
+
+      // Fallback: cerrar sesión sin confirmación
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");
       localStorage.removeItem("token");
+      localStorage.removeItem("sessionStartTime");
+      localStorage.removeItem("lastActivity");
 
-      // Mostrar mensaje de confirmación con popup personalizado
-      if (typeof CustomPopups !== "undefined") {
-        await CustomPopups.showAlert(
-          "Sesión cerrada exitosamente",
-          "success",
-          "✅ Sesión Cerrada"
-        );
-      } else {
-        alert("Sesión cerrada exitosamente");
-      }
-
-      // Redireccionar al inicio
-      console.log("🏠 Redirigiendo a inicio...");
+      alert("Sesión cerrada");
       window.location.href = "index.html";
-    } else {
-      console.log("❌ Usuario canceló cierre de sesión");
     }
   }
 
-  // Agregar event listeners para botón de cerrar sesión
+  // ⏰ SISTEMA DE AUTO-LOGOUT POR INACTIVIDAD (2-3 minutos)
+  let inactivityTimer;
+  const INACTIVITY_TIMEOUT = 2.5 * 60 * 1000; // 2.5 minutos en milisegundos
+
+  function resetInactivityTimer() {
+    // Limpiar timer anterior
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+    }
+
+    // Guardar última actividad
+    localStorage.setItem("lastActivity", Date.now().toString());
+
+    // Configurar nuevo timer
+    inactivityTimer = setTimeout(async () => {
+      console.log("⏰ Sesión expirada por inactividad");
+
+      // Mostrar alerta de sesión expirada
+      if (typeof showAlert !== "undefined") {
+        await showAlert(
+          "Tu sesión ha expirado por inactividad (2.5 minutos).\nPor favor, inicia sesión nuevamente.",
+          "warning",
+          "⏰ Sesión Expirada"
+        );
+      } else {
+        alert(
+          "Tu sesión ha expirado por inactividad.\nPor favor, inicia sesión nuevamente."
+        );
+      }
+
+      // Cerrar sesión automáticamente
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("token");
+      localStorage.removeItem("sessionStartTime");
+      localStorage.removeItem("lastActivity");
+
+      // Redireccionar a login
+      window.location.href = "sesion.html";
+    }, INACTIVITY_TIMEOUT);
+
+    console.log("⏰ Timer de inactividad reiniciado (2.5 min)");
+  }
+
+  // Eventos que resetean el timer de inactividad
+  const resetEvents = [
+    "mousedown",
+    "mousemove",
+    "keypress",
+    "scroll",
+    "touchstart",
+    "click",
+    "keydown",
+    "mouseup",
+  ];
+
+  resetEvents.forEach((event) => {
+    document.addEventListener(event, resetInactivityTimer, true);
+  });
+
+  // Función para limpiar timer (exportada globalmente)
+  window.clearSessionTimer = function () {
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = null;
+      console.log("⏰ Timer de sesión limpiado");
+    }
+  };
+
+  // Inicializar timer de inactividad solo si hay sesión activa
+  if (currentUserEmail && isLoggedIn) {
+    resetInactivityTimer();
+    console.log("⏰ Sistema de auto-logout activado");
+  }
+
+  // Agregar event listeners para botón de cerrar sesión CON MÚLTIPLES MÉTODOS
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", cerrarSesion);
+    // Remover listeners anteriores
+    logoutBtn.removeEventListener("click", cerrarSesion);
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      cerrarSesion();
+    });
     console.log("✅ Event listener agregado a #logout-btn");
   }
 
   if (logoutButton) {
-    logoutButton.addEventListener("click", cerrarSesion);
+    // Remover listeners anteriores
+    logoutButton.removeEventListener("click", cerrarSesion);
+    logoutButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      cerrarSesion();
+    });
     console.log("✅ Event listener agregado a .logout-button");
   }
 
-  // También buscar por texto del botón
+  // También buscar por texto del botón (método de respaldo)
   const allButtons = document.querySelectorAll("button, .nav-button");
   allButtons.forEach((button) => {
     const buttonText = button.textContent.trim().toLowerCase();
     if (
       buttonText.includes("cerrar sesión") ||
       buttonText.includes("cerrar sesion") ||
-      buttonText.includes("logout")
+      buttonText.includes("logout") ||
+      buttonText.includes("🚪")
     ) {
-      button.addEventListener("click", cerrarSesion);
+      button.removeEventListener("click", cerrarSesion);
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        cerrarSesion();
+      });
       console.log("✅ Event listener agregado a botón con texto:", buttonText);
     }
   });
+
+  // Función global para cerrar sesión (accesible desde cualquier lugar)
+  window.cerrarSesionProfile = cerrarSesion;
 
   console.log("🎯 Perfil de usuario completamente configurado");
 
@@ -287,6 +414,36 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("🛍️ Historial de compras cargado automáticamente");
     }
   }, 500);
+
+  // 🐛 FUNCIÓN DE DEBUG PARA LOGOUT
+  window.debugLogout = function () {
+    console.log("🧪 === DEBUG LOGOUT ===");
+    console.log(
+      "Botón logout-btn existe:",
+      !!document.getElementById("logout-btn")
+    );
+    console.log(
+      "Botón .logout-button existe:",
+      !!document.querySelector(".logout-button")
+    );
+    console.log("Función cerrarSesion definida:", typeof cerrarSesion);
+    console.log(
+      "Función global cerrarSesionProfile:",
+      typeof window.cerrarSesionProfile
+    );
+    console.log("Custom popups disponible:", typeof confirmLogout);
+    console.log("Timer de inactividad activo:", !!inactivityTimer);
+    console.log("Usuario actual:", localStorage.getItem("userEmail"));
+    console.log("========================");
+
+    // Probar logout manualmente
+    if (typeof cerrarSesion === "function") {
+      console.log("🧪 Ejecutando logout manual...");
+      cerrarSesion();
+    }
+  };
+
+  console.log("🧪 Usa debugLogout() en la consola para probar el logout");
 });
 
 // 🛍️ NUEVA FUNCIÓN: Cargar historial de compras

@@ -366,3 +366,105 @@ function showToast(message, type = "success") {
     toast.remove();
   }, 3000);
 }
+
+console.log("✅ Tienda NewLife - Sistema cargado exitosamente");
+
+// ========================================
+// 🎯 SMOOTH SCROLL PARA CATEGORÍAS
+// Funcionalidad independiente - NO afecta código existente
+// ========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("🎯 Inicializando smooth scroll para categorías...");
+
+  // Obtener todas las tarjetas de categoría
+  const categoryCards = document.querySelectorAll(
+    ".category-card[data-category]"
+  );
+
+  console.log(`🎯 Encontradas ${categoryCards.length} tarjetas de categoría`);
+
+  // Agregar event listener a cada tarjeta
+  categoryCards.forEach((card) => {
+    const category = card.getAttribute("data-category");
+    console.log(`🎯 Configurando tarjeta: ${category}`);
+
+    card.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      console.log(`🎯 Clic en categoría: ${category}`);
+
+      // Buscar la sección correspondiente
+      const targetSection = document.getElementById(category);
+
+      if (targetSection) {
+        console.log(`🎯 Navegando a sección: ${category}`);
+
+        // Scroll suave hacia la sección
+        targetSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        // Efecto visual en la tarjeta
+        card.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          card.style.transform = "scale(1)";
+        }, 150);
+
+        // Mostrar notificación (opcional)
+        if (typeof showNotification === "function") {
+          showNotification(
+            `📍 Navegando a ${
+              category.charAt(0).toUpperCase() + category.slice(1)
+            }`,
+            "info"
+          );
+        }
+      } else {
+        console.warn(`⚠️ No se encontró la sección: ${category}`);
+      }
+    });
+
+    // Agregar estilos CSS de hover si no existen
+    card.style.cursor = "pointer";
+    card.style.transition = "all 0.3s ease";
+
+    // Efecto hover mejorado
+    card.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-5px)";
+      this.style.boxShadow = "0 10px 25px rgba(255, 105, 180, 0.3)";
+    });
+
+    card.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0)";
+      this.style.boxShadow = "";
+    });
+  });
+
+  console.log("✅ Smooth scroll para categorías configurado exitosamente");
+});
+
+// ========================================
+// 🧪 FUNCIÓN DE DEBUG PARA CATEGORÍAS
+// ========================================
+window.debugCategories = function () {
+  console.log("🧪 === DEBUG CATEGORÍAS ===");
+
+  const categoryCards = document.querySelectorAll(
+    ".category-card[data-category]"
+  );
+  console.log(`Tarjetas encontradas: ${categoryCards.length}`);
+
+  categoryCards.forEach((card) => {
+    const category = card.getAttribute("data-category");
+    const targetSection = document.getElementById(category);
+    console.log(
+      `- ${category}: ${
+        targetSection ? "✅ Sección existe" : "❌ Sección faltante"
+      }`
+    );
+  });
+
+  console.log("============================");
+};

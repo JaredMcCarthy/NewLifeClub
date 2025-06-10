@@ -476,119 +476,87 @@
       </section>
     </div>
 
-    <script>
-      // Smooth scroll and interactions
-      document.addEventListener("DOMContentLoaded", function () {
-        // Animate stats on scroll
-        const stats = document.querySelectorAll(".stat-number");
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const target = entry.target;
-              const finalValue = target.textContent;
-              animateCount(target, finalValue);
-            }
-          });
-        });
-
-        stats.forEach((stat) => observer.observe(stat));
-
-        // CTA button interaction
-        const ctaButton = document.querySelector(".cta-button");
-        ctaButton.addEventListener("click", function () {
-          this.style.transform = "scale(0.95)";
-          setTimeout(() => {
-            this.style.transform = "translateY(-3px)";
-          }, 150);
-        });
-      });
-
-      function animateCount(element, target) {
-        const isPercentage = target.includes("%");
-        const isMultiplier = target.includes("x");
-        const isTime = target.includes("/");
-
-        if (isTime) return;
-
-        let current = 0;
-        const increment = isPercentage ? 1 : isMultiplier ? 0.1 : 1;
-        const finalNum = parseInt(target);
-
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= finalNum) {
-            current = finalNum;
-            clearInterval(timer);
-          }
-
-          if (isPercentage) {
-            element.textContent = Math.floor(current) + "%";
-          } else if (isMultiplier) {
-            element.textContent = current.toFixed(1) + "x";
-          } else {
-            element.textContent = Math.floor(current);
-          }
-        }, 50);
-      }
-    </script>
-
     <!-- Scripts JavaScript -->
     <script src="js/simple-mobile-nav.js"></script>
     <script src="js/cart-handler.js"></script>
     <script src="js/search.js"></script>
     <script src="js/navbar-session.js"></script>
     <script src="js/custom-popups.js?v=1.0"></script>
+    <!-- 🔒 AUTH PROTECTION SYSTEM -->
+    <script src="js/auth-protection.js?v=1.0"></script>
 
+    <!-- Script MEJORADO con mejor timing -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const plan42kButton = document.getElementById("add-plan42k-to-cart");
-
-        if (plan42kButton) {
-          plan42kButton.addEventListener("click", function (e) {
-            e.preventDefault();
-            console.log("🏃‍♂️ Agregando Plan 42K al carrito");
-
-            // Datos del Plan 42K
-            const planData = {
-              id: "plan-42k-elite",
-              name: "Plan 42K Elite",
-              price: 129.99,
-              size: "20 Semanas",
-              quantity: 1,
-              image: "FotosPlanes/plan42k.png",
-              source: "plan42k",
-            };
-
-            // Agregar al carrito
-            if (typeof addToCart === "function") {
-              const success = addToCart(planData);
-
-              if (success) {
-                // Efecto visual del botón
-                const originalText = this.textContent;
-                const originalBackground = this.style.background;
-
-                this.textContent = "¡Plan Agregado! ✅";
-                this.style.background =
-                  "linear-gradient(45deg, #00ff00, #32cd32)";
-                this.disabled = true;
-
-                setTimeout(() => {
-                  this.textContent = originalText;
-                  this.style.background = originalBackground;
-                  this.disabled = false;
-                }, 3000);
-              }
-            } else {
-              console.error("❌ Función addToCart no disponible");
-              alert(
-                "Error: Sistema de carrito no disponible. Recarga la página."
-              );
-            }
-          });
+      // Función para verificar si el carrito está listo
+      function waitForCart(callback) {
+        if (typeof addToCart === "function" && typeof loadCart === "function") {
+          console.log("✅ Carrito disponible - ejecutando callback");
+          callback();
+        } else {
+          console.log("⏳ Esperando carrito...");
+          setTimeout(() => waitForCart(callback), 50);
         }
+      }
 
-        console.log("✅ Plan 42K inicializado");
+      // Función para agregar al carrito
+      function addPlan42kToCart() {
+        console.log("🏃 Agregando Plan 42K al carrito");
+
+        const planData = {
+          id: "plan-42k-elite",
+          name: "Plan 42K Elite",
+          price: 129.99,
+          size: "20 Semanas",
+          quantity: 1,
+          image: "FotosPlanes/plan42k.png",
+          source: "plan42k",
+        };
+
+        // Verificar que addToCart existe y ejecutar inmediatamente
+        if (typeof addToCart === "function") {
+          const result = addToCart(planData);
+          console.log("📦 Resultado addToCart:", result);
+          return result;
+        } else {
+          console.error("❌ addToCart no disponible");
+          alert("Error: Sistema de carrito no disponible. Recarga la página.");
+          return false;
+        }
+      }
+
+      // Inicialización con mejor timing
+      function initializePlan42k() {
+        console.log("🚀 Plan 42K - Inicializando con timing mejorado...");
+
+        const plan42kBtn = document.getElementById("add-plan42k-to-cart");
+        if (plan42kBtn) {
+          plan42kBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Ejecutar inmediatamente
+            addPlan42kToCart();
+          });
+
+          console.log("✅ Plan 42K botón configurado");
+        } else {
+          console.error("❌ Botón plan42k no encontrado");
+        }
+      }
+
+      // Esperar a que TODO esté listo
+      document.addEventListener("DOMContentLoaded", function () {
+        waitForCart(initializePlan42k);
+      });
+
+      // Backup - también escuchar load
+      window.addEventListener("load", function () {
+        setTimeout(() => {
+          if (!document.getElementById("add-plan42k-to-cart")?.onclick) {
+            console.log("🔄 Backup - reinicializando Plan 42K");
+            waitForCart(initializePlan42k);
+          }
+        }, 100);
       });
     </script>
   </body>
