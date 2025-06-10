@@ -4,37 +4,88 @@
       "percentage": 10,
       "description": "Descuento de bienvenida",
       "active": true,
-      "minAmount": 0
+      "minAmount": 0,
+      "maxUses": 1000,
+      "currentUses": 0
     },
     "NEWLIFE15": {
       "percentage": 15,
       "description": "Descuento NewLife Club",
       "active": true,
-      "minAmount": 50
+      "minAmount": 50,
+      "maxUses": 500,
+      "currentUses": 0
     },
     "RUNNER20": {
       "percentage": 20,
       "description": "Descuento especial runner",
       "active": true,
-      "minAmount": 100
+      "minAmount": 100,
+      "maxUses": 200,
+      "currentUses": 0
     },
     "VIP25": {
       "percentage": 25,
       "description": "Descuento VIP",
       "active": true,
-      "minAmount": 150
+      "minAmount": 150,
+      "maxUses": 100,
+      "currentUses": 0
     },
     "SAVE10": {
       "percentage": 10,
       "description": "Ahorra 10%",
       "active": true,
-      "minAmount": 30
+      "minAmount": 30,
+      "maxUses": 300,
+      "currentUses": 0
     },
     "MEGA15": {
       "percentage": 15,
       "description": "Mega descuento",
       "active": true,
-      "minAmount": 75
+      "minAmount": 75,
+      "maxUses": 250,
+      "currentUses": 0
+    },
+    "FIRST20": {
+      "percentage": 20,
+      "description": "Primera compra",
+      "active": true,
+      "minAmount": 60,
+      "maxUses": 500,
+      "currentUses": 0
+    },
+    "STUDENT15": {
+      "percentage": 15,
+      "description": "Descuento estudiante",
+      "active": true,
+      "minAmount": 40,
+      "maxUses": 200,
+      "currentUses": 0
+    },
+    "FITNESS25": {
+      "percentage": 25,
+      "description": "Promoción fitness",
+      "active": true,
+      "minAmount": 120,
+      "maxUses": 150,
+      "currentUses": 0
+    },
+    "BLACKFRIDAY30": {
+      "percentage": 30,
+      "description": "Black Friday especial",
+      "active": false,
+      "minAmount": 100,
+      "maxUses": 1000,
+      "currentUses": 0
     }
+  },
+  "settings": {
+    "defaultShippingThreshold": 75,
+    "taxRate": 0.15,
+    "currency": "HNL",
+    "currencySymbol": "L.",
+    "lastUpdated": "2024-12-20"
   }
 }

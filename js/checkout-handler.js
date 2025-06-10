@@ -1,19 +1,10 @@
 // ======================================
-// 🛒 CHECKOUT HANDLER - DINÁMICO CON DESCUENTOS
+// �� CHECKOUT HANDLER - SISTEMA DE DESCUENTOS
+// NewLife Run Club - Versión Producción
 // ======================================
 
-let checkoutData = {
-  cart: { items: [], count: 0, total: 0 },
-  subtotal: 0,
-  shipping: 0,
-  taxes: 0,
-  discount: 0,
-  discountCode: null,
-  finalTotal: 0,
-};
-
-// Códigos de descuento hardcodeados (respaldo si no se puede cargar JSON)
-const fallbackPromoCodes = {
+// Códigos de descuento activos
+const PROMO_CODES = {
   WELCOME10: {
     percentage: 10,
     description: "Descuento de bienvenida",
@@ -50,416 +41,277 @@ const fallbackPromoCodes = {
     active: true,
     minAmount: 75,
   },
+  FIRST20: {
+    percentage: 20,
+    description: "Primer compra",
+    active: true,
+    minAmount: 60,
+  },
 };
 
-let availablePromoCodes = fallbackPromoCodes;
+// Variables globales para descuentos
+let appliedDiscount = {
+  code: null,
+  percentage: 0,
+  amount: 0,
+  active: false,
+};
 
 // ======================================
-// 🎯 FUNCIONES DE CARGA Y INICIALIZACIÓN
+// 🎟️ FUNCIONES DE CÓDIGOS DE DESCUENTO
 // ======================================
 
-// Cargar carrito desde localStorage
-function loadCartFromStorage() {
-  const savedCart = localStorage.getItem("newlife_cart");
-  if (savedCart) {
-    try {
-      checkoutData.cart = JSON.parse(savedCart);
-      console.log("🛒 Carrito cargado:", checkoutData.cart);
-    } catch (e) {
-      console.error("Error cargando carrito:", e);
-      checkoutData.cart = { items: [], count: 0, total: 0 };
+// Aplicar código de descuento
+function applyPromoCode() {
+  const promoInput = document.getElementById("promo-input");
+  const promoBtn = document.querySelector(".promo-btn");
+
+  if (!promoInput || !promoBtn) return;
+
+  const code = promoInput.value.trim().toUpperCase();
+
+  if (!code) {
+    showPromoNotification("Por favor ingresa un código válido", "error");
+    return;
+  }
+
+  // Verificar si el código existe y está activo
+  const promoData = PROMO_CODES[code];
+
+  if (!promoData || !promoData.active) {
+    showPromoNotification("Código de descuento no válido", "error");
+    promoInput.style.borderColor = "#ff4444";
+
+    setTimeout(() => {
+      promoInput.style.borderColor = "#e0e0e0";
+      promoInput.value = "";
+    }, 3000);
+    return;
+  }
+
+  // Obtener subtotal actual del carrito
+  const cartInfo = getCartInfo();
+  const subtotal = cartInfo.total;
+
+  if (subtotal < promoData.minAmount) {
+    showPromoNotification(
+      `Monto mínimo requerido: L.${promoData.minAmount}`,
+      "error"
+    );
+    return;
+  }
+
+  // Calcular descuento
+  const discountAmount =
+    Math.round(subtotal * (promoData.percentage / 100) * 100) / 100;
+
+  // Aplicar descuento
+  appliedDiscount = {
+    code: code,
+    percentage: promoData.percentage,
+    amount: discountAmount,
+    active: true,
+    description: promoData.description,
+  };
+
+  // Actualizar UI del input
+  promoInput.value = `${code} - APLICADO`;
+  promoInput.style.borderColor = "#4CAF50";
+  promoInput.style.color = "#4CAF50";
+  promoInput.disabled = true;
+
+  promoBtn.textContent = "✓ Aplicado";
+  promoBtn.style.background = "#4CAF50";
+  promoBtn.disabled = true;
+
+  // Mostrar notificación de éxito
+  showPromoNotification(
+    `✅ ${promoData.description} aplicado! ${promoData.percentage}% de descuento`,
+    "success"
+  );
+
+  // Actualizar resumen del carrito
+  updateCartSummaryWithDiscount();
+
+  console.log("🎟️ Descuento aplicado:", appliedDiscount);
+}
+
+// Remover código de descuento
+function removePromoCode() {
+  const promoInput = document.getElementById("promo-input");
+  const promoBtn = document.querySelector(".promo-btn");
+
+  if (!promoInput || !promoBtn) return;
+
+  // Resetear descuento
+  appliedDiscount = {
+    code: null,
+    percentage: 0,
+    amount: 0,
+    active: false,
+  };
+
+  // Resetear UI
+  promoInput.value = "";
+  promoInput.style.borderColor = "#e0e0e0";
+  promoInput.style.color = "#333";
+  promoInput.disabled = false;
+
+  promoBtn.textContent = "Aplicar";
+  promoBtn.style.background = "#000";
+  promoBtn.disabled = false;
+
+  // Actualizar resumen
+  updateCartSummaryWithDiscount();
+
+  showPromoNotification("Código de descuento removido", "info");
+}
+
+// ======================================
+// 🧮 FUNCIONES DE CÁLCULO CON DESCUENTO
+// ======================================
+
+// Actualizar resumen del carrito incluyendo descuentos
+function updateCartSummaryWithDiscount() {
+  // Obtener información del carrito actual
+  const cartInfo = getCartInfo();
+
+  if (!cartInfo || cartInfo.count === 0) {
+    // Si no hay productos, mostrar totales en cero
+    updateSummaryElements(0, 0, 0, 0, 0);
+    return;
+  }
+
+  const subtotal = cartInfo.total;
+  const shipping = subtotal >= 75 ? 0 : 10; // Envío gratis en compras mayores a L.75
+
+  // Aplicar descuento si está activo
+  let discountAmount = 0;
+  if (appliedDiscount.active) {
+    discountAmount =
+      Math.round(subtotal * (appliedDiscount.percentage / 100) * 100) / 100;
+  }
+
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const taxRate = 0.15; // 15% de impuestos
+  const taxes =
+    Math.round((subtotalAfterDiscount + shipping) * taxRate * 100) / 100;
+  const finalTotal = subtotalAfterDiscount + shipping + taxes;
+
+  // Actualizar elementos del DOM
+  updateSummaryElements(subtotal, discountAmount, shipping, taxes, finalTotal);
+
+  console.log("💰 Totales con descuento:", {
+    subtotal: subtotal,
+    discount: discountAmount,
+    subtotalAfterDiscount: subtotalAfterDiscount,
+    shipping: shipping,
+    taxes: taxes,
+    finalTotal: finalTotal,
+  });
+}
+
+// Actualizar elementos del resumen en el DOM
+function updateSummaryElements(
+  subtotal,
+  discount,
+  shipping,
+  taxes,
+  finalTotal
+) {
+  // Actualizar subtotal
+  const subtotalElement = document.querySelector(".subtotal-amount");
+  if (subtotalElement) {
+    subtotalElement.textContent = `L.${subtotal.toFixed(2)}`;
+  }
+
+  // Mostrar/ocultar fila de descuento
+  let discountRow = document.querySelector(".discount-row");
+  if (discount > 0 && appliedDiscount.active) {
+    if (!discountRow) {
+      // Crear fila de descuento si no existe
+      const summaryContainer = document.querySelector(".summary-totals");
+      const subtotalRow = summaryContainer.querySelector(".total-row");
+
+      discountRow = document.createElement("div");
+      discountRow.className = "total-row discount-row";
+      discountRow.style.color = "#4CAF50";
+      discountRow.style.fontWeight = "600";
+
+      // Insertar después del subtotal
+      subtotalRow.insertAdjacentElement("afterend", discountRow);
+    }
+
+    discountRow.innerHTML = `
+      <span>Descuento (${appliedDiscount.code}):</span>
+      <span>-L.${discount.toFixed(2)}</span>
+    `;
+    discountRow.style.display = "flex";
+  } else if (discountRow) {
+    discountRow.style.display = "none";
+  }
+
+  // Actualizar envío
+  const shippingElement = document.querySelector(".shipping-amount");
+  if (shippingElement) {
+    shippingElement.textContent =
+      shipping === 0 ? "GRATIS" : `L.${shipping.toFixed(2)}`;
+    shippingElement.style.color = shipping === 0 ? "#4CAF50" : "inherit";
+  }
+
+  // Actualizar impuestos
+  const taxElement = document.querySelector(".tax-amount");
+  if (taxElement) {
+    taxElement.textContent = `L.${taxes.toFixed(2)}`;
+  }
+
+  // Actualizar total final
+  const totalElement = document.querySelector(".total-amount");
+  if (totalElement) {
+    totalElement.textContent = `L.${finalTotal.toFixed(2)}`;
+  }
+
+  // Actualizar botón de pago
+  const payButton =
+    document.querySelector("#payment-button") ||
+    document.querySelector(".btn-primary");
+  if (payButton) {
+    if (finalTotal === 0 || subtotal === 0) {
+      payButton.textContent = "Carrito Vacío";
+      payButton.disabled = true;
+      payButton.style.background = "#ccc";
+      payButton.style.cursor = "not-allowed";
+    } else {
+      payButton.textContent = `Completar Pago - L.${finalTotal.toFixed(2)}`;
+      payButton.disabled = false;
+      payButton.style.background = "";
+      payButton.style.cursor = "";
     }
   }
 }
 
-// Cargar códigos de descuento
-async function loadPromoCodes() {
-  try {
-    const response = await fetch("promo-codes.json");
-    const data = await response.json();
-    availablePromoCodes = data.discountCodes;
-    console.log(
-      "🎟️ Códigos de descuento cargados:",
-      Object.keys(availablePromoCodes)
-    );
-  } catch (error) {
-    console.log("📦 Usando códigos de descuento por defecto");
-    availablePromoCodes = fallbackPromoCodes;
-  }
-}
-
 // ======================================
-// 🧮 LÓGICA DE CÁLCULOS
+// 🔔 SISTEMA DE NOTIFICACIONES PARA PROMOS
 // ======================================
 
-// Determinar si un producto requiere envío físico
-function requiresPhysicalShipping(product) {
-  // Productos físicos: ropa, accesorios de tienda
-  const physicalKeywords = [
-    "camisa",
-    "polo",
-    "blusa",
-    "top",
-    "hoodie",
-    "tank",
-    "tee",
-    "henley",
-    "zapatos",
-    "tenis",
-    "nike",
-    "adidas",
-    "puma",
-    "shorts",
-    "pantalón",
-  ];
-
-  // Productos digitales: membresías, planes, suscripciones
-  const digitalKeywords = [
-    "membresía",
-    "plan",
-    "suscripción",
-    "básica",
-    "premium",
-    "elite",
-    "pro",
-    "digital",
-    "acceso",
-    "contenido",
-  ];
-
-  const productName = product.name.toLowerCase();
-
-  // Verificar si es digital
-  const isDigital = digitalKeywords.some((keyword) =>
-    productName.includes(keyword)
-  );
-  if (isDigital) return false;
-
-  // Verificar si es físico
-  const isPhysical = physicalKeywords.some((keyword) =>
-    productName.includes(keyword)
-  );
-  if (isPhysical) return true;
-
-  // Por defecto, si viene de tienda.html, asumir que es físico
-  return product.source === "tienda" || product.type === "physical";
-}
-
-// Calcular envío inteligente
-function calculateShipping() {
-  const physicalItems = checkoutData.cart.items.filter((item) =>
-    requiresPhysicalShipping(item)
-  );
-
-  if (physicalItems.length === 0) {
-    return 0; // Sin productos físicos = envío gratis
-  }
-
-  // Envío fijo para productos físicos
-  return 100; // L.100 en lempiras
-}
-
-// Calcular impuestos (15% sobre subtotal + envío)
-function calculateTaxes(subtotal, shipping) {
-  return Math.round((subtotal + shipping) * 0.15 * 100) / 100;
-}
-
-// Aplicar código de descuento
-function applyDiscount(subtotal, code) {
-  if (!code || !availablePromoCodes[code]) {
-    return { discount: 0, valid: false, message: "Código no válido" };
-  }
-
-  const promoCode = availablePromoCodes[code];
-
-  if (!promoCode.active) {
-    return { discount: 0, valid: false, message: "Código expirado" };
-  }
-
-  if (subtotal < promoCode.minAmount) {
-    return {
-      discount: 0,
-      valid: false,
-      message: `Monto mínimo requerido: L.${promoCode.minAmount}`,
-    };
-  }
-
-  const discount =
-    Math.round(subtotal * (promoCode.percentage / 100) * 100) / 100;
-
-  return {
-    discount: discount,
-    valid: true,
-    message: `${promoCode.description} (${promoCode.percentage}% descuento)`,
-    percentage: promoCode.percentage,
-  };
-}
-
-// Recalcular todos los totales
-function recalculateAll() {
-  // Subtotal de productos
-  checkoutData.subtotal = checkoutData.cart.items.reduce((sum, item) => {
-    return sum + item.price * item.quantity;
-  }, 0);
-
-  // Envío
-  checkoutData.shipping = calculateShipping();
-
-  // Aplicar descuento si existe
-  if (checkoutData.discountCode) {
-    const discountResult = applyDiscount(
-      checkoutData.subtotal,
-      checkoutData.discountCode
-    );
-    checkoutData.discount = discountResult.valid ? discountResult.discount : 0;
-  }
-
-  // Subtotal después del descuento
-  const discountedSubtotal = checkoutData.subtotal - checkoutData.discount;
-
-  // Impuestos
-  checkoutData.taxes = calculateTaxes(
-    discountedSubtotal,
-    checkoutData.shipping
-  );
-
-  // Total final
-  checkoutData.finalTotal =
-    discountedSubtotal + checkoutData.shipping + checkoutData.taxes;
-
-  console.log("💰 Totales calculados:", checkoutData);
-}
-
-// ======================================
-// 🎨 FUNCIONES DE RENDERIZADO
-// ======================================
-
-// Renderizar productos en el resumen
-function renderCartItems() {
-  const container = document.querySelector(".order-summary");
-  if (!container) return;
-
-  // Buscar el contenedor de productos o crearlo
-  let productsContainer = container.querySelector(".products-container");
-  if (!productsContainer) {
-    productsContainer = document.createElement("div");
-    productsContainer.className = "products-container";
-
-    // Insertar después del título
-    const title = container.querySelector(".summary-title");
-    title.insertAdjacentElement("afterend", productsContainer);
-  }
-
-  // Limpiar contenedor
-  productsContainer.innerHTML = "";
-
-  if (checkoutData.cart.items.length === 0) {
-    productsContainer.innerHTML = `
-      <div class="empty-cart-message">
-        <p>🛒 Tu carrito está vacío</p>
-        <a href="tienda.html" style="color: #ff69b4; text-decoration: none;">← Ir a la tienda</a>
-      </div>
-    `;
-    return;
-  }
-
-  // Renderizar cada producto
-  checkoutData.cart.items.forEach((item, index) => {
-    const productElement = document.createElement("div");
-    productElement.className = "product-item";
-
-    // Determinar icono del producto
-    const isDigital = !requiresPhysicalShipping(item);
-    const productIcon = isDigital ? "📱" : "👕";
-
-    productElement.innerHTML = `
-      <div class="product-img">${productIcon}</div>
-      <div class="product-details">
-        <div class="product-name">${item.name}</div>
-        <div class="product-specs">
-          ${item.size ? `Talla: ${item.size}` : ""}
-          ${
-            isDigital
-              ? '<span style="color: #4CAF50; font-weight: 600;">• Digital</span>'
-              : ""
-          }
-          ${
-            !isDigital
-              ? '<span style="color: #ff9800; font-weight: 600;">• Físico</span>'
-              : ""
-          }
-        </div>
-        <div class="product-price">L.${item.price.toFixed(2)}</div>
-      </div>
-      <div class="quantity-controls">
-        <button class="qty-control-btn minus" onclick="updateQuantity(${index}, -1)" ${
-      item.quantity <= 1 ? "disabled" : ""
-    }>-</button>
-        <span class="quantity-display">${item.quantity}</span>
-        <button class="qty-control-btn plus" onclick="updateQuantity(${index}, 1)">+</button>
-      </div>
-    `;
-
-    productsContainer.appendChild(productElement);
-  });
-}
-
-// Renderizar totales
-function renderTotals() {
-  const totalsContainer = document.querySelector(".summary-totals");
-  if (!totalsContainer) return;
-
-  let html = `
-    <div class="total-row">
-      <span>Subtotal:</span>
-      <span>L.${checkoutData.subtotal.toFixed(2)}</span>
-    </div>
-  `;
-
-  // Mostrar descuento si existe
-  if (checkoutData.discount > 0) {
-    html += `
-      <div class="total-row discount-row" style="color: #4CAF50;">
-        <span>Descuento (${checkoutData.discountCode}):</span>
-        <span>-L.${checkoutData.discount.toFixed(2)}</span>
-      </div>
-    `;
-  }
-
-  // Mostrar envío
-  html += `
-    <div class="total-row">
-      <span>Envío:</span>
-      <span style="color: ${
-        checkoutData.shipping === 0 ? "#4CAF50" : "inherit"
-      }">
-        ${
-          checkoutData.shipping === 0
-            ? "GRATIS"
-            : `L.${checkoutData.shipping.toFixed(2)}`
-        }
-      </span>
-    </div>
-    <div class="total-row">
-      <span>Impuestos (15%):</span>
-      <span>L.${checkoutData.taxes.toFixed(2)}</span>
-    </div>
-    <div class="total-row total-final">
-      <span>TOTAL:</span>
-      <span>L.${checkoutData.finalTotal.toFixed(2)}</span>
-    </div>
-  `;
-
-  totalsContainer.innerHTML = html;
-}
-
-// ======================================
-// 🎟️ MANEJO DE CÓDIGOS DE DESCUENTO
-// ======================================
-
-// Manejar aplicación de código de descuento
-function handlePromoCode() {
-  const input = document.querySelector(".promo-input input");
-  const button = document.querySelector(".promo-btn");
-
-  if (!input || !button) return;
-
-  const code = input.value.trim().toUpperCase();
-
-  if (!code) {
-    showNotification("Por favor ingresa un código", "error");
-    return;
-  }
-
-  const discountResult = applyDiscount(checkoutData.subtotal, code);
-
-  if (discountResult.valid) {
-    checkoutData.discountCode = code;
-    checkoutData.discount = discountResult.discount;
-
-    // Actualizar UI
-    input.style.borderColor = "#4CAF50";
-    input.style.color = "#4CAF50";
-    button.textContent = "✓ Aplicado";
-    button.style.background = "#4CAF50";
-    button.disabled = true;
-
-    showNotification(`¡Código aplicado! ${discountResult.message}`, "success");
-
-    // Recalcular y actualizar
-    recalculateAll();
-    renderTotals();
-  } else {
-    input.style.borderColor = "#ff4444";
-    showNotification(discountResult.message, "error");
-
-    // Resetear input después de 3 segundos
-    setTimeout(() => {
-      input.style.borderColor = "#e0e0e0";
-      input.value = "";
-    }, 3000);
-  }
-}
-
-// ======================================
-// 🚀 INICIALIZACIÓN
-// ======================================
-
-document.addEventListener("DOMContentLoaded", async function () {
-  console.log("🛒 Checkout Handler iniciado");
-
-  // Cargar datos
-  await loadPromoCodes();
-  loadCartFromStorage();
-
-  // Calcular totales
-  recalculateAll();
-
-  // Renderizar UI
-  renderCartItems();
-  renderTotals();
-
-  // Event listeners
-  const promoBtn = document.querySelector(".promo-btn");
-  const promoInput = document.querySelector(".promo-input input");
-
-  if (promoBtn) {
-    promoBtn.addEventListener("click", handlePromoCode);
-  }
-
-  if (promoInput) {
-    promoInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        handlePromoCode();
-      }
-    });
-  }
-
-  // Verificar si el carrito está vacío
-  if (checkoutData.cart.items.length === 0) {
-    console.log("⚠️ Carrito vacío - mostrando mensaje");
-  }
-
-  console.log("✅ Checkout Handler inicializado completamente");
-});
-
-// ======================================
-// 🔧 FUNCIONES AUXILIARES
-// ======================================
-
-// Función para mostrar notificaciones (reutilizada)
-function showNotification(message, type = "info") {
+// Mostrar notificaciones específicas para códigos promocionales
+function showPromoNotification(message, type = "info") {
   const notification = document.createElement("div");
-  notification.className = `notification notification-${type}`;
-  notification.textContent = message;
+  notification.className = `promo-notification notification-${type}`;
+  notification.innerHTML = message;
+
+  const colors = {
+    success: "#4CAF50",
+    error: "#ff4444",
+    info: "#2196F3",
+    warning: "#ff9800",
+  };
 
   notification.style.cssText = `
     position: fixed;
-    top: 20px;
+    top: 120px;
     right: 20px;
-    background: ${
-      type === "error" ? "#ff4444" : type === "success" ? "#4CAF50" : "#333"
-    };
+    background: ${colors[type] || colors.info};
     color: white;
     padding: 15px 20px;
     border-radius: 8px;
@@ -467,10 +319,14 @@ function showNotification(message, type = "info") {
     z-index: 10000;
     animation: slideInRight 0.3s ease-out;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 320px;
+    font-size: 14px;
+    line-height: 1.4;
   `;
 
   document.body.appendChild(notification);
 
+  // Remover después de 4 segundos
   setTimeout(() => {
     notification.style.animation = "slideOutRight 0.3s ease-in";
     setTimeout(() => {
@@ -478,81 +334,96 @@ function showNotification(message, type = "info") {
         notification.parentNode.removeChild(notification);
       }
     }, 300);
-  }, 3000);
+  }, 4000);
 }
 
-// Función global para debugging
-window.debugCheckout = function () {
-  console.log("🛒 DEBUG CHECKOUT:");
-  console.log("Cart:", checkoutData.cart);
-  console.log("Subtotal:", checkoutData.subtotal);
-  console.log("Shipping:", checkoutData.shipping);
-  console.log("Discount:", checkoutData.discount);
-  console.log("Taxes:", checkoutData.taxes);
-  console.log("Final Total:", checkoutData.finalTotal);
-  console.log("Promo Codes:", Object.keys(availablePromoCodes));
+// ======================================
+// 🚀 INICIALIZACIÓN Y EVENT LISTENERS
+// ======================================
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("🎟️ Checkout Handler - Sistema de Descuentos inicializado");
+
+  // Solo ejecutar si estamos en la página de checkout
+  if (!window.location.pathname.includes("checkout.html")) {
+    return;
+  }
+
+  // Configurar event listeners para códigos promocionales
+  setTimeout(() => {
+    const promoBtn = document.querySelector(".promo-btn");
+    const promoInput = document.getElementById("promo-input");
+
+    if (promoBtn) {
+      promoBtn.addEventListener("click", applyPromoCode);
+    }
+
+    if (promoInput) {
+      // Aplicar código al presionar Enter
+      promoInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applyPromoCode();
+        }
+      });
+
+      // Agregar botón para remover código si está aplicado
+      promoInput.addEventListener("input", function () {
+        if (appliedDiscount.active && this.value === "") {
+          removePromoCode();
+        }
+      });
+    }
+
+    // Integrar con el sistema de carrito principal
+    // Override la función updateCartSummary para incluir descuentos
+    if (typeof window.updateCartSummary === "function") {
+      const originalUpdateCartSummary = window.updateCartSummary;
+      window.updateCartSummary = function () {
+        // Llamar función original primero
+        originalUpdateCartSummary();
+        // Luego aplicar descuentos
+        setTimeout(() => {
+          updateCartSummaryWithDiscount();
+        }, 50);
+      };
+    }
+
+    console.log("✅ Event listeners de descuentos configurados");
+  }, 300);
+});
+
+// ======================================
+// 🌐 FUNCIONES GLOBALES PARA API
+// ======================================
+
+// Exponer funciones principales
+window.applyPromoCode = applyPromoCode;
+window.removePromoCode = removePromoCode;
+window.updateCartSummaryWithDiscount = updateCartSummaryWithDiscount;
+
+// Función para obtener descuento actual
+window.getAppliedDiscount = function () {
+  return appliedDiscount;
 };
 
-console.log("🛒 Checkout Handler cargado exitosamente");
+// Función para obtener códigos disponibles (para desarrollo/debug)
+window.getAvailablePromoCodes = function () {
+  return Object.keys(PROMO_CODES);
+};
 
-// ======================================
-// 🔧 FUNCIONES DE MANEJO DE CANTIDAD
-// ======================================
+// Función de debug para descuentos
+window.debugDiscount = function () {
+  console.log("🎟️ DEBUG DESCUENTOS:");
+  console.log("Códigos disponibles:", Object.keys(PROMO_CODES));
+  console.log("Descuento aplicado:", appliedDiscount);
+  return {
+    availableCodes: Object.keys(PROMO_CODES),
+    appliedDiscount: appliedDiscount,
+  };
+};
 
-// Actualizar cantidad de un producto
-function updateQuantity(itemIndex, change) {
-  if (itemIndex < 0 || itemIndex >= checkoutData.cart.items.length) return;
-
-  const item = checkoutData.cart.items[itemIndex];
-  const newQuantity = item.quantity + change;
-
-  if (newQuantity <= 0) {
-    // Eliminar producto si la cantidad llega a 0
-    removeItem(itemIndex);
-  } else {
-    // Actualizar cantidad
-    checkoutData.cart.items[itemIndex].quantity = newQuantity;
-
-    // Actualizar el contador total
-    checkoutData.cart.count = checkoutData.cart.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-
-    // Guardar en localStorage
-    localStorage.setItem("newlife_cart", JSON.stringify(checkoutData.cart));
-
-    // Recalcular y renderizar
-    recalculateAll();
-    renderCartItems();
-    renderTotals();
-
-    showNotification(`Cantidad actualizada: ${item.name}`, "success");
-  }
-}
-
-// Eliminar un producto completamente
-function removeItem(itemIndex) {
-  if (itemIndex < 0 || itemIndex >= checkoutData.cart.items.length) return;
-
-  const item = checkoutData.cart.items[itemIndex];
-
-  // Remover del array
-  checkoutData.cart.items.splice(itemIndex, 1);
-
-  // Actualizar contador
-  checkoutData.cart.count = checkoutData.cart.items.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
-
-  // Guardar en localStorage
-  localStorage.setItem("newlife_cart", JSON.stringify(checkoutData.cart));
-
-  // Recalcular y renderizar
-  recalculateAll();
-  renderCartItems();
-  renderTotals();
-
-  showNotification(`${item.name} eliminado del carrito`, "info");
-}
+console.log(
+  "🎟️ Checkout Handler - Sistema de Descuentos v1.0 cargado exitosamente"
+);

@@ -1,5 +1,6 @@
 // ======================================
-// 🛒 CART HANDLER SIMPLIFICADO - SOLO REDIRECCIÓN
+// 🛒 NEW LIFE RUN CLUB - CART HANDLER
+// Sistema de Carrito Completo para Producción
 // ======================================
 
 // Variables globales para el carrito
@@ -9,174 +10,64 @@ let cart = {
   total: 0,
 };
 
-// 🧹 FUNCIÓN DE LIMPIEZA COMPLETA
-function forceCleanCart() {
-  console.log("🧹 LIMPIEZA COMPLETA DEL CARRITO");
-
-  // Limpiar localStorage completamente
-  localStorage.removeItem("newlife_cart");
-  localStorage.removeItem("cart_data");
-  localStorage.removeItem("checkout_data");
-
-  // Resetear variable global
-  cart = { items: [], count: 0, total: 0 };
-
-  // Actualizar UI
-  updateCartCount();
-
-  console.log("✅ Carrito completamente limpio");
-}
+// ======================================
+// 🔧 FUNCIONES CORE DEL CARRITO
+// ======================================
 
 // Cargar datos del carrito desde localStorage
 function loadCart() {
-  const savedCart = localStorage.getItem("newlife_cart");
-  if (savedCart) {
-    try {
+  try {
+    const savedCart = localStorage.getItem("newlife_cart");
+    if (savedCart) {
       const parsedCart = JSON.parse(savedCart);
 
-      // 🔍 VALIDACIÓN ESTRICTA: Solo cargar si tiene estructura válida
+      // Validar estructura del carrito
       if (parsedCart && Array.isArray(parsedCart.items)) {
         cart = parsedCart;
 
-        // 🚨 ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA
+        // Limpiar productos inválidos o corruptos
         cart.items = cart.items.filter((item) => {
-          // Eliminar "Top Premium Fucsia" que esté marcado como digital/fantasma
-          const isTopPremiumFucsia =
-            item.name && item.name.toLowerCase().includes("top premium fucsia");
-          const isDigital =
-            item.source === "unknown" ||
-            !item.source ||
-            detectProductType(item) === "membership" ||
-            detectProductType(item) === "plan";
-
-          if (isTopPremiumFucsia && isDigital) {
-            console.log(
-              "🗑️ ELIMINANDO PRODUCTO FANTASMA:",
-              item.name,
-              "- Tipo:",
-              detectProductType(item)
-            );
-            return false; // Eliminar este item
-          }
-
-          return true; // Conservar otros items
+          return (
+            item.name && item.price && !isNaN(item.price) && item.quantity > 0
+          );
         });
 
         console.log(
-          "✅ Carrito cargado:",
+          "✅ Carrito cargado exitosamente:",
           cart.items.length,
-          "productos (fantasmas eliminados)"
+          "productos"
         );
       } else {
-        console.log("⚠️ Datos de carrito inválidos - reseteando");
         resetCart();
       }
-    } catch (e) {
-      console.error("❌ Error loading cart:", e);
+    } else {
       resetCart();
     }
-  } else {
-    console.log("📝 No hay carrito guardado - iniciando vacío");
+  } catch (error) {
+    console.error("Error cargando carrito:", error);
     resetCart();
   }
 
-  // Recalcular totales después de la limpieza
   calculateCartTotals();
   updateCartCount();
-  saveCart(); // Guardar carrito limpio
 }
 
 // Guardar carrito en localStorage
 function saveCart() {
-  localStorage.setItem("newlife_cart", JSON.stringify(cart));
-  updateCartCount();
+  try {
+    localStorage.setItem("newlife_cart", JSON.stringify(cart));
+    updateCartCount();
+    console.log("💾 Carrito guardado exitosamente");
+  } catch (error) {
+    console.error("Error guardando carrito:", error);
+  }
 }
 
 // Resetear carrito
 function resetCart() {
   cart = { items: [], count: 0, total: 0 };
+  console.log("🔄 Carrito reseteado");
   saveCart();
-}
-
-// Actualizar contador del carrito
-function updateCartCount() {
-  const cartCountElement = document.getElementById("cart-count");
-  if (cartCountElement) {
-    // FORZAR SIEMPRE A CERO - NO MÁS PRODUCTOS FANTASMA
-    cartCountElement.textContent = "0";
-    cartCountElement.style.display = "none"; // Ocultar completamente
-    console.log("🔢 Contador del carrito forzado a 0");
-  }
-
-  // También buscar otros posibles contadores
-  const cartCounts = document.querySelectorAll(
-    ".cart-count, #cart-count, .cart-counter"
-  );
-  cartCounts.forEach((counter) => {
-    counter.textContent = "0";
-    counter.style.display = "none";
-  });
-}
-
-// Agregar producto al carrito
-function addToCart(productData) {
-  console.log("🛒 Agregando al carrito:", productData);
-
-  // 🔍 Auto-detectar source si no está definido
-  if (!productData.source || productData.source === "unknown") {
-    const currentPage = window.location.pathname;
-    if (currentPage.includes("tienda.html")) {
-      productData.source = "tienda";
-    } else if (currentPage.includes("membresias.html")) {
-      productData.source = "membresias";
-    } else if (currentPage.includes("newlifepro.html")) {
-      productData.source = "newlifepro";
-    } else {
-      productData.source = "unknown";
-    }
-    console.log("🎯 Source auto-detectado:", productData.source);
-  }
-
-  // Verificar restricciones de membresías y planes
-  const productType = detectProductType(productData);
-  console.log("📦 Tipo de producto detectado:", productType);
-
-  if (productType === "membership" || productType === "plan") {
-    handleMembershipOrPlan(productData, productType);
-    return;
-  }
-
-  // Para productos regulares (ropa, accesorios)
-  const existingItemIndex = cart.items.findIndex(
-    (item) => item.name === productData.name && item.size === productData.size
-  );
-
-  if (existingItemIndex !== -1) {
-    // Si ya existe, aumentar cantidad
-    cart.items[existingItemIndex].quantity += 1;
-  } else {
-    // Si no existe, agregarlo como nuevo
-    const newItem = {
-      id: Date.now(),
-      name: productData.name,
-      price: productData.price,
-      size: productData.size || "Talla única",
-      quantity: 1,
-      image: productData.image || "",
-      source: productData.source || "unknown",
-    };
-    cart.items.push(newItem);
-  }
-
-  // Actualizar contadores
-  cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-  cart.total = cart.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  saveCart();
-  showAddToCartNotification();
 }
 
 // Calcular totales del carrito
@@ -188,52 +79,129 @@ function calculateCartTotals() {
   );
 }
 
+// Actualizar contador del carrito en la UI
+function updateCartCount() {
+  const cartCountElement = document.getElementById("cart-count");
+  if (cartCountElement) {
+    cartCountElement.textContent = cart.count;
+    cartCountElement.style.display = cart.count > 0 ? "flex" : "none";
+  }
+
+  // Buscar otros posibles contadores
+  const cartCounters = document.querySelectorAll(".cart-count, .cart-counter");
+  cartCounters.forEach((counter) => {
+    counter.textContent = cart.count;
+    counter.style.display = cart.count > 0 ? "flex" : "none";
+  });
+}
+
 // ======================================
-// 🗑️ NUEVAS FUNCIONES PARA GESTIÓN DEL CARRITO
+// 🛍️ FUNCIONES DE GESTIÓN DE PRODUCTOS
 // ======================================
 
-// Remover producto específico del carrito
+// Agregar producto al carrito
+function addToCart(productData) {
+  console.log("🛒 Agregando producto al carrito:", productData);
+
+  // Validar datos del producto
+  if (!productData.name || !productData.price || isNaN(productData.price)) {
+    showNotification("Error: Datos de producto inválidos", "error");
+    return false;
+  }
+
+  // Auto-detectar source si no está definido
+  if (!productData.source) {
+    const currentPage = window.location.pathname;
+    if (currentPage.includes("tienda.html")) {
+      productData.source = "tienda";
+    } else if (currentPage.includes("membresias.html")) {
+      productData.source = "membresias";
+    } else if (currentPage.includes("newlifepro.html")) {
+      productData.source = "newlifepro";
+    } else {
+      productData.source = "unknown";
+    }
+  }
+
+  // Detectar tipo de producto
+  const productType = detectProductType(productData);
+
+  // Manejar membresías y planes con restricciones especiales
+  if (productType === "membership" || productType === "plan") {
+    return handleMembershipOrPlan(productData, productType);
+  }
+
+  // Para productos físicos regulares
+  const existingItemIndex = cart.items.findIndex(
+    (item) => item.name === productData.name && item.size === productData.size
+  );
+
+  if (existingItemIndex !== -1) {
+    // Si ya existe, aumentar cantidad
+    cart.items[existingItemIndex].quantity += productData.quantity || 1;
+    showNotification("📦 Cantidad actualizada en el carrito", "success");
+  } else {
+    // Si no existe, agregarlo como nuevo
+    const newItem = {
+      id: Date.now() + Math.random(), // ID único
+      name: productData.name,
+      price: parseFloat(productData.price),
+      size: productData.size || "Talla única",
+      quantity: productData.quantity || 1,
+      image: productData.image || "",
+      source: productData.source,
+      category: productData.category || "General",
+    };
+
+    cart.items.push(newItem);
+    showNotification("✅ ¡Producto agregado al carrito!", "success");
+  }
+
+  calculateCartTotals();
+  saveCart();
+  return true;
+}
+
+// Remover producto del carrito
 function removeFromCart(productId, size) {
   console.log("🗑️ Eliminando producto:", productId, size);
 
   const itemIndex = cart.items.findIndex((item) => {
-    // Buscar por múltiples criterios para mayor compatibilidad
     return (
       item.id == productId ||
       item.name === productId ||
-      (item.name === productId && item.size === size) ||
-      (item.id == productId && item.size === size)
+      (item.name === productId && item.size === size)
     );
   });
 
   if (itemIndex !== -1) {
     const removedItem = cart.items[itemIndex];
     cart.items.splice(itemIndex, 1);
+
     calculateCartTotals();
     saveCart();
 
-    showNotification(`✅ ${removedItem.name} eliminado del carrito`, "success");
+    showNotification(`🗑️ ${removedItem.name} eliminado del carrito`, "success");
 
-    // Refrescar la página del checkout si estamos ahí
+    // Refrescar checkout si estamos ahí
     if (window.location.pathname.includes("checkout.html")) {
       loadCartInCheckout();
     }
+
+    return true;
   } else {
-    console.log("🚨 Producto no encontrado para eliminar:", productId, size);
-    showNotification("Error: Producto no encontrado", "error");
+    showNotification("Producto no encontrado", "error");
+    return false;
   }
 }
 
-// Eliminar una unidad de un producto (disminuir cantidad)
-function decreaseItemQuantity(productId, size) {
-  console.log("➖ Disminuyendo cantidad:", productId, size);
-
+// Aumentar cantidad de un producto
+function increaseItemQuantity(productId, size) {
   const itemIndex = cart.items.findIndex((item) => {
     return (
       item.id == productId ||
       item.name === productId ||
-      (item.name === productId && item.size === size) ||
-      (item.id == productId && item.size === size)
+      (item.name === productId && item.size === size)
     );
   });
 
@@ -241,11 +209,48 @@ function decreaseItemQuantity(productId, size) {
     const item = cart.items[itemIndex];
     const productType = detectProductType(item);
 
-    // Para membresías y planes, solo permitir 1 cantidad máximo
+    // Membresías y planes solo pueden tener cantidad 1
     if (productType === "membership" || productType === "plan") {
-      // Si es membresía/plan, eliminar directamente
-      removeFromCart(productId, size);
-      return;
+      showNotification(
+        "Las membresías y planes solo pueden tener cantidad 1",
+        "info"
+      );
+      return false;
+    }
+
+    item.quantity += 1;
+    calculateCartTotals();
+    saveCart();
+
+    showNotification("➕ Cantidad aumentada", "info");
+
+    if (window.location.pathname.includes("checkout.html")) {
+      loadCartInCheckout();
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+// Disminuir cantidad de un producto
+function decreaseItemQuantity(productId, size) {
+  const itemIndex = cart.items.findIndex((item) => {
+    return (
+      item.id == productId ||
+      item.name === productId ||
+      (item.name === productId && item.size === size)
+    );
+  });
+
+  if (itemIndex !== -1) {
+    const item = cart.items[itemIndex];
+    const productType = detectProductType(item);
+
+    // Para membresías y planes, eliminar directamente
+    if (productType === "membership" || productType === "plan") {
+      return removeFromCart(productId, size);
     }
 
     if (item.quantity > 1) {
@@ -253,276 +258,261 @@ function decreaseItemQuantity(productId, size) {
       calculateCartTotals();
       saveCart();
 
-      showNotification(`➖ Cantidad actualizada`, "info");
+      showNotification("➖ Cantidad disminuida", "info");
 
-      // Refrescar la página del checkout si estamos ahí
       if (window.location.pathname.includes("checkout.html")) {
         loadCartInCheckout();
       }
+
+      return true;
     } else {
       // Si solo queda 1, eliminar completamente
-      removeFromCart(productId, size);
+      return removeFromCart(productId, size);
     }
-  } else {
-    console.log("🚨 Producto no encontrado para disminuir:", productId, size);
   }
+
+  return false;
 }
 
-// Aumentar cantidad de un producto
-function increaseItemQuantity(productId, size) {
-  console.log("➕ Aumentando cantidad:", productId, size);
-
-  const itemIndex = cart.items.findIndex((item) => {
-    return (
-      item.id == productId ||
-      item.name === productId ||
-      (item.name === productId && item.size === size) ||
-      (item.id == productId && item.size === size)
-    );
-  });
-
-  if (itemIndex !== -1) {
-    const item = cart.items[itemIndex];
-    const productType = detectProductType(item);
-
-    // Para membresías y planes, no permitir más de 1
-    if (productType === "membership" || productType === "plan") {
-      showNotification(
-        "Las membresías y planes solo pueden tener cantidad 1",
-        "info"
-      );
-      return;
-    }
-
-    item.quantity += 1;
-    calculateCartTotals();
-    saveCart();
-
-    showNotification(`➕ Cantidad aumentada`, "info");
-
-    // Refrescar la página del checkout si estamos ahí
-    if (window.location.pathname.includes("checkout.html")) {
-      loadCartInCheckout();
-    }
-  } else {
-    console.log("🚨 Producto no encontrado para aumentar:", productId, size);
-  }
-}
-
-// Vaciar carrito completamente
+// Vaciar carrito completamente - USANDO POPUP PERSONALIZADO
 function clearCart() {
-  console.log("🧹 Vaciando carrito completo");
-
   if (cart.items.length === 0) {
     showNotification("El carrito ya está vacío", "info");
     return;
   }
 
-  // Confirmar antes de vaciar usando popup personalizado
-  confirmClearCart().then((confirmed) => {
-    if (confirmed) {
+  // Usar popup personalizado si está disponible
+  if (typeof confirmClearCart === "function") {
+    confirmClearCart().then((confirmed) => {
+      if (confirmed) {
+        resetCart();
+        showNotification("🧹 ¡Carrito vaciado completamente!", "success");
+
+        if (window.location.pathname.includes("checkout.html")) {
+          loadCartInCheckout();
+        }
+      }
+    });
+  } else {
+    // Fallback a confirm nativo
+    if (confirm("¿Estás seguro de que quieres vaciar todo el carrito?")) {
       resetCart();
       showNotification("🧹 ¡Carrito vaciado completamente!", "success");
 
-      // Refrescar la página del checkout si estamos ahí
       if (window.location.pathname.includes("checkout.html")) {
         loadCartInCheckout();
       }
+
+      return true;
     }
-  });
+  }
+
+  return false;
 }
 
-// Función para mostrar notificación de producto agregado
-function showAddToCartNotification() {
-  // Crear notificación temporal
-  const notification = document.createElement("div");
-  notification.innerHTML = "✅ ¡Producto agregado al carrito!";
-  notification.style.cssText = `
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    z-index: 10000;
-    animation: slideInRight 0.3s ease-out;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  `;
+// ======================================
+// 🎯 FUNCIONES DE TIPOS DE PRODUCTO
+// ======================================
 
-  document.body.appendChild(notification);
+// Detectar tipo de producto
+function detectProductType(product) {
+  const name = product.name.toLowerCase();
+  const source = product.source || "";
 
-  // Remover después de 3 segundos
-  setTimeout(() => {
-    notification.style.animation = "slideOutRight 0.3s ease-in";
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
+  // Productos físicos de la tienda
+  if (source === "tienda" || source === "store") {
+    return "physical";
+  }
+
+  // Membresías
+  if (source === "membresias" || source === "membership") {
+    return "membership";
+  }
+
+  // Planes Pro
+  if (source === "newlifepro" || source === "pro") {
+    return "plan";
+  }
+
+  // Fallback por keywords
+  const membershipKeywords = ["membresía", "membership"];
+  const planKeywords = ["newlife pro", "plan de entrenamiento", "coaching"];
+
+  if (membershipKeywords.some((keyword) => name.includes(keyword))) {
+    return "membership";
+  }
+
+  if (planKeywords.some((keyword) => name.includes(keyword))) {
+    return "plan";
+  }
+
+  return "physical";
+}
+
+// Manejar membresías y planes con restricciones - USANDO POPUP PERSONALIZADO
+function handleMembershipOrPlan(productData, type) {
+  const typeLabel = type === "membership" ? "membresía" : "plan";
+
+  // Buscar si ya existe una membresía o plan del mismo tipo
+  const existingIndex = cart.items.findIndex(
+    (item) => detectProductType(item) === type
+  );
+
+  if (existingIndex !== -1) {
+    const existingItem = cart.items[existingIndex];
+
+    if (existingItem.name === productData.name) {
+      // Es el mismo producto, no hacer nada
+      showNotification(`Ya tienes esta ${typeLabel} en tu carrito`, "info");
+      return false;
+    } else {
+      // Es diferente, preguntar si reemplazar usando popup personalizado
+      if (typeof confirmReplaceMembership === "function") {
+        confirmReplaceMembership(existingItem.name, productData.name).then(
+          (confirmed) => {
+            if (confirmed) {
+              // Reemplazar
+              cart.items[existingIndex] = {
+                id: Date.now() + Math.random(),
+                name: productData.name,
+                price: parseFloat(productData.price),
+                size: "Digital",
+                quantity: 1,
+                image: productData.image || "",
+                source: productData.source,
+                category: typeLabel,
+              };
+
+              calculateCartTotals();
+              saveCart();
+              showNotification(
+                `${typeLabel} reemplazada: ${productData.name}`,
+                "success"
+              );
+            } else {
+              showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
+            }
+          }
+        );
+      } else {
+        // Fallback a confirm nativo
+        if (
+          confirm(
+            `Ya tienes "${existingItem.name}" en tu carrito. ¿Quieres reemplazarla con "${productData.name}"?`
+          )
+        ) {
+          // Reemplazar
+          cart.items[existingIndex] = {
+            id: Date.now() + Math.random(),
+            name: productData.name,
+            price: parseFloat(productData.price),
+            size: "Digital",
+            quantity: 1,
+            image: productData.image || "",
+            source: productData.source,
+            category: typeLabel,
+          };
+
+          showNotification(
+            `${typeLabel} reemplazada: ${productData.name}`,
+            "success"
+          );
+        } else {
+          showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
+          return false;
+        }
       }
-    }, 300);
-  }, 3000);
+    }
+  } else {
+    // No existe, agregar normalmente
+    const newItem = {
+      id: Date.now() + Math.random(),
+      name: productData.name,
+      price: parseFloat(productData.price),
+      size: "Digital",
+      quantity: 1,
+      image: productData.image || "",
+      source: productData.source,
+      category: typeLabel,
+    };
+
+    cart.items.push(newItem);
+    showNotification(`${typeLabel} agregada: ${productData.name}`, "success");
+  }
+
+  calculateCartTotals();
+  saveCart();
+  return true;
 }
 
 // ======================================
-// 🔄 NUEVA FUNCIONALIDAD: REDIRECCIÓN A CHECKOUT
+// 🛒 FUNCIONES DE INTERFAZ
 // ======================================
 
-// Función principal del botón carrito - REDIRIGE A CHECKOUT
+// Abrir carrito (redirigir a checkout)
 function openCart() {
-  // Si no hay productos en el carrito, mostrar mensaje
   if (cart.count === 0) {
     showEmptyCartMessage();
     return;
   }
 
-  // Guardar carrito actual
-  saveCart();
-
-  // Redirigir a checkout.html
+  console.log("🛒 Redirigiendo a checkout con", cart.count, "productos");
+  saveCart(); // Asegurar que esté guardado
   window.location.href = "checkout.html";
 }
 
 // Mensaje cuando el carrito está vacío
 function showEmptyCartMessage() {
-  const notification = document.createElement("div");
-  notification.innerHTML =
-    "🛒 Tu carrito está vacío<br><small>Agrega algunos productos primero</small>";
-  notification.style.cssText = `
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: #ff9800;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    z-index: 10000;
-    text-align: center;
-    animation: slideInRight 0.3s ease-out;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  `;
-
-  document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.style.animation = "slideOutRight 0.3s ease-in";
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 300);
-  }, 3000);
+  showNotification(
+    "🛒 Tu carrito está vacío\nAgrega algunos productos primero",
+    "info"
+  );
 }
 
 // ======================================
-// 🔄 FUNCIÓN PARA CARGAR CARRITO EN CHECKOUT
+// 🏪 FUNCIONES DE CHECKOUT
 // ======================================
 
-// Función para cargar y mostrar el carrito en checkout.html
+// Cargar carrito en la página de checkout
 function loadCartInCheckout() {
   const cartItemsContainer = document.getElementById("cart-items");
   const cartSummaryContainer = document.getElementById("cart-summary");
 
-  if (!cartItemsContainer) return; // No estamos en checkout.html
+  if (!cartItemsContainer) return; // No estamos en checkout
 
-  console.log("🛒 VERIFICANDO CARRITO EN CHECKOUT");
+  console.log("🛒 Cargando carrito en checkout");
 
-  // 🧹 VERIFICACIÓN ESTRICTA: Solo cargar si hay datos válidos
-  const savedCart = localStorage.getItem("newlife_cart");
-
-  if (!savedCart) {
-    console.log("✅ No hay carrito guardado - mostrando vacío");
-    showEmptyCartInCheckout(cartItemsContainer);
-    return;
-  }
-
-  try {
-    const parsedCart = JSON.parse(savedCart);
-    if (
-      !parsedCart ||
-      !Array.isArray(parsedCart.items) ||
-      parsedCart.items.length === 0
-    ) {
-      console.log("✅ Carrito vacío o inválido - mostrando vacío");
-      showEmptyCartInCheckout(cartItemsContainer);
-      return;
-    }
-
-    // �� ELIMINACIÓN ESPECÍFICA DEL PRODUCTO FANTASMA EN CHECKOUT
-    parsedCart.items = parsedCart.items.filter((item) => {
-      const isTopPremiumFucsia =
-        item.name && item.name.toLowerCase().includes("top premium fucsia");
-      const isDigital =
-        item.source === "unknown" ||
-        !item.source ||
-        detectProductType(item) === "membership" ||
-        detectProductType(item) === "plan";
-
-      if (isTopPremiumFucsia && isDigital) {
-        console.log("🗑️ CHECKOUT: Eliminando producto fantasma:", item.name);
-        return false;
-      }
-
-      return true;
-    });
-
-    // Solo si hay productos REALES después de la limpieza, mostrarlos
-    cart = parsedCart;
-
-    // Recalcular totales después de la limpieza
-    calculateCartTotals();
-
-    // Guardar carrito limpio
-    saveCart();
-
-    console.log("📦 Productos válidos encontrados:", cart.items.length);
-  } catch (e) {
-    console.log("❌ Error parseando carrito - mostrando vacío");
-    showEmptyCartInCheckout(cartItemsContainer);
-    return;
-  }
+  // Cargar datos del carrito
+  loadCart();
 
   // Limpiar contenedor
   cartItemsContainer.innerHTML = "";
 
-  // Mostrar productos SOLO si hay items válidos
   if (cart.items.length === 0) {
     showEmptyCartInCheckout(cartItemsContainer);
     return;
   }
 
-  console.log("✅ Mostrando productos del carrito:", cart.items);
-
   // Mostrar productos
   cart.items.forEach((item, index) => {
-    console.log("🛒 Cargando item:", item); // Debug
-
     const itemElement = document.createElement("div");
     itemElement.className = "cart-item";
 
-    // Usar múltiples identificadores para mayor compatibilidad
     const itemId = item.id || item.name || index;
     const itemSize = item.size || "Talla única";
     const productType = detectProductType(item);
-
-    console.log("🔍 Item type detected:", productType, "for:", item.name); // Debug extra
-
-    // Determinar si es digital o físico
     const isDigital = productType === "membership" || productType === "plan";
 
-    // Para membresías y planes, ocultar botones de cantidad y solo mostrar eliminar
+    // Controles de cantidad (diferentes para productos digitales)
     const quantityControls = isDigital
       ? `<span class="quantity">1</span>`
-      : `
-        <div class="quantity-controls">
-          <button onclick="decreaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">-</button>
-          <span class="quantity">${item.quantity}</span>
-          <button onclick="increaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">+</button>
-        </div>
-      `;
+      : `<div class="quantity-controls">
+        <button onclick="decreaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">-</button>
+        <span class="quantity">${item.quantity}</span>
+        <button onclick="increaseItemQuantity('${itemId}', '${itemSize}')" class="qty-btn">+</button>
+      </div>`;
 
-    // Etiqueta de tipo de producto
+    // Etiqueta de tipo
     const productLabel = isDigital
       ? '<span style="color: #ff69b4; font-size: 12px; font-weight: 600;">• Digital</span>'
       : '<span style="color: #28a745; font-size: 12px; font-weight: 600;">• Físico</span>';
@@ -544,39 +534,50 @@ function loadCartInCheckout() {
         <button onclick="removeFromCart('${itemId}', '${itemSize}')" class="remove-btn">🗑️</button>
       </div>
     `;
+
     cartItemsContainer.appendChild(itemElement);
   });
 
   // Botón para vaciar carrito
   const clearButton = document.createElement("div");
-  clearButton.innerHTML = `
-    <button onclick="clearCart()" class="clear-cart-btn">🧹 Vaciar Carrito</button>
-  `;
+  clearButton.innerHTML = `<button onclick="clearCart()" class="clear-cart-btn">🧹 Vaciar Carrito</button>`;
   cartItemsContainer.appendChild(clearButton);
 
   // Actualizar resumen
   updateCartSummary();
 }
 
+// Mostrar carrito vacío en checkout
+function showEmptyCartInCheckout(container) {
+  container.innerHTML = `
+    <div class="empty-cart-message" style="text-align: center; padding: 60px 20px; color: #666;">
+      <div style="font-size: 4rem; margin-bottom: 20px;">🛒</div>
+      <h3 style="color: #333; margin-bottom: 15px; font-size: 1.5rem;">Tu carrito está vacío</h3>
+      <p style="margin-bottom: 30px; font-size: 1.1rem;">Agrega algunos productos para proceder con tu compra</p>
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="tienda.html" style="background: linear-gradient(45deg, #ff69b4, #ff0080); color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          🏪 Ir a la Tienda
+        </a>
+        <a href="membresias.html" style="background: linear-gradient(45deg, #333, #555); color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          🎫 Ver Membresías
+        </a>
+      </div>
+    </div>
+  `;
+
+  // Resetear totales
+  updateCartSummary();
+}
+
 // Actualizar resumen del carrito
 function updateCartSummary() {
-  console.log("🧮 Actualizando resumen del carrito");
-
-  // Calcular totales actualizados
   calculateCartTotals();
 
   const subtotal = cart.total || 0;
-  const shipping = 0; // Envío gratis
-  const taxRate = 0.15; // 15%
+  const shipping = subtotal >= 75 ? 0 : 10; // Envío gratis en compras mayores a L.75
+  const taxRate = 0.15; // 15% de impuestos
   const taxes = subtotal * taxRate;
   const finalTotal = subtotal + shipping + taxes;
-
-  console.log("💰 Cálculos:", {
-    subtotal: subtotal,
-    shipping: shipping,
-    taxes: taxes,
-    finalTotal: finalTotal,
-  });
 
   // Actualizar elementos del resumen
   const subtotalElement = document.querySelector(".subtotal-amount");
@@ -588,421 +589,50 @@ function updateCartSummary() {
     document.querySelector(".btn-primary");
 
   if (subtotalElement) subtotalElement.textContent = `L.${subtotal.toFixed(2)}`;
-  if (shippingElement) shippingElement.textContent = "GRATIS";
+  if (shippingElement)
+    shippingElement.textContent =
+      shipping === 0 ? "GRATIS" : `L.${shipping.toFixed(2)}`;
   if (taxElement) taxElement.textContent = `L.${taxes.toFixed(2)}`;
   if (totalElement) totalElement.textContent = `L.${finalTotal.toFixed(2)}`;
 
-  // 🎯 CRÍTICO: Actualizar el botón de pago con el MISMO total
+  // Actualizar botón de pago
   if (payButton) {
-    payButton.textContent = `Completar Pago - L.${finalTotal.toFixed(2)}`;
-    console.log("🔄 Botón actualizado:", payButton.textContent);
-
-    // Si el carrito está vacío, deshabilitar botón
     if (cart.items.length === 0 || finalTotal === 0) {
       payButton.textContent = "Carrito Vacío";
       payButton.disabled = true;
       payButton.style.background = "#ccc";
       payButton.style.cursor = "not-allowed";
     } else {
+      payButton.textContent = `Completar Pago - L.${finalTotal.toFixed(2)}`;
       payButton.disabled = false;
       payButton.style.background = "";
       payButton.style.cursor = "";
     }
   }
-
-  console.log("✅ Resumen actualizado correctamente");
 }
 
 // ======================================
-// 🎯 INICIALIZACIÓN Y EVENT LISTENERS
+// 🔔 SISTEMA DE NOTIFICACIONES
 // ======================================
 
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("🛒 Cart Handler - LIMPIEZA NUCLEAR INICIADA");
-
-  // 🧹 LIMPIEZA NUCLEAR COMPLETA - SIN EXCEPCIONES
-  console.log("🧹 EJECUTANDO LIMPIEZA NUCLEAR TOTAL");
-
-  // ELIMINAR ABSOLUTAMENTE TODO relacionado con carrito
-  const keysToNuke = [
-    "newlife_cart",
-    "cart_data",
-    "checkout_data",
-    "cart_items",
-    "shopping_cart",
-    "user_cart",
-    "cartData",
-    "cart",
-  ];
-
-  keysToNuke.forEach((key) => {
-    localStorage.removeItem(key);
-    console.log(`🗑️ ELIMINADO: ${key}`);
-  });
-
-  // VERIFICAR Y ELIMINAR CUALQUIER CLAVE QUE CONTENGA "CART"
-  const allKeys = Object.keys(localStorage);
-  allKeys.forEach((key) => {
-    if (key.toLowerCase().includes("cart")) {
-      localStorage.removeItem(key);
-      console.log(`🗑️ ELIMINADO RESIDUAL: ${key}`);
-    }
-  });
-
-  // FORZAR CARRITO COMPLETAMENTE VACÍO
-  cart = { items: [], count: 0, total: 0 };
-  console.log("✅ CARRITO FORZADO A VACÍO COMPLETO");
-
-  // ACTUALIZAR CONTADOR A CERO INMEDIATAMENTE
-  updateCartCount();
-
-  // Solo en checkout: mostrar inmediatamente estado vacío
-  if (window.location.pathname.includes("checkout.html")) {
-    setTimeout(() => {
-      const cartItemsContainer = document.getElementById("cart-items");
-      if (cartItemsContainer) {
-        showEmptyCartInCheckout(cartItemsContainer);
-        console.log("🛒 Checkout inicializado VACÍO");
-      }
-
-      // Actualizar totales a cero
-      updateCartSummary();
-      console.log("💰 Totales forzados a cero");
-    }, 50);
-  }
-
-  // 🎯 ARREGLAR BOTÓN DEL CARRITO
-  setTimeout(() => {
-    const cartBtn = document.getElementById("cart-btn");
-    const cartButton = document.querySelector(".cart-button");
-
-    // Intentar con ambos selectores
-    const buttonToFix = cartBtn || cartButton;
-
-    if (buttonToFix) {
-      // Eliminar todos los event listeners previos
-      const newButton = buttonToFix.cloneNode(true);
-      buttonToFix.parentNode.replaceChild(newButton, buttonToFix);
-
-      // Agregar nuevo event listener que funcione
-      newButton.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("🛒 BOTÓN CARRITO PRESIONADO");
-
-        // Redirigir directamente a checkout
-        window.location.href = "checkout.html";
-      });
-
-      console.log("✅ Botón del carrito REPARADO");
-    } else {
-      console.log("⚠️ Botón del carrito no encontrado");
-    }
-  }, 200);
-
-  // Event listeners para agregar al carrito (solo en páginas con modales)
-  const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
-  addToCartButtons.forEach((btn) => {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-
-      // Obtener datos del producto desde el modal o elemento padre
-      const modal = document.getElementById("productModal");
-      if (!modal || modal.style.display === "none") {
-        console.log("Modal no encontrado o cerrado");
-        return;
-      }
-
-      const productData = extractProductDataFromModal(modal);
-      if (productData) {
-        addToCart(productData);
-
-        // Cerrar modal después de agregar
-        setTimeout(() => {
-          modal.style.display = "none";
-        }, 1500);
-      }
-    });
-  });
-
-  // Sincronización entre pestañas
-  window.addEventListener("storage", function (e) {
-    if (e.key === "newlife_cart") {
-      loadCart();
-    }
-  });
-
-  console.log("🛒 Cart Handler LIMPIEZA NUCLEAR completada");
-});
-
-// Función para extraer datos del producto desde el modal
-function extractProductDataFromModal(modal) {
-  try {
-    const productId = modal.getAttribute("data-current-product");
-    const nameElement = document.getElementById("modalProductName");
-    const priceElement = document.getElementById("modalProductPrice");
-    const imageElement = document.getElementById("mainProductImage");
-    const sizeElement = document.querySelector(".size-btn.active");
-    const quantityElement = document.querySelector(".quantity");
-
-    if (!productId || !nameElement || !priceElement) {
-      console.error("Datos de producto incompletos");
-      return null;
-    }
-
-    const priceText = priceElement.textContent;
-    const price = parseFloat(priceText.replace(/[L.$,]/g, "").trim());
-
-    return {
-      id: productId,
-      name: nameElement.textContent.trim(),
-      price: price,
-      size: sizeElement ? sizeElement.textContent.trim() : "Única",
-      quantity: quantityElement ? parseInt(quantityElement.textContent) : 1,
-      image: imageElement ? imageElement.src : "",
-    };
-  } catch (error) {
-    console.error("Error extrayendo datos del producto:", error);
-    return null;
-  }
-}
-
-// ======================================
-// 🎨 ANIMACIONES CSS
-// ======================================
-
-// Agregar estilos de animación al head
-const animationStyle = document.createElement("style");
-animationStyle.textContent = `
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOutRight {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(animationStyle);
-
-// ======================================
-// 🔧 FUNCIONES AUXILIARES GLOBALES
-// ======================================
-
-// Función global para obtener información del carrito
-window.getCartInfo = function () {
-  return {
-    items: cart.items,
-    count: cart.count,
-    total: cart.total,
-  };
-};
-
-// Función global para debugging del carrito
-window.debugCart = function () {
-  console.log("🛒 DEBUG CARRITO:");
-  console.log("Items:", cart.items);
-  console.log("Count:", cart.count);
-  console.log("Total:", cart.total);
-  console.log("localStorage:", localStorage.getItem("newlife_cart"));
-
-  return {
-    cart: cart,
-    localStorage: localStorage.getItem("newlife_cart"),
-  };
-};
-
-// Función para limpiar carrito (para testing)
-window.clearCartForTesting = function () {
-  clearCart();
-  console.log("🧹 Carrito limpiado para testing");
-};
-
-// ======================================
-// 🌎 FUNCIONES GLOBALES PARA CHECKOUT
-// ======================================
-
-// Exponer funciones para uso global
-window.removeFromCart = removeFromCart;
-window.increaseItemQuantity = increaseItemQuantity;
-window.decreaseItemQuantity = decreaseItemQuantity;
-window.clearCart = clearCart;
-window.loadCartInCheckout = loadCartInCheckout;
-window.updateCartSummary = updateCartSummary;
-
-console.log("🛒 Cart Handler - Versión Checkout cargado exitosamente");
-
-// ======================================
-// 🎯 FUNCIONES DE DETECCIÓN Y RESTRICCIÓN
-// ======================================
-
-// Detectar tipo de producto
-function detectProductType(product) {
-  console.log("🔍 Detectando tipo de producto:", product); // Debug
-
-  const name = product.name.toLowerCase();
-  const source = product.source || "";
-
-  // 🏪 PRODUCTOS FÍSICOS: Todo lo que viene de tienda.html
-  if (source === "tienda" || source === "store" || source === "shop") {
-    console.log("📦 Producto físico detectado por source:", source);
-    return "physical";
-  }
-
-  // 💼 MEMBRESÍAS: De membresias.html o keywords específicas de membresía
-  if (source === "membresias" || source === "membership") {
-    console.log("🎫 Membresía detectada por source:", source);
-    return "membership";
-  }
-
-  // 🚀 PLANES PRO: De newlifepro.html o keywords específicas de planes
-  if (source === "newlifepro" || source === "pro" || source === "plan") {
-    console.log("🚀 Plan detectado por source:", source);
-    return "plan";
-  }
-
-  // Fallback: Detección por keywords más específicas
-
-  // Membresías (solo palabras muy específicas)
-  const membershipKeywords = [
-    "membresía básica",
-    "membresía premium",
-    "membresía elite",
-    "membership básica",
-    "membership premium",
-    "membership elite",
-  ];
-  if (membershipKeywords.some((keyword) => name.includes(keyword))) {
-    console.log("🎫 Membresía detectada por keyword:", name);
-    return "membership";
-  }
-
-  // Planes (palabras muy específicas de servicios)
-  const planKeywords = [
-    "newlife pro",
-    "plan de entrenamiento",
-    "coaching personal",
-    "programa digital",
-    "entrenamiento personalizado",
-  ];
-  if (planKeywords.some((keyword) => name.includes(keyword))) {
-    console.log("🚀 Plan detectado por keyword:", name);
-    return "plan";
-  }
-
-  // Por defecto: productos físicos (ropa, accesorios, etc.)
-  console.log("📦 Producto físico por defecto:", name);
-  return "physical";
-}
-
-// Manejar membresías y planes con restricciones
-function handleMembershipOrPlan(productData, type) {
-  const typeLabel = type === "membership" ? "membresía" : "plan";
-
-  // Buscar si ya existe una membresía o plan del mismo tipo
-  const existingIndex = cart.items.findIndex(
-    (item) => detectProductType(item) === type
-  );
-
-  if (existingIndex !== -1) {
-    const existingItem = cart.items[existingIndex];
-
-    // Si es exactamente el mismo producto, aumentar cantidad
-    if (existingItem.name === productData.name) {
-      existingItem.quantity += 1;
-      showNotification(`Cantidad actualizada: ${productData.name}`, "success");
-    } else {
-      // Si es diferente, mostrar opción de reemplazar usando popup personalizado
-      confirmReplaceMembership(existingItem.name, productData.name).then(
-        (confirmReplace) => {
-          if (confirmReplace) {
-            // Reemplazar la membresía/plan existente
-            cart.items[existingIndex] = {
-              id: Date.now(),
-              name: productData.name,
-              price: productData.price,
-              size: productData.size || "Digital",
-              quantity: 1,
-              image: productData.image || "",
-              source: productData.source || "unknown",
-            };
-            showNotification(
-              `${typeLabel} reemplazada: ${productData.name}`,
-              "success"
-            );
-
-            // Actualizar contadores después de reemplazar
-            cart.count = cart.items.reduce(
-              (sum, item) => sum + item.quantity,
-              0
-            );
-            cart.total = cart.items.reduce(
-              (sum, item) => sum + item.price * item.quantity,
-              0
-            );
-            saveCart();
-          } else {
-            showNotification(`Mantuviste tu ${typeLabel} actual`, "info");
-          }
-        }
-      );
-      return; // Importante: salir aquí para no continuar con el procesamiento
-    }
-  } else {
-    // No existe ninguna membresía/plan del tipo, agregar normalmente
-    const newItem = {
-      id: Date.now(),
-      name: productData.name,
-      price: productData.price,
-      size: productData.size || "Digital",
-      quantity: 1,
-      image: productData.image || "",
-      source: productData.source || "unknown",
-    };
-    cart.items.push(newItem);
-    showNotification(`${typeLabel} agregada: ${productData.name}`, "success");
-  }
-
-  // Actualizar contadores
-  cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-  cart.total = cart.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  saveCart();
-}
-
-// ======================================
-// 🔔 FUNCIÓN DE NOTIFICACIONES
-// ======================================
-
-// Función para mostrar notificaciones
+// Mostrar notificaciones
 function showNotification(message, type = "info") {
   const notification = document.createElement("div");
   notification.className = `cart-notification notification-${type}`;
-  notification.textContent = message;
+  notification.innerHTML = message.replace(/\n/g, "<br>");
+
+  const colors = {
+    success: "#4CAF50",
+    error: "#ff4444",
+    info: "#2196F3",
+    warning: "#ff9800",
+  };
 
   notification.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: ${
-      type === "error" ? "#ff4444" : type === "success" ? "#4CAF50" : "#333"
-    };
+    background: ${colors[type] || colors.info};
     color: white;
     padding: 15px 20px;
     border-radius: 8px;
@@ -1012,10 +642,12 @@ function showNotification(message, type = "info") {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     max-width: 300px;
     font-size: 14px;
+    line-height: 1.4;
   `;
 
   document.body.appendChild(notification);
 
+  // Remover después de 4 segundos
   setTimeout(() => {
     notification.style.animation = "slideOutRight 0.3s ease-in";
     setTimeout(() => {
@@ -1025,10 +657,15 @@ function showNotification(message, type = "info") {
     }, 300);
   }, 4000);
 
-  // Agregar estilos de animación si no existen
-  if (!document.querySelector("#cart-notification-styles")) {
+  // Agregar estilos CSS de animación
+  addAnimationStyles();
+}
+
+// Agregar estilos de animación
+function addAnimationStyles() {
+  if (!document.querySelector("#cart-animation-styles")) {
     const style = document.createElement("style");
-    style.id = "cart-notification-styles";
+    style.id = "cart-animation-styles";
     style.textContent = `
       @keyframes slideInRight {
         from { transform: translateX(100%); opacity: 0; }
@@ -1044,174 +681,157 @@ function showNotification(message, type = "info") {
 }
 
 // ======================================
-// 🔧 FUNCIONES GLOBALES PARA DEBUGGING Y LIMPIEZA
+// 🚀 INICIALIZACIÓN
 // ======================================
 
-// Función global para limpiar carrito (para testing y emergencias)
-window.clearCartCompletely = function () {
-  console.log("🧹 LIMPIEZA MANUAL ACTIVADA");
-  forceCleanCart();
+// Inicializar cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("🛒 NewLife Cart Handler - Inicializando...");
 
-  // Si estamos en checkout, recargar la página
+  // Cargar carrito existente
+  loadCart();
+
+  // Configurar botón del carrito
+  setTimeout(() => {
+    const cartBtn =
+      document.getElementById("cart-btn") ||
+      document.querySelector(".cart-button");
+    if (cartBtn) {
+      // Remover listeners anteriores y agregar nuevo
+      const newButton = cartBtn.cloneNode(true);
+      cartBtn.parentNode.replaceChild(newButton, cartBtn);
+
+      newButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openCart();
+      });
+
+      console.log("✅ Botón del carrito configurado");
+    }
+  }, 200);
+
+  // Si estamos en checkout, cargar productos
   if (window.location.pathname.includes("checkout.html")) {
-    window.location.reload();
+    setTimeout(() => {
+      loadCartInCheckout();
+    }, 100);
   }
 
-  alert("✅ Carrito limpiado completamente");
-};
+  // Configurar botones de agregar al carrito
+  const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+  addToCartButtons.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
 
-// Función global para verificar productos duplicados
-window.checkDuplicates = function () {
-  const names = cart.items.map((item) => item.name);
-  const duplicates = names.filter(
-    (name, index) => names.indexOf(name) !== index
-  );
+      // Extraer datos del modal
+      const productData = extractProductDataFromModal();
+      if (productData) {
+        addToCart(productData);
 
-  if (duplicates.length > 0) {
-    console.log("⚠️ PRODUCTOS DUPLICADOS ENCONTRADOS:", duplicates);
-    return duplicates;
-  } else {
-    console.log("✅ No hay productos duplicados");
-    return [];
-  }
-};
+        // Efecto visual del botón
+        const originalText = this.textContent;
+        this.textContent = "¡Agregado!";
+        this.style.background = "linear-gradient(45deg, #00ff00, #32cd32)";
 
-// 🧹 NUEVA FUNCIÓN: Mostrar carrito vacío en checkout
-function showEmptyCartInCheckout(container) {
-  console.log("📝 Mostrando carrito vacío en checkout");
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.style.background = "";
+        }, 2000);
 
-  container.innerHTML = `
-    <div class="empty-cart-message" style="text-align: center; padding: 60px 20px; color: #666;">
-      <div style="font-size: 4rem; margin-bottom: 20px;">🛒</div>
-      <h3 style="color: #333; margin-bottom: 15px; font-size: 1.5rem;">Tu carrito está vacío</h3>
-      <p style="margin-bottom: 30px; font-size: 1.1rem;">Agrega algunos productos para proceder con tu compra</p>
-      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-        <a href="tienda.html" style="
-          background: linear-gradient(45deg, #ff69b4, #ff0080);
-          color: white;
-          padding: 12px 25px;
-          border-radius: 25px;
-          text-decoration: none;
-          font-weight: 600;
-          transition: transform 0.3s ease;
-        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-          🏪 Ir a la Tienda
-        </a>
-        <a href="membresias.html" style="
-          background: linear-gradient(45deg, #333, #555);
-          color: white;
-          padding: 12px 25px;
-          border-radius: 25px;
-          text-decoration: none;
-          font-weight: 600;
-          transition: transform 0.3s ease;
-        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-          🎫 Ver Membresías
-        </a>
-      </div>
-    </div>
-  `;
+        // Cerrar modal después de 1.5 segundos
+        setTimeout(() => {
+          const modal = document.getElementById("productModal");
+          if (modal) modal.style.display = "none";
+        }, 1500);
+      }
+    });
+  });
 
-  // Actualizar resumen con valores en cero
-  const subtotalElement = document.querySelector(".subtotal-amount");
-  const totalElement = document.querySelector(".total-amount");
-  const payButton = document.querySelector(".btn-primary");
+  // Sincronización entre pestañas
+  window.addEventListener("storage", function (e) {
+    if (e.key === "newlife_cart") {
+      loadCart();
+    }
+  });
 
-  if (subtotalElement) subtotalElement.textContent = "L.0.00";
-  if (totalElement) totalElement.textContent = "L.0.00";
-  if (payButton) {
-    payButton.textContent = "Carrito Vacío";
-    payButton.disabled = true;
-    payButton.style.background = "#ccc";
-    payButton.style.cursor = "not-allowed";
+  console.log("✅ Cart Handler inicializado exitosamente");
+});
+
+// ======================================
+// 🔧 FUNCIONES AUXILIARES
+// ======================================
+
+// Extraer datos del producto desde el modal
+function extractProductDataFromModal() {
+  try {
+    const modal = document.getElementById("productModal");
+    if (!modal || modal.style.display === "none") return null;
+
+    const productId = modal.getAttribute("data-current-product");
+    const nameElement = document.getElementById("modalProductName");
+    const priceElement = document.getElementById("modalProductPrice");
+    const imageElement = document.getElementById("mainProductImage");
+    const sizeElement = document.querySelector(".size-btn.active");
+    const quantityElement = document.querySelector(".quantity");
+
+    if (!nameElement || !priceElement) return null;
+
+    const priceText = priceElement.textContent;
+    const price = parseFloat(priceText.replace(/[L.$,]/g, "").trim());
+
+    return {
+      id: productId,
+      name: nameElement.textContent.trim(),
+      price: price,
+      size: sizeElement ? sizeElement.textContent.trim() : "Única",
+      quantity: quantityElement ? parseInt(quantityElement.textContent) : 1,
+      image: imageElement ? imageElement.src : "",
+      source: "tienda", // Por defecto desde modal de tienda
+    };
+  } catch (error) {
+    console.error("Error extrayendo datos del producto:", error);
+    return null;
   }
 }
 
-// Función global para sincronizar totales
-window.syncTotals = function () {
-  console.log("🔄 SINCRONIZANDO TOTALES MANUALMENTE");
+// ======================================
+// 🌐 FUNCIONES GLOBALES PARA API
+// ======================================
 
-  // Recalcular totales del carrito
-  calculateCartTotals();
+// Exponer funciones principales para uso global
+window.addToCart = addToCart;
+window.removeFromCart = removeFromCart;
+window.increaseItemQuantity = increaseItemQuantity;
+window.decreaseItemQuantity = decreaseItemQuantity;
+window.clearCart = clearCart;
+window.openCart = openCart;
+window.loadCartInCheckout = loadCartInCheckout;
+window.updateCartSummary = updateCartSummary;
 
-  // Actualizar resumen
-  updateCartSummary();
-
-  // Si estamos en checkout, actualizar también la vista
-  if (window.location.pathname.includes("checkout.html")) {
-    loadCartInCheckout();
-  }
-
-  console.log("✅ Totales sincronizados correctamente");
+// Funciones de información
+window.getCartInfo = function () {
   return {
-    subtotal: cart.total,
-    taxes: cart.total * 0.15,
-    total: cart.total * 1.15,
+    items: cart.items,
+    count: cart.count,
+    total: cart.total,
   };
 };
 
-// 🚨 FUNCIÓN DE EMERGENCIA: Eliminar producto fantasma específico
-window.eliminarProductoFantasma = function () {
-  console.log("🚨 ELIMINACIÓN DE EMERGENCIA: Top Premium Fucsia fantasma");
-
-  const cartData = localStorage.getItem("newlife_cart");
-  if (!cartData) {
-    console.log("No hay carrito para limpiar");
-    return;
-  }
-
-  try {
-    const cart = JSON.parse(cartData);
-    const originalCount = cart.items.length;
-
-    // Eliminar ESPECÍFICAMENTE el Top Premium Fucsia digital/fantasma
-    cart.items = cart.items.filter((item) => {
-      const isTopPremiumFucsia =
-        item.name && item.name.toLowerCase().includes("top premium fucsia");
-      const isDigital =
-        item.source === "unknown" ||
-        !item.source ||
-        item.size === "Única" ||
-        item.size === "Digital" ||
-        detectProductType(item) === "membership" ||
-        detectProductType(item) === "plan";
-
-      if (isTopPremiumFucsia && isDigital) {
-        console.log(
-          "🗑️ ELIMINADO:",
-          item.name,
-          "Source:",
-          item.source,
-          "Tipo:",
-          detectProductType(item)
-        );
-        return false; // Eliminar
-      }
-
-      return true; // Conservar
-    });
-
-    // Recalcular totales
-    cart.count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    cart.total = cart.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-
-    // Guardar carrito limpio
-    localStorage.setItem("newlife_cart", JSON.stringify(cart));
-
-    console.log(
-      `✅ Limpieza completada: ${originalCount} → ${cart.items.length} productos`
-    );
-
-    // Recargar página si estamos en checkout
-    if (window.location.pathname.includes("checkout.html")) {
-      window.location.reload();
-    }
-
-    return cart;
-  } catch (e) {
-    console.error("Error en limpieza de emergencia:", e);
-  }
+window.getCartItems = function () {
+  return cart.items;
 };
+
+// Función de debug
+window.debugCart = function () {
+  console.log("🛒 DEBUG CARRITO:");
+  console.log("Items:", cart.items);
+  console.log("Count:", cart.count);
+  console.log("Total:", cart.total);
+  console.log("localStorage:", localStorage.getItem("newlife_cart"));
+  return cart;
+};
+
+console.log(
+  "🛒 NewLife Cart Handler - Versión Producción v1.0 - Cargado exitosamente"
+);

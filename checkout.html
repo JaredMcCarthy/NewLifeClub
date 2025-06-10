@@ -1775,36 +1775,11 @@
       }
 
       function applyPromoCode() {
-        const promoInput = document.getElementById("promo-input");
-        const promoCode = promoInput.value.trim().toUpperCase();
-
-        if (!promoCode) {
-          showNotification("Por favor ingresa un código válido", "error");
-          return;
-        }
-
-        // Códigos de descuento válidos
-        const validCodes = {
-          NEWLIFE10: 0.1,
-          FIRST20: 0.2,
-          RUNNER15: 0.15,
-        };
-
-        if (validCodes[promoCode]) {
-          const discount = validCodes[promoCode];
-          showNotification(
-            `✅ Código aplicado! ${discount * 100}% de descuento`,
-            "success"
-          );
-
-          // Aquí puedes agregar lógica para aplicar el descuento
-          // updateCartSummary() con el descuento aplicado
-
-          promoInput.disabled = true;
-          promoInput.value = `${promoCode} - APLICADO`;
-        } else {
-          showNotification("Código de descuento no válido", "error");
-        }
+        // Esta función ahora es manejada por checkout-handler.js
+        // La función se llama automáticamente desde el event listener
+        console.log(
+          "🎟️ Función de código promocional delegada a checkout-handler.js"
+        );
       }
 
       function generateOrderToken() {
