@@ -274,17 +274,27 @@ function openCart() {
 // Cargar carrito en checkout
 function loadCartInCheckout() {
   const cartItemsContainer = document.getElementById("cart-items");
-  if (!cartItemsContainer) return; // No estamos en checkout
+  if (!cartItemsContainer) {
+    console.log("⚠️ No estamos en checkout.html - container no encontrado");
+    return; // No estamos en checkout
+  }
 
-  console.log("🛒 Cargando carrito en checkout");
+  console.log("🛒 === CARGANDO CARRITO EN CHECKOUT ===");
 
-  // Cargar datos
+  // Cargar datos del localStorage
   loadCart();
+
+  console.log("📊 Estado del carrito después de cargar:");
+  console.log("- Items:", cart.items.length);
+  console.log("- Count:", cart.count);
+  console.log("- Total:", cart.total);
+  console.log("- Productos:", cart.items);
 
   // Limpiar contenedor
   cartItemsContainer.innerHTML = "";
 
   if (cart.items.length === 0) {
+    console.log("⚠️ Carrito vacío - mostrando mensaje");
     cartItemsContainer.innerHTML = `
       <div style="text-align: center; padding: 40px; color: #666;">
         <div style="font-size: 3rem; margin-bottom: 20px;">🛒</div>
@@ -299,8 +309,12 @@ function loadCartInCheckout() {
     return;
   }
 
+  console.log("✅ Renderizando", cart.items.length, "productos en checkout");
+
   // Mostrar productos
   cart.items.forEach((item, index) => {
+    console.log(`📦 Renderizando producto ${index + 1}:`, item.name);
+
     const itemElement = document.createElement("div");
     itemElement.className = "cart-item";
     itemElement.style.cssText = `
@@ -366,6 +380,8 @@ function loadCartInCheckout() {
 
   // Actualizar resumen
   updateCartSummary();
+
+  console.log("✅ Carrito renderizado exitosamente en checkout");
 }
 
 // Actualizar resumen del carrito

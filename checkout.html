@@ -9,66 +9,6 @@
     <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
 
-    <!-- 🧹 LIMPIEZA NUCLEAR COMPLETA - SIN EXCEPCIONES -->
-    <script>
-      console.log("🧹 LIMPIEZA NUCLEAR ACTIVADA - ELIMINANDO TODO");
-
-      // PASO 1: ELIMINAR ABSOLUTAMENTE TODO
-      const keysToNuke = [
-        "newlife_cart",
-        "cart_data",
-        "checkout_data",
-        "cart_items",
-        "shopping_cart",
-        "user_cart",
-      ];
-
-      keysToNuke.forEach((key) => {
-        localStorage.removeItem(key);
-        console.log(`🗑️ ELIMINADO: ${key}`);
-      });
-
-      // PASO 2: VERIFICAR ELIMINACIÓN COMPLETA
-      let remaining = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.toLowerCase().includes("cart")) {
-          remaining.push(key);
-          localStorage.removeItem(key);
-        }
-      }
-
-      if (remaining.length > 0) {
-        console.log("🗑️ Eliminados datos residuales:", remaining);
-      }
-
-      // PASO 3: INICIALIZAR CARRITO COMPLETAMENTE VACÍO
-      const carritoLimpio = {
-        items: [],
-        count: 0,
-        total: 0,
-      };
-
-      // NO guardar nada - dejar localStorage completamente limpio
-      console.log("✅ LIMPIEZA NUCLEAR COMPLETADA - CARRITO VACÍO GARANTIZADO");
-
-      // FUNCIÓN DE VERIFICACIÓN
-      window.verificarLimpieza = function () {
-        const keys = Object.keys(localStorage);
-        const cartKeys = keys.filter((key) =>
-          key.toLowerCase().includes("cart")
-        );
-        console.log(
-          "🔍 Verificación:",
-          cartKeys.length === 0 ? "LIMPIO" : "DATOS RESIDUALES",
-          cartKeys
-        );
-        return cartKeys;
-      };
-
-      // Ejecutar verificación
-      verificarLimpieza();
-    </script>
     <style>
       * {
         margin: 0;
