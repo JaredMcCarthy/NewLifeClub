@@ -43,17 +43,11 @@ router.get("/compra/:token", async (req, res) => {
 });
 
 // 📊 ESTADÍSTICAS (ADMIN)
-router.get("/estadisticas", async (req, res) => {
-  try {
-    await ComprasController.obtenerEstadisticas(req, res);
-  } catch (error) {
-    console.error("❌ Error en ruta estadísticas:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error obteniendo estadísticas",
-    });
-  }
-});
+// TEMPORALMENTE DESHABILITADO - CAUSABA ERRORES EN DESARROLLO
+// router.get("/estadisticas", async (req, res) => {
+//   console.log("🔐 Auth Route:", { method: req.method, url: req.url, body: req.body });
+//   await ComprasController.obtenerEstadisticas(req, res);
+// });
 
 // 🔄 ACTUALIZAR ESTADO DE COMPRA (ADMIN)
 router.put("/actualizar-estado/:token", async (req, res) => {
