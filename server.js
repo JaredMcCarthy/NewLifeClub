@@ -8,6 +8,7 @@ const eventRoutes = require("./backend/routes/eventRegistration");
 const newsletterRoutes = require("./backend/routes/newsletter");
 const contactRoutes = require("./backend/routes/contacts");
 const rutasRoutes = require("./backend/routes/rutasRoutes");
+const comprasRoutes = require("./backend/routes/compras");
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.use(
 app.use(
   cors({
     origin: "*", // Permitir todas las origenes durante desarrollo
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
   })
@@ -49,6 +50,9 @@ app.use("/api", authRoutes);
 app.use("/api", eventRoutes);
 app.use("/backend/routes", contactRoutes);
 app.use("/backend/routes", rutasRoutes);
+
+// 🛒 NUEVA RUTA PARA COMPRAS - COMPLETAMENTE INDEPENDIENTE
+app.use("/api/compras", comprasRoutes);
 
 // Newsletter completamente separado
 app.use("/newsletter-api", newsletterRoutes);
