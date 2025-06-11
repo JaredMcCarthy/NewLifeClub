@@ -505,15 +505,18 @@ function detectarTipoTarjeta(numeroTarjeta) {
 // 📋 Obtener información del carrito (compatible con tu sistema actual)
 function getCartInfo() {
   // Intentar obtener del localStorage primero
-  const cartData = localStorage.getItem("newlife-cart");
+  const cartData = localStorage.getItem("newlife_cart");
 
   if (cartData) {
     try {
       const cart = JSON.parse(cartData);
 
+      // ✅ FIXED: El carrito es un array directo, no objeto con items
+      const cartItems = Array.isArray(cart) ? cart : cart.items || [];
+
       // Calcular totales
       let subtotal = 0;
-      const items = cart.map((item) => {
+      const items = cartItems.map((item) => {
         const itemTotal = item.price * (item.quantity || 1);
         subtotal += itemTotal;
 
