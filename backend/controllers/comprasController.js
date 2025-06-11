@@ -248,6 +248,23 @@ class ComprasController {
   // 📊 ESTADÍSTICAS DE COMPRAS (ADMIN)
   static async obtenerEstadisticas(req, res) {
     try {
+      // 🔍 VALIDAR QUE LA TABLA COMPRAS EXISTE
+      const tableCheck = await pool.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'compras'
+        )
+      `);
+
+      if (!tableCheck.rows[0].exists) {
+        return res.status(503).json({
+          success: false,
+          message: "Sistema de compras en configuración. Inténtalo más tarde.",
+          error: "TABLE_NOT_READY",
+        });
+      }
+
       const queries = {
         total_compras: "SELECT COUNT(*) as total FROM compras",
         ventas_totales:
