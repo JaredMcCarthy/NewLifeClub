@@ -1016,6 +1016,7 @@
               type="email"
               class="form-input"
               placeholder="tu@email.com"
+              id="email"
               required
             />
           </div>
@@ -1027,6 +1028,7 @@
                 type="text"
                 class="form-input"
                 placeholder="Tu nombre"
+                id="first-name"
                 required
               />
             </div>
@@ -1036,6 +1038,7 @@
                 type="text"
                 class="form-input"
                 placeholder="Tu apellido"
+                id="last-name"
                 required
               />
             </div>
@@ -1047,6 +1050,7 @@
               type="tel"
               class="form-input"
               placeholder="+504 0000-0000"
+              id="phone"
               required
             />
           </div>
@@ -1067,6 +1071,7 @@
               type="text"
               class="form-input"
               placeholder="Calle, número, referencias"
+              id="address"
               required
             />
           </div>
@@ -1078,12 +1083,13 @@
                 type="text"
                 class="form-input"
                 placeholder="Tegucigalpa"
+                id="city"
                 required
               />
             </div>
             <div class="form-group">
               <label class="form-label">Departamento *</label>
-              <select class="form-input" required>
+              <select class="form-input" id="state" required>
                 <option value="">Seleccionar</option>
                 <option value="francisco-morazan">Francisco Morazán</option>
                 <option value="cortes">Cortés</option>
@@ -1101,7 +1107,12 @@
 
           <div class="form-group">
             <label class="form-label">Código Postal</label>
-            <input type="text" class="form-input" placeholder="11101" />
+            <input
+              type="text"
+              class="form-input"
+              placeholder="11101"
+              id="zip"
+            />
           </div>
 
           <div class="security-features">
@@ -1188,6 +1199,7 @@
                   type="text"
                   class="form-input"
                   placeholder="Como aparece en tu tarjeta"
+                  id="card-holder-name"
                   required
                 />
               </div>
@@ -2070,6 +2082,83 @@
           "💳 Procesando Pago"
         );
         return true;
+      }
+
+      // 🛠️ FUNCIONES FALTANTES: Actualizar página de éxito
+      function updateSuccessPageForCard() {
+        // Actualizar mensaje para pago con tarjeta
+        const successContainer = document.querySelector(".success-container");
+        if (successContainer) {
+          const subtitle = successContainer.querySelector(".section-subtitle");
+          if (subtitle) {
+            subtitle.textContent =
+              "Tu pago con tarjeta ha sido procesado exitosamente";
+          }
+        }
+
+        // Actualizar instrucciones específicas para tarjeta
+        const securityFeatures = document.querySelector(
+          "#section-4 .security-features"
+        );
+        if (securityFeatures) {
+          const securityTitle =
+            securityFeatures.querySelector(".security-title");
+          if (securityTitle) {
+            securityTitle.innerHTML = "<span>💳</span> ¿Qué sigue?";
+          }
+        }
+
+        console.log("✅ Página de éxito actualizada para pago con tarjeta");
+      }
+
+      function updateSuccessPageForBankDeposit() {
+        // Actualizar mensaje para depósito bancario
+        const successContainer = document.querySelector(".success-container");
+        if (successContainer) {
+          const subtitle = successContainer.querySelector(".section-subtitle");
+          if (subtitle) {
+            subtitle.textContent =
+              "Tu pedido ha sido registrado. Completa el depósito para procesar tu orden";
+          }
+        }
+
+        // Actualizar instrucciones específicas para depósito
+        const securityFeatures = document.querySelector(
+          "#section-4 .security-features"
+        );
+        if (securityFeatures) {
+          const securityTitle =
+            securityFeatures.querySelector(".security-title");
+          if (securityTitle) {
+            securityTitle.innerHTML =
+              "<span>🏦</span> Instrucciones de Depósito";
+          }
+
+          // Cambiar las instrucciones para depósito bancario
+          const securityList = securityFeatures.querySelector(".security-list");
+          if (securityList) {
+            securityList.innerHTML = `
+              <div class="security-item">
+                <div class="security-icon">1</div>
+                <span>Realiza el <strong>depósito por el monto total</strong> mostrado arriba</span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">2</div>
+                <span>Conserva el <strong>comprobante de depósito</strong></span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">3</div>
+                <span>Envía foto del comprobante a: <strong>info@newliferun.com</strong></span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">4</div>
+                <span>Tu pedido será <strong>procesado en 24-48 horas</strong></span>
+              </div>
+            `;
+          }
+        }
+
+        console.log("✅ Página de éxito actualizada para depósito bancario");
       }
     </script>
     <!-- 🎨 CUSTOM POPUPS SYSTEM -->
