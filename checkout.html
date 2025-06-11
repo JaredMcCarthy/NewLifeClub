@@ -1641,207 +1641,154 @@
         const btn = event.target;
         const originalText = btn.textContent;
 
+        // 📋 RECOPILAR DATOS DEL FORMULARIO
+        const datosFormulario = {
+          email: document.getElementById("email")?.value || "",
+          firstName: document.getElementById("first-name")?.value || "",
+          lastName: document.getElementById("last-name")?.value || "",
+          phone: document.getElementById("phone")?.value || "",
+          address: document.getElementById("address")?.value || "",
+          city: document.getElementById("city")?.value || "",
+          state: document.getElementById("state")?.value || "Honduras",
+          zip: document.getElementById("zip")?.value || "",
+          paymentMethod:
+            selectedPaymentMethod === "bank-deposit" ? "bank" : "card",
+          cardNumber:
+            selectedPaymentMethod === "card"
+              ? document.getElementById("card-number")?.value || ""
+              : null,
+        };
+
         // Si es depósito bancario, mostrar mensaje especial
         if (selectedPaymentMethod === "bank-deposit") {
-          await handleBankDepositPayment();
+          await handleBankDepositPayment(datosFormulario);
           return;
         }
 
         // Mostrar estado de carga para tarjeta
         btn.classList.add("btn-loading");
         btn.disabled = true;
+        btn.textContent = "Procesando pago...";
 
-        // Simular procesamiento de pago con tarjeta
-        setTimeout(() => {
-          // Generar token único
-          const token = generateOrderToken();
-          document.getElementById("purchase-token").textContent = token;
+        try {
+          // 🛒 PROCESAR COMPRA CON NUESTRA API
+          console.log("🔄 Procesando compra con la nueva API...");
+          const resultadoAPI = await procesarCompraCompleta(datosFormulario);
+
+          if (resultadoAPI.success) {
+            // ✅ Compra exitosa
+            console.log(
+              "✅ Compra procesada exitosamente:",
+              resultadoAPI.token
+            );
+
+            // Actualizar token en la página con el token real de la API
+            document.getElementById("purchase-token").textContent =
+              resultadoAPI.token;
+
+            // 🛍️ GUARDAR COMPRA EN HISTORIAL LOCAL (para compatibilidad)
+            savePurchaseToHistory(resultadoAPI.token, "Tarjeta de Crédito");
+
+            // Actualizar contenido para pago con tarjeta
+            updateSuccessPageForCard();
+
+            // Mostrar notificación de éxito
+            showNotification("¡Pago procesado exitosamente!", "success");
+
+            // Ir al paso de confirmación
+            nextStep(4);
+
+            // Limpiar carrito después del pago exitoso
+            clearCartAfterPurchase();
+          } else {
+            // ❌ Error en la API
+            console.error("❌ Error en la API:", resultadoAPI.error);
+            showNotification(`Error: ${resultadoAPI.error}`, "error");
+
+            // Generar token local como fallback
+            const tokenFallback = generateOrderToken();
+            document.getElementById("purchase-token").textContent =
+              tokenFallback;
+            savePurchaseToHistory(tokenFallback, "Tarjeta de Crédito");
+
+            // Continuar con el flujo pero mostrar advertencia
+            updateSuccessPageForCard();
+            nextStep(4);
+            clearCartAfterPurchase();
+          }
+        } catch (error) {
+          // ❌ Error de conexión
+          console.error("❌ Error procesando compra:", error);
+          showNotification(
+            "Error de conexión. Reintenta en unos momentos.",
+            "error"
+          );
+
+          // Generar token local como fallback
+          const tokenFallback = generateOrderToken();
+          document.getElementById("purchase-token").textContent = tokenFallback;
+          savePurchaseToHistory(tokenFallback, "Tarjeta de Crédito");
+
+          // Continuar con el flujo
+          updateSuccessPageForCard();
+          nextStep(4);
+          clearCartAfterPurchase();
+        }
+
+        // Restaurar botón
+        btn.classList.remove("btn-loading");
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+
+      async function handleBankDepositPayment(datosFormulario = {}) {
+        try {
+          // 🛒 PROCESAR COMPRA CON NUESTRA API PARA DEPÓSITO BANCARIO
+          console.log("🏦 Procesando pedido con depósito bancario...");
+          const resultadoAPI = await procesarCompraCompleta(datosFormulario);
+
+          let token;
+          if (resultadoAPI.success) {
+            // ✅ Pedido exitoso
+            token = resultadoAPI.token;
+            console.log("✅ Pedido registrado exitosamente:", token);
+          } else {
+            // ❌ Error en la API, usar token local
+            console.error("❌ Error en la API:", resultadoAPI.error);
+            token = generateOrderToken();
+            showNotification(
+              "Advertencia: Se generó un token local",
+              "warning"
+            );
+          }
 
           // 🛍️ GUARDAR COMPRA EN HISTORIAL
-          savePurchaseToHistory(token, "Tarjeta de Crédito");
+          savePurchaseToHistory(token, "Depósito Bancario");
 
-          // Actualizar contenido para pago con tarjeta
-          updateSuccessPageForCard();
+          // Actualizar token en la página
+          document.getElementById("purchase-token").textContent = token;
 
-          // Mostrar notificación de éxito
-          showNotification("¡Pago procesado exitosamente!", "success");
+          // Actualizar contenido para depósito bancario
+          updateSuccessPageForBankDeposit();
 
           // Ir al paso de confirmación
           nextStep(4);
 
-          // Restaurar botón
-          btn.classList.remove("btn-loading");
-          btn.disabled = false;
-          btn.textContent = originalText;
-
-          // Limpiar carrito después del pago exitoso
+          // Limpiar carrito después del pedido
           clearCartAfterPurchase();
-        }, 3000);
-      }
+        } catch (error) {
+          // ❌ Error de conexión, continuar con token local
+          console.error("❌ Error procesando pedido:", error);
+          const tokenFallback = generateOrderToken();
 
-      async function handleBankDepositPayment() {
-        // Generar token único para depósito bancario
-        const token = generateOrderToken();
+          document.getElementById("purchase-token").textContent = tokenFallback;
+          savePurchaseToHistory(tokenFallback, "Depósito Bancario");
+          updateSuccessPageForBankDeposit();
+          nextStep(4);
+          clearCartAfterPurchase();
 
-        // 🛍️ GUARDAR COMPRA EN HISTORIAL
-        savePurchaseToHistory(token, "Depósito Bancario");
-
-        // Actualizar token en la página
-        document.getElementById("purchase-token").textContent = token;
-
-        // Actualizar contenido para depósito bancario
-        updateSuccessPageForBankDeposit();
-
-        // Ir al paso de confirmación
-        nextStep(4);
-
-        // Limpiar carrito después del pedido
-        clearCartAfterPurchase();
-      }
-
-      // 💳 NUEVA FUNCIÓN: Actualizar página de éxito para pago con tarjeta
-      function updateSuccessPageForCard() {
-        const successContainer = document.querySelector(
-          "#section-4 .success-container"
-        );
-        if (!successContainer) return;
-
-        successContainer.innerHTML = `
-          <div class="success-icon">✓</div>
-          <h2 class="section-title">¡Pago Exitoso!</h2>
-          <p class="section-subtitle">
-            Tu pedido ha sido procesado correctamente
-          </p>
-
-          <div class="token-display">
-            <div class="token-label">Token de Compra</div>
-            <div class="token-value" id="purchase-token">NRC-240608-A7X9</div>
-            <button class="token-copy" onclick="copyToken()">
-              Copiar Token
-            </button>
-          </div>
-
-          <div class="security-features">
-            <div class="security-title"><span>📧</span> ¿Qué sigue?</div>
-            <div class="security-list">
-              <div class="security-item">
-                <div class="security-icon">1</div>
-                <span
-                  >Recibirás un <strong>email de confirmación</strong> en los
-                  próximos minutos</span
-                >
-              </div>
-              <div class="security-item">
-                <div class="security-icon">2</div>
-                <span
-                  >Tu pedido será <strong>procesado en 24 horas</strong></span
-                >
-              </div>
-              <div class="security-item">
-                <div class="security-icon">3</div>
-                <span
-                  ><strong>Envío y seguimiento</strong> te llegará por
-                  SMS</span
-                >
-              </div>
-              <div class="security-item">
-                <div class="security-icon">4</div>
-                <span><strong>Entrega en 2-5 días</strong> hábiles</span>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn-primary" onclick="goHome()">
-            Continuar Comprando
-          </button>
-        `;
-      }
-
-      // 🏦 NUEVA FUNCIÓN: Actualizar página de éxito para depósito bancario
-      function updateSuccessPageForBankDeposit() {
-        const successContainer = document.querySelector(
-          "#section-4 .success-container"
-        );
-        if (!successContainer) return;
-
-        // Obtener cuenta bancaria seleccionada
-        const selectedBankElement = document.querySelector(
-          ".bank-account.selected"
-        );
-        const selectedBankName = selectedBankElement
-          ? selectedBankElement.querySelector("h4").textContent
-          : "🏦 Cuenta Bancaria";
-
-        successContainer.innerHTML = `
-          <div class="success-icon">✓</div>
-          <h2 class="section-title">¡Gracias por su compra!</h2>
-          <p class="section-subtitle">
-            Envíe la captura de la transferencia bancaria para procesar el envío y detalles de membresías
-          </p>
-
-          <div class="token-display">
-            <div class="token-label">Token de Compra</div>
-            <div class="token-value" id="purchase-token">NRC-240608-A7X9</div>
-            <button class="token-copy" onclick="copyToken()">
-              Copiar Token
-            </button>
-          </div>
-
-          <div class="security-features" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px solid #ff69b4; border-radius: 12px; padding: 25px; margin: 20px 0;">
-            <div class="security-title" style="color: #495057; margin-bottom: 15px; font-size: 18px;">
-              <span>🎯</span> Cuenta Seleccionada: ${selectedBankName}
-            </div>
-            <p style="color: #495057; margin-bottom: 20px;">Realiza tu depósito a la cuenta que seleccionaste:</p>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
-              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 BAC Honduras</h4>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-BAC-001</p>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta Corriente</p>
-              </div>
-
-              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banco Fichosa</h4>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-FCH-002</p>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta de Ahorros</p>
-              </div>
-
-              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banco Atlántida</h4>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-ATL-003</p>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta Corriente</p>
-              </div>
-
-              <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #495057; margin-bottom: 8px; font-size: 16px;">🏦 Banpais</h4>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Número:</strong> 123445-BNP-004</p>
-                <p style="margin: 4px 0; font-size: 14px; color: #6c757d;"><strong>Tipo:</strong> Cuenta de Ahorros</p>
-              </div>
-            </div>
-
-            <div style="background: rgba(255, 105, 180, 0.1); border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
-              <h4 style="color: #ff1493; margin-bottom: 10px;">📝 Instrucciones Importantes:</h4>
-              <ol style="margin: 0; padding-left: 20px;">
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Realiza el depósito por el monto total mostrado</li>
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Conserva el comprobante de depósito</li>
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
-                  Envía foto del comprobante a: <strong style="color: #ff1493;">info@newliferun.com</strong>
-                </li>
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">Tu pedido será procesado en 24-48 horas</li>
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
-                  <strong style="color: #ff1493;">Incluye tu token de compra en el email</strong>
-                </li>
-                <li style="margin: 8px 0; color: #495057; font-size: 14px;">
-                  <strong style="color: #ff1493;">Deposita en: ${selectedBankName}</strong>
-                </li>
-              </ol>
-            </div>
-          </div>
-
-          <button class="btn-primary" onclick="goHome()">
-            Continuar Comprando
-          </button>
-        `;
+          showNotification("Pedido registrado localmente", "warning");
+        }
       }
 
       // 🛍️ NUEVA FUNCIÓN: Guardar compra en historial del usuario

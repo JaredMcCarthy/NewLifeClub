@@ -398,10 +398,171 @@ document.addEventListener("DOMContentLoaded", function () {
 // 🌐 FUNCIONES GLOBALES PARA API
 // ======================================
 
+// 🛒 NUEVA FUNCIÓN PARA PROCESAR COMPRAS CON NUESTRA API
+async function procesarCompraCompleta(datosFormulario) {
+  try {
+    console.log("🛒 Iniciando procesamiento de compra...");
+
+    // Obtener información del carrito
+    const cartInfo = getCartInfo ? getCartInfo() : { items: [], total: 0 };
+    const descuentoAplicado = getAppliedDiscount();
+
+    // Preparar datos para la API
+    const datosCompra = {
+      // Información del cliente (del formulario)
+      email: datosFormulario.email,
+      nombre: datosFormulario.firstName,
+      apellido: datosFormulario.lastName,
+      telefono: datosFormulario.phone,
+      direccion: datosFormulario.address,
+      ciudad: datosFormulario.city,
+      departamento: datosFormulario.state || "Honduras",
+      codigo_postal: datosFormulario.zip,
+
+      // Información de la compra
+      metodo_pago:
+        datosFormulario.paymentMethod === "card"
+          ? "tarjeta_credito"
+          : "deposito_bancario",
+      subtotal: cartInfo.subtotal || cartInfo.total,
+      impuestos: cartInfo.taxes || 0,
+      descuentos: descuentoAplicado.active ? descuentoAplicado.amount : 0,
+      total: cartInfo.finalTotal || cartInfo.total,
+
+      // Productos del carrito
+      productos: cartInfo.items.map((item) => ({
+        id: item.id || Math.random().toString(36).substr(2, 9),
+        nombre: item.name || item.title,
+        precio: item.price,
+        cantidad: item.quantity || 1,
+        talla: item.size || "Sin especificar",
+      })),
+
+      // Información de tarjeta (solo últimos 4 dígitos si es tarjeta)
+      ultimos_4_digitos:
+        datosFormulario.paymentMethod === "card" && datosFormulario.cardNumber
+          ? datosFormulario.cardNumber.replace(/\s/g, "").slice(-4)
+          : null,
+      tipo_tarjeta:
+        datosFormulario.paymentMethod === "card"
+          ? detectarTipoTarjeta(datosFormulario.cardNumber)
+          : null,
+    };
+
+    console.log("📦 Datos preparados para envío:", datosCompra);
+
+    // Enviar a nuestra API
+    const response = await fetch("/api/compras/nueva-compra", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datosCompra),
+    });
+
+    const resultado = await response.json();
+
+    if (resultado.success) {
+      console.log(
+        "✅ Compra guardada exitosamente:",
+        resultado.data.token_compra
+      );
+      return {
+        success: true,
+        token: resultado.data.token_compra,
+        data: resultado.data,
+      };
+    } else {
+      console.error("❌ Error en la API:", resultado.message);
+      return {
+        success: false,
+        error: resultado.message,
+      };
+    }
+  } catch (error) {
+    console.error("❌ Error procesando compra:", error);
+    return {
+      success: false,
+      error: "Error de conexión con el servidor",
+    };
+  }
+}
+
+// 🔍 Detectar tipo de tarjeta por el número
+function detectarTipoTarjeta(numeroTarjeta) {
+  if (!numeroTarjeta) return null;
+
+  const numero = numeroTarjeta.replace(/\s/g, "");
+
+  if (numero.startsWith("4")) return "visa";
+  if (numero.startsWith("5") || numero.startsWith("2")) return "mastercard";
+  if (numero.startsWith("3")) return "amex";
+  if (numero.startsWith("6")) return "discover";
+
+  return "otras";
+}
+
+// 📋 Obtener información del carrito (compatible con tu sistema actual)
+function getCartInfo() {
+  // Intentar obtener del localStorage primero
+  const cartData = localStorage.getItem("newlife-cart");
+
+  if (cartData) {
+    try {
+      const cart = JSON.parse(cartData);
+
+      // Calcular totales
+      let subtotal = 0;
+      const items = cart.map((item) => {
+        const itemTotal = item.price * (item.quantity || 1);
+        subtotal += itemTotal;
+
+        return {
+          id: item.id,
+          name: item.name || item.title,
+          price: item.price,
+          quantity: item.quantity || 1,
+          size: item.size,
+        };
+      });
+
+      const descuentoAplicado = getAppliedDiscount();
+      const descuento = descuentoAplicado.active ? descuentoAplicado.amount : 0;
+      const impuestos = subtotal * 0.15; // 15% de impuestos
+      const total = subtotal - descuento + impuestos;
+
+      return {
+        items: items,
+        subtotal: subtotal,
+        taxes: impuestos,
+        discount: descuento,
+        finalTotal: total,
+        total: total,
+        count: items.length,
+      };
+    } catch (e) {
+      console.error("Error parsing cart data:", e);
+    }
+  }
+
+  // Fallback: carrito vacío
+  return {
+    items: [],
+    subtotal: 0,
+    taxes: 0,
+    discount: 0,
+    finalTotal: 0,
+    total: 0,
+    count: 0,
+  };
+}
+
 // Exponer funciones principales
 window.applyPromoCode = applyPromoCode;
 window.removePromoCode = removePromoCode;
 window.updateCartSummaryWithDiscount = updateCartSummaryWithDiscount;
+// 🆕 NUEVA FUNCIÓN EXPUESTA
+window.procesarCompraCompleta = procesarCompraCompleta;
 
 // Función para obtener descuento actual
 window.getAppliedDiscount = function () {
