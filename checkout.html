@@ -1875,7 +1875,8 @@
           if (!cartData) return [];
 
           const cart = JSON.parse(cartData);
-          return cart.items || [];
+          // ✅ FIXED: El carrito es un array directo, no objeto con items
+          return Array.isArray(cart) ? cart : cart.items || [];
         } catch (error) {
           console.error("Error al obtener items del carrito:", error);
           return [];
