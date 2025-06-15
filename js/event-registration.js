@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // URL del endpoint de registro de eventos
       const response = await fetch(
-        "https://newlifeclub.onrender.com/api/event-registration",
+        "https://newlifeclub.onrender.com/event-registration/event-registration",
         {
           method: "POST",
           headers: {

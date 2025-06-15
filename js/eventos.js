@@ -542,9 +542,8 @@ async function procesarInscripcionRuta() {
   try {
     // URLs a intentar
     const urlsToTry = [
-      "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
+      "https://newlifeclub.onrender.com/backend/routes",
       "https://newlifeclub.onrender.com/rutasRoutes",
-      "https://newlifeclub.onrender.com/api/rutasRoutes",
     ];
 
     let success = false;
