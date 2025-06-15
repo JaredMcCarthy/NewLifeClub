@@ -525,111 +525,106 @@ async function procesarInscripcionRuta() {
   try {
     console.log("📤 Enviando datos de inscripción a ruta:", formData);
 
-    // Probar múltiples URLs por si una no funciona
-    const urlsToTry = [
-      "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
-      "https://newlifeclub.onrender.com/rutasRoutes",
+    const response = await fetch(
       "https://newlifeclub.onrender.com/api/rutasRoutes",
-    ];
-
-    let response = null;
-    let lastError = null;
-
-    for (const url of urlsToTry) {
-      try {
-        console.log("🔄 Probando URL para rutas:", url);
-        response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-
-        console.log("📡 Respuesta de", url, "- Status:", response.status);
-
-        if (response.ok) {
-          console.log("✅ URL funcionando para rutas:", url);
-          break;
-        } else {
-          console.log(
-            "❌ URL falló para rutas:",
-            url,
-            "Status:",
-            response.status
-          );
-        }
-      } catch (error) {
-        console.log("❌ Error con URL de rutas:", url, error.message);
-        lastError = error;
-        continue;
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
       }
-    }
-
-    if (!response || !response.ok) {
-      throw lastError || new Error("Todas las URLs para rutas fallaron");
-    }
-
-    console.log("📥 Respuesta del servidor:", response.status);
+    );
 
     const data = await response.json();
-    console.log("📄 Datos de respuesta:", data);
+    console.log("📡 Respuesta del servidor:", data);
 
     if (!response.ok) {
+      if (
+        response.status === 400 &&
+        data.message === "Ya estás registrado en esta ruta"
+      ) {
+        throw new Error("Ya estás registrado en esta ruta");
+      }
       throw new Error(data.message || "Error al procesar la inscripción");
     }
 
-    if (data.success) {
-      // Ocultar el formulario
-      form.style.display = "none";
+    // Ocultar el formulario
+    form.style.display = "none";
 
-      // Crear y mostrar el banner de éxito (SIN mencionar correo)
-      const banner = document.createElement("div");
-      banner.className = "success-banner animate__animated animate__fadeInDown";
-      banner.innerHTML = `
-        <div class="success-content">
-          <i class="fas fa-check-circle"></i>
-          <h3>¡Inscripción Exitosa!</h3>
-          <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
-          <p>Participantes: ${formData.participantes} persona(s)</p>
-          <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
-          <button class="close-banner">Cerrar</button>
-        </div>
-      `;
+    // Crear y mostrar el banner de éxito
+    const banner = document.createElement("div");
+    banner.className = "success-banner animate__animated animate__fadeInDown";
+    banner.innerHTML = `
+      <div class="success-content">
+        <i class="fas fa-check-circle"></i>
+        <h3>¡Inscripción Exitosa!</h3>
+        <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
+        <p>Participantes: ${formData.participantes} persona(s)</p>
+        <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
+        <button class="close-banner">Cerrar</button>
+      </div>
+    `;
 
-      document.body.appendChild(banner);
+    document.body.appendChild(banner);
 
-      // Agregar evento para cerrar el banner
-      banner.querySelector(".close-banner").addEventListener("click", () => {
+    // Agregar evento para cerrar el banner
+    banner.querySelector(".close-banner").addEventListener("click", () => {
+      banner.classList.remove("animate__fadeInDown");
+      banner.classList.add("animate__fadeOutUp");
+      setTimeout(() => {
+        banner.remove();
+        cerrarModalRuta();
+      }, 500);
+    });
+
+    // Auto-cerrar después de 5 segundos
+    setTimeout(() => {
+      if (banner.parentNode) {
         banner.classList.remove("animate__fadeInDown");
         banner.classList.add("animate__fadeOutUp");
         setTimeout(() => {
           banner.remove();
           cerrarModalRuta();
         }, 500);
-      });
+      }
+    }, 5000);
 
-      // Auto-cerrar después de 5 segundos
-      setTimeout(() => {
-        if (banner.parentNode) {
-          banner.classList.remove("animate__fadeInDown");
-          banner.classList.add("animate__fadeOutUp");
-          setTimeout(() => {
-            banner.remove();
-            cerrarModalRuta();
-          }, 500);
-        }
-      }, 5000);
-
-      // Limpiar formulario
-      form.reset();
-    } else {
-      throw new Error(data.message || "Error en el registro");
-    }
+    // Limpiar formulario
+    form.reset();
   } catch (error) {
     console.error("Error al procesar inscripción:", error);
-    alert("Error al procesar la inscripción: " + error.message);
+
+    // Mostrar mensaje de error en un banner rojo
+    const errorBanner = document.createElement("div");
+    errorBanner.className =
+      "error-banner animate__animated animate__fadeInDown";
+    errorBanner.innerHTML = `
+      <div class="error-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>${error.message}</p>
+        <button class="close-banner">Cerrar</button>
+      </div>
+    `;
+
+    document.body.appendChild(errorBanner);
+
+    // Agregar evento para cerrar el banner de error
+    errorBanner.querySelector(".close-banner").addEventListener("click", () => {
+      errorBanner.classList.remove("animate__fadeInDown");
+      errorBanner.classList.add("animate__fadeOutUp");
+      setTimeout(() => errorBanner.remove(), 500);
+    });
+
+    // Auto-cerrar después de 5 segundos
+    setTimeout(() => {
+      if (errorBanner.parentNode) {
+        errorBanner.classList.remove("animate__fadeInDown");
+        errorBanner.classList.add("animate__fadeOutUp");
+        setTimeout(() => errorBanner.remove(), 500);
+      }
+    }, 5000);
   } finally {
     // Restaurar el botón
     submitButton.disabled = false;
@@ -650,21 +645,19 @@ if (inscripcionForm) {
   );
 }
 
-// Agregar estilos CSS para el banner de éxito
-const addSuccessBannerStyles = () => {
+// Agregar estilos CSS para los banners
+const addBannerStyles = () => {
   const style = document.createElement("style");
   style.textContent = `
-    .success-banner {
+    .success-banner, .error-banner {
       position: fixed;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10000;
-      background: linear-gradient(135deg, #4CAF50, #45a049);
-      color: white;
       padding: 25px 30px;
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       text-align: center;
       min-width: 400px;
       max-width: 90vw;
@@ -672,14 +665,24 @@ const addSuccessBannerStyles = () => {
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .success-content {
+    .success-banner {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+    }
+
+    .error-banner {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+      color: white;
+    }
+
+    .success-content, .error-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 15px;
     }
 
-    .success-banner i {
+    .success-banner i, .error-banner i {
       font-size: 3rem;
       color: white;
       margin-bottom: 10px;
@@ -691,7 +694,7 @@ const addSuccessBannerStyles = () => {
       font-weight: 700;
     }
 
-    .success-banner p {
+    .success-banner p, .error-banner p {
       margin: 5px 0;
       font-size: 1rem;
       opacity: 0.95;
@@ -719,7 +722,7 @@ const addSuccessBannerStyles = () => {
       transform: translateY(-2px);
     }
 
-    /* Animaciones para el banner */
+    /* Animaciones para los banners */
     .animate__fadeInDown {
       animation: fadeInDown 0.5s ease-out;
     }
@@ -752,7 +755,7 @@ const addSuccessBannerStyles = () => {
 
     /* Responsive para móviles */
     @media (max-width: 768px) {
-      .success-banner {
+      .success-banner, .error-banner {
         min-width: 300px;
         padding: 20px;
         margin: 0 10px;
@@ -762,20 +765,19 @@ const addSuccessBannerStyles = () => {
         font-size: 1.3rem;
       }
 
-      .success-banner p {
+      .success-banner p, .error-banner p {
         font-size: 0.9rem;
       }
     }
   `;
-
-  if (!document.querySelector("#success-banner-styles")) {
-    style.id = "success-banner-styles";
-    document.head.appendChild(style);
-  }
+  document.head.appendChild(style);
 };
 
-// Inicializar estilos cuando se carga el DOM
-document.addEventListener("DOMContentLoaded", addSuccessBannerStyles);
+// Agregar los estilos cuando se carga el documento
+document.addEventListener("DOMContentLoaded", function () {
+  addBannerStyles();
+  // ... resto del código existente ...
+});
 
 //Menu responsivo para dispositivos mobiles
 document.addEventListener("DOMContentLoaded", function () {

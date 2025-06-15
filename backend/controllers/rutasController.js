@@ -33,6 +33,19 @@ const registrarEnRuta = async (req, res) => {
       )
     `);
 
+    // Verificar si el usuario ya está registrado en esta ruta
+    const existingRegistration = await pool.query(
+      `SELECT * FROM rutas_registros WHERE ruta_id = $1 AND email = $2`,
+      [rutaId, email]
+    );
+
+    if (existingRegistration.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Ya estás registrado en esta ruta",
+      });
+    }
+
     // Insertar en la base de datos
     const result = await pool.query(
       `INSERT INTO rutas_registros 
