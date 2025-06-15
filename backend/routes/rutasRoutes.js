@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { registrarEnRuta } = require("../controllers/rutasController");
 
-// Ruta principal
-router.post("/rutasRoutes", registrarEnRuta);
+// Endpoint de prueba
+router.get("/test", (req, res) => {
+  res.json({ success: true, message: "Rutas funcionando correctamente" });
+});
 
-// Ruta alternativa para compatibilidad
+// Ruta principal para el registro de rutas
 router.post("/", registrarEnRuta);
 
 module.exports = router;
