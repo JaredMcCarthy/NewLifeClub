@@ -526,7 +526,7 @@ async function procesarInscripcionRuta() {
     console.log("📤 Enviando datos de inscripción a ruta:", formData);
 
     const response = await fetch(
-      "https://newlifeclub.onrender.com/api/rutas-registros",
+      "https://newlifeclub.onrender.com/api/rutasRoutes",
       {
         method: "POST",
         headers: {
@@ -537,23 +537,10 @@ async function procesarInscripcionRuta() {
       }
     );
 
-    let data;
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      throw new Error("Error en la respuesta del servidor");
-    }
-
+    const data = await response.json();
     console.log("📡 Respuesta del servidor:", data);
 
     if (!response.ok) {
-      if (
-        response.status === 400 &&
-        data.message === "Ya estás registrado en esta ruta"
-      ) {
-        throw new Error("Ya estás registrado en esta ruta");
-      }
       throw new Error(data.message || "Error al procesar la inscripción");
     }
 
@@ -576,13 +563,16 @@ async function procesarInscripcionRuta() {
 
     document.body.appendChild(banner);
 
-    // Agregar evento para cerrar el banner
+    // Agregar evento para cerrar el banner y permitir nuevo registro
     banner.querySelector(".close-banner").addEventListener("click", () => {
       banner.classList.remove("animate__fadeInDown");
       banner.classList.add("animate__fadeOutUp");
       setTimeout(() => {
         banner.remove();
         cerrarModalRuta();
+        // Mostrar el formulario de nuevo y limpiarlo
+        form.style.display = "block";
+        form.reset();
       }, 500);
     });
 
@@ -594,12 +584,12 @@ async function procesarInscripcionRuta() {
         setTimeout(() => {
           banner.remove();
           cerrarModalRuta();
+          // Mostrar el formulario de nuevo y limpiarlo
+          form.style.display = "block";
+          form.reset();
         }, 500);
       }
     }, 5000);
-
-    // Limpiar formulario
-    form.reset();
   } catch (error) {
     console.error("Error al procesar inscripción:", error);
 
