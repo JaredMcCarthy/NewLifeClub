@@ -137,6 +137,27 @@ async function applyPromoCode() {
       updateCartSummaryWithDiscount();
 
       console.log("🎟️ Código único aplicado:", appliedDiscount);
+
+      console.log("✅ Código promocional aplicado:", {
+        code: code,
+        discount: appliedDiscount,
+      });
+
+      // Forzar actualización inmediata del resumen
+      updateCartSummaryWithDiscount();
+
+      // Forzar actualización adicional después de un momento
+      setTimeout(() => {
+        updateCartSummaryWithDiscount();
+        console.log("🔄 Actualización forzada de totales con descuento");
+      }, 200);
+
+      // Una tercera actualización para asegurar que se mantenga
+      setTimeout(() => {
+        updateCartSummaryWithDiscount();
+        console.log("🔄 Actualización final de totales con descuento");
+      }, 500);
+
       return;
     }
   } catch (error) {
@@ -212,7 +233,26 @@ async function applyPromoCode() {
   // Actualizar resumen del carrito
   updateCartSummaryWithDiscount();
 
-  console.log("🎟️ Descuento hardcodeado aplicado:", appliedDiscount);
+  console.log("✅ Código hardcodeado aplicado:", appliedDiscount);
+
+  // Forzar actualización inmediata del resumen
+  updateCartSummaryWithDiscount();
+
+  // Forzar actualización adicional después de un momento
+  setTimeout(() => {
+    updateCartSummaryWithDiscount();
+    console.log(
+      "🔄 Actualización forzada de totales con descuento (hardcoded)"
+    );
+  }, 200);
+
+  // Una tercera actualización para asegurar que se mantenga
+  setTimeout(() => {
+    updateCartSummaryWithDiscount();
+    console.log("🔄 Actualización final de totales con descuento (hardcoded)");
+  }, 500);
+
+  return;
 }
 
 // Remover código de descuento
@@ -483,10 +523,24 @@ document.addEventListener("DOMContentLoaded", function () {
       window.updateCartSummary = function () {
         // Llamar función original primero
         originalUpdateCartSummary();
-        // Luego aplicar descuentos
+        // Luego aplicar descuentos inmediatamente
         setTimeout(() => {
           updateCartSummaryWithDiscount();
-        }, 50);
+        }, 10); // Reducir timeout para aplicar más rápido
+      };
+
+      console.log("✅ Override de updateCartSummary configurado");
+    }
+
+    // También llamar directamente después de aplicar descuento
+    const originalApplyPromoCode = window.applyPromoCode;
+    if (originalApplyPromoCode) {
+      window.applyPromoCode = async function () {
+        await originalApplyPromoCode();
+        // Forzar actualización después de aplicar código
+        setTimeout(() => {
+          updateCartSummaryWithDiscount();
+        }, 100);
       };
     }
 
@@ -755,6 +809,34 @@ window.testPromoButton = function () {
 
   console.log("=================================");
 };
+
+// Función de debug para verificar estado de descuentos
+function debugDiscountState() {
+  console.log("🔍 DEBUG - Estado actual de descuentos:");
+  console.log("📊 appliedDiscount:", appliedDiscount);
+
+  const cartInfo = getCartInfo();
+  console.log("🛒 Cart Info:", cartInfo);
+
+  const subtotalElement = document.querySelector(".subtotal-amount");
+  const totalElement = document.querySelector(".total-amount");
+  const discountRow = document.querySelector(".discount-row");
+
+  console.log("💰 Elementos DOM:");
+  console.log("  - Subtotal:", subtotalElement?.textContent);
+  console.log("  - Total:", totalElement?.textContent);
+  console.log("  - Descuento visible:", discountRow?.style.display !== "none");
+
+  if (appliedDiscount.active) {
+    const expectedDiscount =
+      Math.round(cartInfo.total * (appliedDiscount.percentage / 100) * 100) /
+      100;
+    console.log("💸 Descuento esperado:", expectedDiscount);
+  }
+}
+
+// Hacer función disponible globalmente para testing
+window.debugDiscountState = debugDiscountState;
 
 console.log(
   "🎟️ Checkout Handler - Sistema de Descuentos v1.0 cargado exitosamente"
