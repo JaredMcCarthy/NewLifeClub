@@ -319,6 +319,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Agregar smooth scroll para el botón Explorar Colección
+  const ctaButton = document.querySelector(".cta-button");
+  if (ctaButton) {
+    ctaButton.addEventListener("click", function () {
+      const categoriesSection = document.querySelector(".categories-section");
+      if (categoriesSection) {
+        categoriesSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
+  }
+
   console.log("✅ Tienda.js inicializado correctamente");
 });
 
