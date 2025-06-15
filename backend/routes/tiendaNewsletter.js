@@ -65,9 +65,13 @@ const sendPromoEmail = async (email) => {
 // Ruta para suscripción al newsletter de la tienda
 router.post("/subscribe", async (req, res) => {
   try {
+    console.log("📧 Solicitud de newsletter de tienda recibida");
+    console.log("📥 Body:", req.body);
+
     const { email } = req.body;
 
     if (!email) {
+      console.log("❌ Email no proporcionado");
       return res.status(400).json({
         success: false,
         message: "El email es requerido",
@@ -77,6 +81,7 @@ router.post("/subscribe", async (req, res) => {
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log("❌ Formato de email inválido:", email);
       return res.status(400).json({
         success: false,
         message: "Formato de email inválido",
@@ -84,10 +89,14 @@ router.post("/subscribe", async (req, res) => {
     }
 
     const pool = req.app.locals.pool;
+    console.log(
+      "🔧 Pool de base de datos:",
+      pool ? "✅ Disponible" : "❌ No disponible"
+    );
 
     // Crear tabla si no existe
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS tienda_newsletter (
+      CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         fecha_suscripcion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -95,14 +104,16 @@ router.post("/subscribe", async (req, res) => {
         status VARCHAR(20) DEFAULT 'active'
       )
     `);
+    console.log("✅ Tabla newsletter_subscriptions verificada");
 
     // Verificar si el email ya existe
     const existingSubscription = await pool.query(
-      "SELECT * FROM tienda_newsletter WHERE email = $1",
+      "SELECT * FROM newsletter_subscriptions WHERE email = $1",
       [email]
     );
 
     if (existingSubscription.rows.length > 0) {
+      console.log("⚠️ Email ya existente:", email);
       return res.status(400).json({
         success: false,
         message: "Este email ya está suscrito a nuestro newsletter",
@@ -110,15 +121,18 @@ router.post("/subscribe", async (req, res) => {
     }
 
     // Insertar nueva suscripción
+    console.log("💾 Insertando nueva suscripción para:", email);
     const result = await pool.query(
-      "INSERT INTO tienda_newsletter (email, promo_code) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO newsletter_subscriptions (email, promo_code) VALUES ($1, $2) RETURNING *",
       [email, "WELCOME10"]
     );
+    console.log("✅ Suscripción guardada en BD:", result.rows[0]);
 
     // Enviar correo con código promocional
     try {
+      console.log("📧 Intentando enviar correo promocional a:", email);
       await sendPromoEmail(email);
-      console.log("✅ Correo promocional enviado a:", email);
+      console.log("✅ Correo promocional enviado exitosamente a:", email);
     } catch (emailError) {
       console.error("❌ Error al enviar correo:", emailError);
       // Continuar aunque falle el envío del correo
