@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchResults = document.getElementById("searchResults");
   const mobileCloseBtn = document.getElementById("mobileCloseSearch");
 
+  // 🔒 VERIFICACIÓN DE SEGURIDAD: Solo ejecutar si los elementos principales existen
+  if (!searchBtn || !searchMenu || !searchInput || !searchResults) {
+    console.log("⚠️ Elementos de búsqueda no encontrados en esta página");
+    return; // Salir del script si faltan elementos críticos
+  }
+
   // Datos del sitio web
   const siteData = [
     {
@@ -47,6 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para abrir el menú de búsqueda
   function openSearchMenu() {
+    if (!searchMenu || !searchInput) return; // Verificación de seguridad
+
     searchMenu.classList.add("active");
     searchInput.focus();
     if (isMobile()) {
@@ -56,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para cerrar el menú de búsqueda
   function closeSearchMenu() {
+    if (!searchMenu || !searchInput) return; // Verificación de seguridad
+
     searchMenu.classList.remove("active");
     searchInput.value = "";
     if (isMobile()) {
@@ -69,18 +79,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Toggle del menú de búsqueda
-  searchBtn.addEventListener("click", function (e) {
-    e.preventDefault();
-    if (searchMenu.classList.contains("active")) {
-      closeSearchMenu();
-    } else {
-      openSearchMenu();
-      displayResults(siteData); // Mostrar todos los resultados al abrir
-    }
-  });
+  if (searchBtn) {
+    searchBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (searchMenu && searchMenu.classList.contains("active")) {
+        closeSearchMenu();
+      } else {
+        openSearchMenu();
+        displayResults(siteData); // Mostrar todos los resultados al abrir
+      }
+    });
+  }
 
   // Botón cerrar en móvil
-  mobileCloseBtn.addEventListener("click", closeSearchMenu);
+  if (mobileCloseBtn) {
+    mobileCloseBtn.addEventListener("click", closeSearchMenu);
+  }
 
   // Cerrar al hacer clic fuera
   document.addEventListener("click", function (e) {
@@ -110,6 +124,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Mostrar resultados
   function displayResults(results) {
+    if (!searchResults) return; // Verificación de seguridad
+
     searchResults.innerHTML = "";
 
     if (results.length === 0) {

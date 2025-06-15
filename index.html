@@ -72,6 +72,22 @@
           <!-- Botones para usuarios logueados -->
           <div class="user-actions">
             <button class="user-button" id="search-btn">🔍</button>
+            <!-- Menú de búsqueda -->
+            <div class="search-menu" id="searchMenu">
+              <div class="search-container">
+                <button class="mobile-close-btn" id="mobileCloseSearch">
+                  ×
+                </button>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar en el sitio..."
+                />
+                <div class="search-results" id="searchResults">
+                  <!-- Los resultados se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
             <button class="user-button cart-button" id="cart-btn">
               🛒<span id="cart-count" class="cart-count">0</span>
             </button>
