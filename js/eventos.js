@@ -504,142 +504,138 @@ async function procesarInscripcionRuta() {
   const rutaId = form.querySelector("#rutaId").value;
   const ruta = rutasIntData.find((r) => r.id == rutaId);
 
+  // Validar que se encontró la ruta
+  if (!ruta) {
+    console.error("No se encontró la ruta con ID:", rutaId);
+    alert("Error: No se encontró la información de la ruta");
+    return;
+  }
+
   const formData = {
     rutaId: rutaId,
     rutaNombre: ruta.titulo,
     nombre: form.querySelector("#nombre").value,
     email: form.querySelector("#email").value,
     telefono: form.querySelector("#telefono").value,
-    participantes: form.querySelector("#participantes").value,
+    participantes: parseInt(form.querySelector("#participantes").value, 10),
     fecha: ruta.fecha,
     duracion: ruta.duracion,
     ubicacion: ruta.ubicacion,
     dificultad: ruta.dificultad,
   };
 
-  // Mostrar estado de carga solo cuando se envía el formulario
+  // Validar número de participantes
+  if (isNaN(formData.participantes) || formData.participantes < 1) {
+    alert("Por favor selecciona un número válido de participantes");
+    return;
+  }
+
+  // Mostrar estado de carga
   submitButton.disabled = true;
   submitButton.innerHTML =
     '<i class="fas fa-spinner fa-spin"></i> Procesando...';
 
   try {
-    console.log("📤 Enviando datos de inscripción a ruta:", formData);
-
-    // Probar múltiples URLs por si una no funciona
+    // URLs a intentar
     const urlsToTry = [
       "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
       "https://newlifeclub.onrender.com/rutasRoutes",
       "https://newlifeclub.onrender.com/api/rutasRoutes",
     ];
 
-    let response = null;
+    let success = false;
     let lastError = null;
 
+    // Intentar cada URL hasta que una funcione
     for (const url of urlsToTry) {
       try {
-        console.log("🔄 Probando URL para rutas:", url);
-        response = await fetch(url, {
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
           },
           body: JSON.stringify(formData),
         });
 
-        console.log("📡 Respuesta de", url, "- Status:", response.status);
+        const data = await response.json();
 
-        if (response.ok) {
-          console.log("✅ URL funcionando para rutas:", url);
-          break;
-        } else {
-          console.log(
-            "❌ URL falló para rutas:",
-            url,
-            "Status:",
-            response.status
-          );
+        if (response.ok && data.success) {
+          success = true;
+
+          // Ocultar el formulario
+          form.style.display = "none";
+
+          // Crear y mostrar el banner de éxito
+          const banner = document.createElement("div");
+          banner.className =
+            "success-banner animate__animated animate__fadeInDown";
+          banner.innerHTML = `
+            <div class="success-content">
+              <i class="fas fa-check-circle"></i>
+              <h3>¡Inscripción Exitosa!</h3>
+              <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
+              <p>Participantes: ${formData.participantes} persona(s)</p>
+              <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
+              <button class="close-banner">Cerrar</button>
+            </div>
+          `;
+
+          document.body.appendChild(banner);
+
+          // Agregar evento para cerrar el banner
+          banner
+            .querySelector(".close-banner")
+            .addEventListener("click", () => {
+              banner.classList.remove("animate__fadeInDown");
+              banner.classList.add("animate__fadeOutUp");
+              setTimeout(() => {
+                banner.remove();
+                cerrarModalRuta();
+                // Restaurar y limpiar el formulario para permitir nuevo registro
+                form.style.display = "block";
+                form.reset();
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+              }, 500);
+            });
+
+          // Auto-cerrar después de 5 segundos
+          setTimeout(() => {
+            if (banner.parentNode) {
+              banner.classList.remove("animate__fadeInDown");
+              banner.classList.add("animate__fadeOutUp");
+              setTimeout(() => {
+                banner.remove();
+                cerrarModalRuta();
+                // Restaurar y limpiar el formulario para permitir nuevo registro
+                form.style.display = "block";
+                form.reset();
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+              }, 500);
+            }
+          }, 5000);
+
+          break; // Salir del bucle si tuvimos éxito
         }
       } catch (error) {
-        console.log("❌ Error con URL de rutas:", url, error.message);
         lastError = error;
-        continue;
+        console.error(`Error con URL ${url}:`, error);
       }
     }
 
-    if (!response || !response.ok) {
-      throw lastError || new Error("Todas las URLs para rutas fallaron");
-    }
-
-    console.log("📥 Respuesta del servidor:", response.status);
-
-    const data = await response.json();
-    console.log("📄 Datos de respuesta:", data);
-
-    if (!response.ok) {
-      throw new Error(data.message || "Error al procesar la inscripción");
-    }
-
-    if (data.success) {
-      // Ocultar el formulario
-      form.style.display = "none";
-
-      // Crear y mostrar el banner de éxito
-      const banner = document.createElement("div");
-      banner.className = "success-banner animate__animated animate__fadeInDown";
-      banner.innerHTML = `
-        <div class="success-content">
-          <i class="fas fa-check-circle"></i>
-          <h3>¡Inscripción Exitosa!</h3>
-          <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
-          <p>Participantes: ${formData.participantes} persona(s)</p>
-          <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
-          <button class="close-banner">Cerrar</button>
-        </div>
-      `;
-
-      document.body.appendChild(banner);
-
-      // Agregar evento para cerrar el banner
-      banner.querySelector(".close-banner").addEventListener("click", () => {
-        banner.classList.remove("animate__fadeInDown");
-        banner.classList.add("animate__fadeOutUp");
-        setTimeout(() => {
-          banner.remove();
-          cerrarModalRuta();
-          // Restaurar y limpiar el formulario para permitir nuevo registro
-          form.style.display = "block";
-          form.reset();
-          submitButton.disabled = false;
-          submitButton.innerHTML = originalButtonText;
-        }, 500);
-      });
-
-      // Auto-cerrar después de 5 segundos
-      setTimeout(() => {
-        if (banner.parentNode) {
-          banner.classList.remove("animate__fadeInDown");
-          banner.classList.add("animate__fadeOutUp");
-          setTimeout(() => {
-            banner.remove();
-            cerrarModalRuta();
-            // Restaurar y limpiar el formulario para permitir nuevo registro
-            form.style.display = "block";
-            form.reset();
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
-          }, 500);
-        }
-      }, 5000);
-    } else {
-      throw new Error(data.message || "Error en el registro");
+    if (!success) {
+      throw new Error(lastError?.message || "Error al procesar la inscripción");
     }
   } catch (error) {
     console.error("Error al procesar inscripción:", error);
     alert("Error al procesar la inscripción: " + error.message);
-    // Restaurar el botón en caso de error
-    submitButton.disabled = false;
-    submitButton.innerHTML = originalButtonText;
+  } finally {
+    // Restaurar el botón si hubo un error
+    if (submitButton.disabled) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    }
   }
 }
 

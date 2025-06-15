@@ -46,7 +46,16 @@ const registrarEnRuta = async (req, res) => {
       });
     }
 
-    // Insertar un solo registro con el número de participantes
+    // Insertar un solo registro con el número de participantes como un valor numérico
+    const numParticipantes = parseInt(participantes, 10);
+    if (isNaN(numParticipantes) || numParticipantes < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Número de participantes inválido",
+      });
+    }
+
+    // Realizar una única inserción
     const result = await pool.query(
       `INSERT INTO rutas_registros 
       (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad)
@@ -57,7 +66,7 @@ const registrarEnRuta = async (req, res) => {
         nombre,
         email,
         telefono,
-        parseInt(participantes), // Asegurarnos de que sea un número
+        numParticipantes,
         fecha,
         duracion,
         ubicacion,
@@ -74,7 +83,7 @@ const registrarEnRuta = async (req, res) => {
         id: result.rows[0].id,
         rutaNombre,
         nombre,
-        participantes,
+        participantes: numParticipantes,
       },
     });
   } catch (error) {
