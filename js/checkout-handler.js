@@ -57,6 +57,9 @@ let appliedDiscount = {
   active: false,
 };
 
+// Variable para controlar actualizaciones
+let discountUpdateInProgress = false;
+
 // ======================================
 // 🎟️ FUNCIONES DE CÓDIGOS DE DESCUENTO
 // ======================================
@@ -176,12 +179,9 @@ async function applyPromoCode() {
       setTimeout(() => {
         updateCartSummaryWithDiscount();
         console.log("🔄 Actualización forzada de totales con descuento");
-      }, 200);
 
-      // Una tercera actualización para asegurar que se mantenga
-      setTimeout(() => {
-        updateCartSummaryWithDiscount();
-        console.log("🔄 Actualización final de totales con descuento");
+        // NUEVA: Forzar actualización visual
+        forceUpdatePriceDisplay();
 
         // Verificación final
         console.log(
@@ -279,12 +279,24 @@ async function applyPromoCode() {
     console.log(
       "🔄 Actualización forzada de totales con descuento (hardcoded)"
     );
-  }, 200);
+
+    // NUEVA: Forzar actualización visual
+    forceUpdatePriceDisplay();
+
+    // Verificación final
+    console.log("🔍 Verificación final - appliedDiscount:", appliedDiscount);
+    if (!appliedDiscount.active) {
+      console.error("❌ ERROR: El descuento hardcodeado no se mantuvo activo!");
+    }
+  }, 500);
 
   // Una tercera actualización para asegurar que se mantenga
   setTimeout(() => {
     updateCartSummaryWithDiscount();
     console.log("🔄 Actualización final de totales con descuento (hardcoded)");
+
+    // NUEVA: Forzar actualización visual
+    forceUpdatePriceDisplay();
 
     // Verificación final
     console.log("🔍 Verificación final - appliedDiscount:", appliedDiscount);
@@ -562,15 +574,27 @@ document.addEventListener("DOMContentLoaded", function () {
     if (typeof window.updateCartSummary === "function") {
       const originalUpdateCartSummary = window.updateCartSummary;
       window.updateCartSummary = function () {
+        // Si hay descuento activo y estamos actualizando, no sobrescribir
+        if (appliedDiscount.active && discountUpdateInProgress) {
+          console.log("🚫 Bloqueando updateCartSummary - descuento activo");
+          return;
+        }
+
         // Llamar función original primero
         originalUpdateCartSummary();
-        // Luego aplicar descuentos inmediatamente
-        setTimeout(() => {
-          updateCartSummaryWithDiscount();
-        }, 10); // Reducir timeout para aplicar más rápido
+
+        // Si hay descuento activo, aplicar inmediatamente
+        if (appliedDiscount.active) {
+          setTimeout(() => {
+            updateCartSummaryWithDiscount();
+            forceUpdatePriceDisplay();
+          }, 10);
+        }
       };
 
-      console.log("✅ Override de updateCartSummary configurado");
+      console.log(
+        "✅ Override de updateCartSummary configurado con protección"
+      );
     }
 
     // También llamar directamente después de aplicar descuento
@@ -902,6 +926,117 @@ function forceReapplyDiscount() {
 
 // Hacer función disponible globalmente
 window.forceReapplyDiscount = forceReapplyDiscount;
+
+// Función para forzar actualización visual de precios
+function forceUpdatePriceDisplay() {
+  if (!appliedDiscount.active) return;
+
+  discountUpdateInProgress = true;
+  console.log("🔄 Forzando actualización visual de precios...");
+
+  const cartInfo = getCartInfo();
+  const subtotal = cartInfo.total;
+  const shipping = subtotal >= 75 ? 0 : 10;
+
+  // Calcular descuento
+  const discountAmount =
+    Math.round(subtotal * (appliedDiscount.percentage / 100) * 100) / 100;
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const taxes =
+    Math.round((subtotalAfterDiscount + shipping) * 0.15 * 100) / 100;
+  const finalTotal = subtotalAfterDiscount + shipping + taxes;
+
+  console.log("💰 Valores calculados:", {
+    subtotal,
+    discountAmount,
+    subtotalAfterDiscount,
+    taxes,
+    finalTotal,
+  });
+
+  // FORZAR actualización de elementos específicos
+  const elements = {
+    subtotal: document.querySelector(".subtotal-amount"),
+    shipping: document.querySelector(".shipping-amount"),
+    tax: document.querySelector(".tax-amount"),
+    total: document.querySelector(".total-amount"),
+  };
+
+  console.log("🎯 Elementos encontrados:", {
+    subtotal: !!elements.subtotal,
+    shipping: !!elements.shipping,
+    tax: !!elements.tax,
+    total: !!elements.total,
+  });
+
+  // Actualizar subtotal
+  if (elements.subtotal) {
+    elements.subtotal.textContent = `L.${subtotal.toFixed(2)}`;
+    elements.subtotal.style.fontWeight = "bold";
+    console.log("✅ Subtotal actualizado:", elements.subtotal.textContent);
+  }
+
+  // Crear/mostrar fila de descuento
+  let discountRow = document.querySelector(".discount-row");
+  const summaryContainer = document.querySelector(".summary-totals");
+
+  if (discountAmount > 0) {
+    if (!discountRow) {
+      discountRow = document.createElement("div");
+      discountRow.className = "total-row discount-row";
+      discountRow.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        color: #4CAF50;
+        font-weight: 600;
+        border-bottom: 1px solid #eee;
+      `;
+
+      // Insertar después del subtotal
+      const subtotalRow = summaryContainer.children[0];
+      subtotalRow.insertAdjacentElement("afterend", discountRow);
+    }
+
+    discountRow.innerHTML = `
+      <span>Descuento (${appliedDiscount.code}):</span>
+      <span>-L.${discountAmount.toFixed(2)}</span>
+    `;
+    discountRow.style.display = "flex";
+    console.log("✅ Descuento mostrado:", discountRow.textContent);
+  }
+
+  // Actualizar envío
+  if (elements.shipping) {
+    elements.shipping.textContent =
+      shipping === 0 ? "GRATIS" : `L.${shipping.toFixed(2)}`;
+    elements.shipping.style.color = shipping === 0 ? "#4CAF50" : "inherit";
+    console.log("✅ Envío actualizado:", elements.shipping.textContent);
+  }
+
+  // Actualizar impuestos
+  if (elements.tax) {
+    elements.tax.textContent = `L.${taxes.toFixed(2)}`;
+    console.log("✅ Impuestos actualizados:", elements.tax.textContent);
+  }
+
+  // Actualizar total final - MUY IMPORTANTE
+  if (elements.total) {
+    elements.total.textContent = `L.${finalTotal.toFixed(2)}`;
+    elements.total.style.fontWeight = "bold";
+    elements.total.style.fontSize = "18px";
+    elements.total.style.color = "#4CAF50"; // Verde para mostrar el ahorro
+    console.log("✅ TOTAL FINAL ACTUALIZADO:", elements.total.textContent);
+  }
+
+  setTimeout(() => {
+    discountUpdateInProgress = false;
+  }, 1000);
+}
+
+// Hacer función disponible globalmente
+window.forceUpdatePriceDisplay = forceUpdatePriceDisplay;
 
 console.log(
   "🎟️ Checkout Handler - Sistema de Descuentos v1.0 cargado exitosamente"
