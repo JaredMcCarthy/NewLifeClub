@@ -46,7 +46,7 @@ const registrarEnRuta = async (req, res) => {
       });
     }
 
-    // Insertar en la base de datos
+    // Insertar un solo registro con el número de participantes
     const result = await pool.query(
       `INSERT INTO rutas_registros 
       (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad)
@@ -57,7 +57,7 @@ const registrarEnRuta = async (req, res) => {
         nombre,
         email,
         telefono,
-        participantes,
+        parseInt(participantes), // Asegurarnos de que sea un número
         fecha,
         duracion,
         ubicacion,
@@ -67,7 +67,6 @@ const registrarEnRuta = async (req, res) => {
 
     console.log("✅ Registro de ruta guardado en BD");
 
-    // Solo devolver éxito - NO enviar correo como pidió el usuario
     return res.status(200).json({
       success: true,
       message: "Inscripción en ruta registrada exitosamente",
@@ -88,4 +87,6 @@ const registrarEnRuta = async (req, res) => {
   }
 };
 
-module.exports = { registrarEnRuta };
+module.exports = {
+  registrarEnRuta,
+};
