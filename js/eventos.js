@@ -464,10 +464,20 @@ function cerrarModalRuta() {
     // Restaurar contenido de inscripción si se mostró confirmación
     const inscripcionForm = document.getElementById("inscripcionForm");
     const confirmacion = document.querySelector(".inscripcion-confirmada");
+    const submitButton = inscripcionForm.querySelector("#btnInscribirse");
 
     if (confirmacion && inscripcionForm) {
       confirmacion.remove();
       inscripcionForm.style.display = "block";
+    }
+
+    // Reiniciar el formulario y el botón
+    if (inscripcionForm) {
+      inscripcionForm.reset();
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = "Inscribirme";
+      }
     }
   }, 300);
 
@@ -517,18 +527,12 @@ async function procesarInscripcionRuta() {
     nombre: form.querySelector("#nombre").value,
     email: form.querySelector("#email").value,
     telefono: form.querySelector("#telefono").value,
-    participantes: parseInt(form.querySelector("#participantes").value, 10),
+    participantes: 1, // Siempre enviar 1 participante
     fecha: ruta.fecha,
     duracion: ruta.duracion,
     ubicacion: ruta.ubicacion,
     dificultad: ruta.dificultad,
   };
-
-  // Validar número de participantes
-  if (isNaN(formData.participantes) || formData.participantes < 1) {
-    alert("Por favor selecciona un número válido de participantes");
-    return;
-  }
 
   // Mostrar estado de carga
   submitButton.disabled = true;
@@ -574,7 +578,6 @@ async function procesarInscripcionRuta() {
               <i class="fas fa-check-circle"></i>
               <h3>¡Inscripción Exitosa!</h3>
               <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
-              <p>Participantes: ${formData.participantes} persona(s)</p>
               <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
               <button class="close-banner">Cerrar</button>
             </div>
