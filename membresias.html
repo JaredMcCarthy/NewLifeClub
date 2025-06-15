@@ -424,10 +424,11 @@
           de entrenamiento y ofertas exclusivas directamente en tu bandeja de
           entrada.
         </p>
-        <form class="newsletter-form" onsubmit="return false;">
+        <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
           <input
             type="email"
             class="newsletter-input"
+            id="newsletter-email"
             placeholder="Tu correo electrónico"
             required
           />
@@ -573,6 +574,106 @@
 
         console.log("✅ Membresías inicializadas");
       });
+    </script>
+
+    <!-- Agregar antes del cierre del body -->
+    <script>
+      async function handleNewsletterSubmit(event) {
+        event.preventDefault();
+
+        const emailInput = document.getElementById("newsletter-email");
+        const submitButton = event.target.querySelector("button");
+        const originalText = submitButton.textContent;
+
+        try {
+          submitButton.textContent = "Enviando...";
+          submitButton.disabled = true;
+
+          const response = await fetch(
+            "https://newlifeclub.onrender.com/newsletter-api/newsletter",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ correo: emailInput.value }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showNotification("✅ " + data.mensaje, "success");
+            emailInput.value = ""; // Limpiar el input
+          } else {
+            // Si el correo ya está registrado u otro error
+            showNotification(
+              "❌ " + (data.mensaje || "Error al suscribirse"),
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showNotification(
+            "❌ Error de conexión. Por favor intenta de nuevo.",
+            "error"
+          );
+        } finally {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      }
+
+      // Función para mostrar notificaciones
+      function showNotification(message, type = "info") {
+        const notification = document.createElement("div");
+        notification.className = `toast-notification toast-${type}`;
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: ${
+            type === "success"
+              ? "#4CAF50"
+              : type === "error"
+              ? "#f44336"
+              : "#2196F3"
+          };
+          color: white;
+          padding: 16px 24px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 10000;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          max-width: 400px;
+          opacity: 0;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+        `;
+
+        notification.innerHTML = `
+          <div class="toast-content">
+            <span class="toast-message">${message}</span>
+          </div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Animación de entrada
+        setTimeout(() => {
+          notification.style.opacity = "1";
+          notification.style.transform = "translateX(0)";
+        }, 100);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          notification.style.opacity = "0";
+          notification.style.transform = "translateX(100%)";
+          setTimeout(() => notification.remove(), 300);
+        }, 5000);
+      }
     </script>
   </body>
 </html>
