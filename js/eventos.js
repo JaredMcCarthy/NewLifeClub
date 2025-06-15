@@ -526,7 +526,7 @@ async function procesarInscripcionRuta() {
     console.log("📤 Enviando datos de inscripción a ruta:", formData);
 
     const response = await fetch(
-      "https://newlifeclub.onrender.com/api/rutasRoutes",
+      "https://newlifeclub.onrender.com/api/rutas-registros",
       {
         method: "POST",
         headers: {
@@ -537,7 +537,14 @@ async function procesarInscripcionRuta() {
       }
     );
 
-    const data = await response.json();
+    let data;
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      throw new Error("Error en la respuesta del servidor");
+    }
+
     console.log("📡 Respuesta del servidor:", data);
 
     if (!response.ok) {
