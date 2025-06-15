@@ -527,9 +527,8 @@ async function procesarInscripcionRuta() {
 
     // Probar múltiples URLs por si una no funciona
     const urlsToTry = [
-      "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
+      "https://newlifeclub.onrender.com/backend/routes",
       "https://newlifeclub.onrender.com/rutasRoutes",
-      "https://newlifeclub.onrender.com/api/rutasRoutes",
     ];
 
     let response = null;
