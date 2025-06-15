@@ -39,66 +39,30 @@ document.addEventListener("DOMContentLoaded", function () {
       // Intentar enviar datos al servidor
       console.log("📤 Enviando datos de evento:", formData);
 
-      // Probar múltiples URLs por si una no funciona
-      const urlsToTry = [
+      // URL del endpoint de registro de eventos
+      const response = await fetch(
         "https://newlifeclub.onrender.com/api/event-registration",
-        "https://newlifeclub.onrender.com/event-registration",
-        "https://newlifeclub.onrender.com/backend/routes/event-registration",
-      ];
-
-      let response = null;
-      let lastError = null;
-
-      for (const url of urlsToTry) {
-        try {
-          console.log("🔄 Probando URL para eventos:", url);
-          response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify(formData),
-          });
-
-          console.log("📡 Respuesta de", url, "- Status:", response.status);
-
-          if (response.ok) {
-            console.log("✅ URL funcionando para eventos:", url);
-            break;
-          } else {
-            console.log(
-              "❌ URL falló para eventos:",
-              url,
-              "Status:",
-              response.status
-            );
-          }
-        } catch (error) {
-          console.log("❌ Error con URL de eventos:", url, error.message);
-          lastError = error;
-          continue;
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(formData),
         }
-      }
+      );
 
-      if (!response || !response.ok) {
-        throw lastError || new Error("Todas las URLs para eventos fallaron");
+      console.log("📡 Respuesta del servidor:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Error al procesar la inscripción"
+        );
       }
 
       // Intentar parsear la respuesta como JSON
-      let responseData;
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        responseData = await response.json();
-      } else {
-        throw new Error("La respuesta del servidor no es JSON válido");
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          responseData.message || "Error al procesar la inscripción"
-        );
-      }
+      const responseData = await response.json();
 
       // Mostrar mensaje de éxito
       form.style.display = "none";
