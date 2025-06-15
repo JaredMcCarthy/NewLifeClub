@@ -524,11 +524,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          // Mostrar mensaje de éxito
-          showNewsletterMessage(
-            "¡Gracias por suscribirte a la tienda! Recibirás un correo con un código de descuento del 10%",
-            "success"
-          );
+          // Mostrar mensaje de éxito personalizado
+          let message;
+          if (data.data && data.data.emailSent) {
+            message =
+              "¡Gracias por suscribirte a la tienda! Recibirás un correo con un código de descuento del 10%";
+          } else {
+            message = `¡Gracias por suscribirte a la tienda! Tu código de descuento es: WELCOME10 (10% off)`;
+          }
+
+          showNewsletterMessage(message, "success");
 
           // Limpiar formulario
           emailInput.value = "";

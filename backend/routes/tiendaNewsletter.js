@@ -11,6 +11,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verificar configuración de email
+const isEmailConfigured = () => {
+  return process.env.EMAIL_PASS && process.env.EMAIL_PASS.length > 0;
+};
+
 // Función para enviar correo con código promocional
 const sendPromoEmail = async (email) => {
   const mailOptions = {
@@ -129,23 +134,38 @@ router.post("/subscribe", async (req, res) => {
     console.log("✅ Suscripción guardada en BD:", result.rows[0]);
 
     // Enviar correo con código promocional
-    try {
-      console.log("📧 Intentando enviar correo promocional a:", email);
-      await sendPromoEmail(email);
-      console.log("✅ Correo promocional enviado exitosamente a:", email);
-    } catch (emailError) {
-      console.error("❌ Error al enviar correo:", emailError);
-      // Continuar aunque falle el envío del correo
+    let emailSent = false;
+    let emailError = null;
+
+    if (isEmailConfigured()) {
+      try {
+        console.log("📧 Intentando enviar correo promocional a:", email);
+        await sendPromoEmail(email);
+        console.log("✅ Correo promocional enviado exitosamente a:", email);
+        emailSent = true;
+      } catch (error) {
+        console.error("❌ Error al enviar correo:", error.message);
+        emailError = error.message;
+      }
+    } else {
+      console.log(
+        "⚠️ Credenciales de email no configuradas, saltando envío de correo"
+      );
+      emailError = "Credenciales de email no configuradas";
     }
 
+    // Respuesta exitosa (independiente del envío de correo)
     res.json({
       success: true,
-      message:
-        "Suscripción exitosa. Revisa tu correo para obtener tu código de descuento.",
+      message: emailSent
+        ? "Suscripción exitosa. Revisa tu correo para obtener tu código de descuento."
+        : "Suscripción exitosa. Tu código de descuento es WELCOME10 (10% off).",
       data: {
         email: email,
         promoCode: "WELCOME10",
         discount: "10%",
+        emailSent: emailSent,
+        emailError: emailError,
       },
     });
   } catch (error) {
