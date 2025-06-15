@@ -96,6 +96,12 @@ async function applyPromoCode() {
 
     const data = await response.json();
 
+    console.log("🔍 Respuesta completa de la API:", {
+      status: response.status,
+      ok: response.ok,
+      data: data,
+    });
+
     if (response.ok && data.success) {
       // ✅ Código único válido
       console.log("✅ Código único válido:", data);
@@ -103,19 +109,39 @@ async function applyPromoCode() {
       const cartInfo = getCartInfo();
       const subtotal = cartInfo.total;
 
-      // Calcular descuento (10% para códigos únicos)
+      // 🔧 CORREGIR: La API devuelve discount como porcentaje (ej: "10%")
+      // Necesitamos extraer el número y convertirlo a decimal
+      let discountPercentage = 10; // Default 10% para códigos WELCOME10
+
+      if (data.data && data.data.discount) {
+        // Si viene como "10%", extraer el número
+        const discountStr = data.data.discount.toString();
+        discountPercentage = parseInt(discountStr.replace("%", "")) || 10;
+      }
+
+      console.log("💰 Porcentaje de descuento calculado:", discountPercentage);
+
+      // Calcular descuento correctamente
       const discountAmount =
-        Math.round(subtotal * data.data.discountValue * 100) / 100;
+        Math.round(subtotal * (discountPercentage / 100) * 100) / 100;
+
+      console.log("💸 Cálculo de descuento:", {
+        subtotal: subtotal,
+        percentage: discountPercentage,
+        amount: discountAmount,
+      });
 
       // Aplicar descuento
       appliedDiscount = {
         code: code,
-        percentage: data.data.discountValue * 100, // Convertir a porcentaje
+        percentage: discountPercentage,
         amount: discountAmount,
         active: true,
         description: "Código de descuento único",
         isUniqueCode: true, // Marcar como código único
       };
+
+      console.log("🎯 Descuento aplicado:", appliedDiscount);
 
       // Actualizar UI del input
       promoInput.value = `${code} - APLICADO`;
@@ -129,7 +155,7 @@ async function applyPromoCode() {
 
       // Mostrar notificación de éxito
       showPromoNotification(
-        `✅ Código único aplicado! ${data.data.discount} de descuento`,
+        `✅ Código único aplicado! ${discountPercentage}% de descuento`,
         "success"
       );
 
@@ -156,6 +182,15 @@ async function applyPromoCode() {
       setTimeout(() => {
         updateCartSummaryWithDiscount();
         console.log("🔄 Actualización final de totales con descuento");
+
+        // Verificación final
+        console.log(
+          "🔍 Verificación final - appliedDiscount:",
+          appliedDiscount
+        );
+        if (!appliedDiscount.active) {
+          console.error("❌ ERROR: El descuento no se mantuvo activo!");
+        }
       }, 500);
 
       return;
@@ -250,6 +285,12 @@ async function applyPromoCode() {
   setTimeout(() => {
     updateCartSummaryWithDiscount();
     console.log("🔄 Actualización final de totales con descuento (hardcoded)");
+
+    // Verificación final
+    console.log("🔍 Verificación final - appliedDiscount:", appliedDiscount);
+    if (!appliedDiscount.active) {
+      console.error("❌ ERROR: El descuento hardcodeado no se mantuvo activo!");
+    }
   }, 500);
 
   return;
@@ -837,6 +878,30 @@ function debugDiscountState() {
 
 // Hacer función disponible globalmente para testing
 window.debugDiscountState = debugDiscountState;
+
+// Función para forzar reaplicación de descuento
+function forceReapplyDiscount() {
+  if (appliedDiscount.active) {
+    console.log("🔄 Forzando reaplicación de descuento:", appliedDiscount);
+
+    // Recalcular el descuento
+    const cartInfo = getCartInfo();
+    const subtotal = cartInfo.total;
+    const discountAmount =
+      Math.round(subtotal * (appliedDiscount.percentage / 100) * 100) / 100;
+
+    // Actualizar el monto del descuento
+    appliedDiscount.amount = discountAmount;
+
+    // Forzar actualización del DOM
+    updateCartSummaryWithDiscount();
+
+    console.log("✅ Descuento reaplicado:", appliedDiscount);
+  }
+}
+
+// Hacer función disponible globalmente
+window.forceReapplyDiscount = forceReapplyDiscount;
 
 console.log(
   "🎟️ Checkout Handler - Sistema de Descuentos v1.0 cargado exitosamente"
