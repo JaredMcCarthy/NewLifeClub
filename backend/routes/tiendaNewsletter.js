@@ -16,8 +16,18 @@ const isEmailConfigured = () => {
   return process.env.EMAIL_PASS && process.env.EMAIL_PASS.length > 0;
 };
 
+// Función para generar código promocional único
+const generateUniquePromoCode = () => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "WELCOME10-";
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 // Función para enviar correo con código promocional
-const sendPromoEmail = async (email) => {
+const sendPromoEmail = async (email, uniquePromoCode) => {
   const mailOptions = {
     from: '"NewLifeRun Club Tienda" <newliferunclubhonduras@gmail.com>',
     to: email,
@@ -32,7 +42,7 @@ const sendPromoEmail = async (email) => {
           </p>
           
           <div style="background: linear-gradient(45deg, #ff69b4, #ff00ff); padding: 20px; border-radius: 10px; margin: 30px 0;">
-            <h2 style="color: white; font-size: 2rem; margin: 0; letter-spacing: 3px;">WELCOME10</h2>
+            <h2 style="color: white; font-size: 2rem; margin: 0; letter-spacing: 3px;">${uniquePromoCode}</h2>
             <p style="color: white; margin: 10px 0 0 0; font-size: 1.1rem;">10% de descuento en tu primera compra</p>
           </div>
           
@@ -127,11 +137,31 @@ router.post("/subscribe", async (req, res) => {
 
     // Insertar nueva suscripción
     console.log("💾 Insertando nueva suscripción para:", email);
+
+    // Generar código promocional único
+    const uniquePromoCode = generateUniquePromoCode();
+    console.log("🎯 Código único generado:", uniquePromoCode);
+
     const result = await pool.query(
       "INSERT INTO newsletter_subscriptions (email, promo_code) VALUES ($1, $2) RETURNING *",
-      [email, "WELCOME10"]
+      [email, uniquePromoCode]
     );
     console.log("✅ Suscripción guardada en BD:", result.rows[0]);
+
+    // Guardar código único en tabla de control
+    try {
+      await pool.query(
+        "INSERT INTO promo_codes_usage (email, promo_code, is_used) VALUES ($1, $2, $3)",
+        [email, uniquePromoCode, false]
+      );
+      console.log("✅ Código único guardado en tabla de control");
+    } catch (promoError) {
+      console.error(
+        "⚠️ Error al guardar código en tabla de control:",
+        promoError.message
+      );
+      // Continuar aunque falle esto
+    }
 
     // Enviar correo con código promocional
     let emailSent = false;
@@ -140,7 +170,7 @@ router.post("/subscribe", async (req, res) => {
     if (isEmailConfigured()) {
       try {
         console.log("📧 Intentando enviar correo promocional a:", email);
-        await sendPromoEmail(email);
+        await sendPromoEmail(email, uniquePromoCode);
         console.log("✅ Correo promocional enviado exitosamente a:", email);
         emailSent = true;
       } catch (error) {
@@ -159,10 +189,10 @@ router.post("/subscribe", async (req, res) => {
       success: true,
       message: emailSent
         ? "Suscripción exitosa. Revisa tu correo para obtener tu código de descuento."
-        : "Suscripción exitosa. Tu código de descuento es WELCOME10 (10% off).",
+        : `Suscripción exitosa. Tu código de descuento es: ${uniquePromoCode} (10% off).`,
       data: {
         email: email,
-        promoCode: "WELCOME10",
+        promoCode: uniquePromoCode,
         discount: "10%",
         emailSent: emailSent,
         emailError: emailError,
@@ -182,6 +212,119 @@ router.post("/subscribe", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error al procesar la suscripción",
+      error: error.message,
+    });
+  }
+});
+
+// Ruta para validar código promocional
+router.post("/validate-promo-code", async (req, res) => {
+  try {
+    console.log("🔍 Solicitud de validación de código promocional");
+    console.log("📥 Body:", req.body);
+
+    const { promoCode } = req.body;
+
+    if (!promoCode) {
+      console.log("❌ Código promocional no proporcionado");
+      return res.status(400).json({
+        success: false,
+        message: "El código promocional es requerido",
+      });
+    }
+
+    const pool = req.app.locals.pool;
+    console.log(
+      "🔧 Pool de base de datos:",
+      pool ? "✅ Disponible" : "❌ No disponible"
+    );
+
+    // Verificar si el código existe y no ha sido usado
+    const codeCheck = await pool.query(
+      "SELECT * FROM promo_codes_usage WHERE promo_code = $1",
+      [promoCode]
+    );
+
+    if (codeCheck.rows.length === 0) {
+      console.log("❌ Código promocional no encontrado:", promoCode);
+      return res.status(404).json({
+        success: false,
+        message: "Código promocional no válido",
+      });
+    }
+
+    const codeData = codeCheck.rows[0];
+
+    if (codeData.is_used) {
+      console.log("⚠️ Código promocional ya usado:", promoCode);
+      return res.status(400).json({
+        success: false,
+        message: "Este código promocional ya ha sido utilizado",
+      });
+    }
+
+    console.log("✅ Código promocional válido:", promoCode);
+    res.json({
+      success: true,
+      message: "Código promocional válido",
+      data: {
+        promoCode: promoCode,
+        discount: "10%",
+        discountValue: 0.1,
+        email: codeData.email,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error en validación de código promocional:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al validar el código promocional",
+      error: error.message,
+    });
+  }
+});
+
+// Ruta para marcar código como usado
+router.post("/use-promo-code", async (req, res) => {
+  try {
+    console.log("✅ Solicitud para marcar código como usado");
+    console.log("📥 Body:", req.body);
+
+    const { promoCode } = req.body;
+
+    if (!promoCode) {
+      return res.status(400).json({
+        success: false,
+        message: "El código promocional es requerido",
+      });
+    }
+
+    const pool = req.app.locals.pool;
+
+    // Marcar código como usado
+    const result = await pool.query(
+      "UPDATE promo_codes_usage SET is_used = TRUE, used_at = CURRENT_TIMESTAMP WHERE promo_code = $1 AND is_used = FALSE RETURNING *",
+      [promoCode]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Código promocional no válido o ya usado",
+      });
+    }
+
+    console.log("✅ Código marcado como usado:", result.rows[0]);
+    res.json({
+      success: true,
+      message: "Código promocional aplicado exitosamente",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error("❌ Error al marcar código como usado:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al procesar el código promocional",
       error: error.message,
     });
   }
