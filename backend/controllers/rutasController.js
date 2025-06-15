@@ -28,15 +28,14 @@ const registrarEnRuta = async (req, res) => {
         fecha VARCHAR(100) NOT NULL,
         duracion VARCHAR(50) NOT NULL,
         ubicacion VARCHAR(255) NOT NULL,
-        dificultad VARCHAR(50) NOT NULL,
-        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
+        dificultad VARCHAR(50) NOT NULL
+      );
     `);
 
-    // Verificar si el usuario ya está registrado en esta ruta
+    // Verificar si ya existe un registro con el mismo email y ruta_id
     const existingRegistration = await pool.query(
-      `SELECT * FROM rutas_registros WHERE ruta_id = $1 AND email = $2`,
-      [rutaId, email]
+      "SELECT * FROM rutas_registros WHERE email = $1 AND ruta_id = $2",
+      [email, rutaId]
     );
 
     if (existingRegistration.rows.length > 0) {
@@ -46,27 +45,27 @@ const registrarEnRuta = async (req, res) => {
       });
     }
 
-    // Insertar un solo registro con el número de participantes como un valor numérico
-    const numParticipantes = parseInt(participantes, 10);
-    if (isNaN(numParticipantes) || numParticipantes < 1) {
-      return res.status(400).json({
-        success: false,
-        message: "Número de participantes inválido",
-      });
-    }
-
-    // Realizar una única inserción
+    // Si no existe, proceder con la inserción
     const result = await pool.query(
-      `INSERT INTO rutas_registros 
-      (ruta_id, ruta_nombre, nombre_participante, email, telefono, num_participantes, fecha, duracion, ubicacion, dificultad)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+      `INSERT INTO rutas_registros (
+        ruta_id,
+        ruta_nombre,
+        nombre_participante,
+        email,
+        telefono,
+        num_participantes,
+        fecha,
+        duracion,
+        ubicacion,
+        dificultad
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
       [
         rutaId,
         rutaNombre,
         nombre,
         email,
         telefono,
-        numParticipantes,
+        participantes,
         fecha,
         duracion,
         ubicacion,
@@ -74,23 +73,16 @@ const registrarEnRuta = async (req, res) => {
       ]
     );
 
-    console.log("✅ Registro de ruta guardado en BD");
-
-    return res.status(200).json({
+    res.json({
       success: true,
-      message: "Inscripción en ruta registrada exitosamente",
-      data: {
-        id: result.rows[0].id,
-        rutaNombre,
-        nombre,
-        participantes: numParticipantes,
-      },
+      message: "Registro exitoso en la ruta",
+      data: result.rows[0],
     });
   } catch (error) {
-    console.error("❌ Error en registro de ruta:", error);
-    return res.status(500).json({
+    console.error("Error al registrar en ruta:", error);
+    res.status(500).json({
       success: false,
-      message: "Error al procesar la inscripción en ruta",
+      message: "Error al procesar el registro",
       error: error.message,
     });
   }
