@@ -47,21 +47,19 @@ app.use((req, res, next) => {
 
 // Rutas principales
 app.use("/api", authRoutes);
-app.use("/api", eventRoutes);
-app.use("/backend/routes", contactRoutes);
 app.use("/backend/routes", rutasRoutes);
 
 // 🛒 NUEVA RUTA PARA COMPRAS - COMPLETAMENTE INDEPENDIENTE
 app.use("/api/compras", comprasRoutes);
-
-// Newsletter completamente separado
-app.use("/newsletter-api", newsletterRoutes);
 
 // Rutas adicionales para rutas (fallback)
 app.use("/rutasRoutes", rutasRoutes);
 
 // Rutas adicionales para eventos (fallback)
 app.use("/event-registration", eventRoutes);
+
+// Newsletter completamente separado
+app.use("/newsletter-api", newsletterRoutes);
 
 // Servir archivos estáticos
 app.get("/", (req, res) => {
