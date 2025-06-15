@@ -498,7 +498,7 @@ function inicializarGaleriaImagenesRuta() {
 // Función para procesar la inscripción a una ruta
 async function procesarInscripcionRuta() {
   const form = document.getElementById("inscripcionForm");
-  const submitButton = form.querySelector('button[type="submit"]');
+  const submitButton = form.querySelector("#btnInscribirse");
   const originalButtonText = submitButton.textContent;
 
   const rutaId = form.querySelector("#rutaId").value;
@@ -517,7 +517,7 @@ async function procesarInscripcionRuta() {
     dificultad: ruta.dificultad,
   };
 
-  // Mostrar estado de carga
+  // Mostrar estado de carga solo cuando se envía el formulario
   submitButton.disabled = true;
   submitButton.innerHTML =
     '<i class="fas fa-spinner fa-spin"></i> Procesando...';
@@ -610,6 +610,8 @@ async function procesarInscripcionRuta() {
           // Restaurar y limpiar el formulario para permitir nuevo registro
           form.style.display = "block";
           form.reset();
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalButtonText;
         }, 500);
       });
 
@@ -624,6 +626,8 @@ async function procesarInscripcionRuta() {
             // Restaurar y limpiar el formulario para permitir nuevo registro
             form.style.display = "block";
             form.reset();
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
           }, 500);
         }
       }, 5000);
@@ -633,8 +637,7 @@ async function procesarInscripcionRuta() {
   } catch (error) {
     console.error("Error al procesar inscripción:", error);
     alert("Error al procesar la inscripción: " + error.message);
-  } finally {
-    // Restaurar el botón
+    // Restaurar el botón en caso de error
     submitButton.disabled = false;
     submitButton.innerHTML = originalButtonText;
   }
