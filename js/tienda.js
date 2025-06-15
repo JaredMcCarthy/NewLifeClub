@@ -530,7 +530,12 @@ document.addEventListener("DOMContentLoaded", function () {
             message =
               "¡Gracias por suscribirte a la tienda! Recibirás un correo con un código de descuento del 10%";
           } else {
-            message = `¡Gracias por suscribirte a la tienda! Tu código de descuento es: WELCOME10 (10% off)`;
+            // Usar el código único que viene del servidor
+            const promoCode =
+              data.data && data.data.promoCode
+                ? data.data.promoCode
+                : "WELCOME10";
+            message = `¡Gracias por suscribirte a la tienda! Tu código de descuento es: ${promoCode} (10% off)`;
           }
 
           showNewsletterMessage(message, "success");
