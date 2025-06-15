@@ -873,22 +873,16 @@
             }
           );
 
-          let data;
+          const data = await response.json();
+
           if (!response.ok) {
-            // Intentar extraer el mensaje real del backend
-            try {
-              data = await response.json();
-              const errorMsg =
-                data.error ||
-                data.message ||
-                `Error del servidor: ${response.status}`;
-              throw new Error(errorMsg);
-            } catch (e) {
-              // Si no es JSON, mostrar error genérico
-              throw new Error(`Error del servidor: ${response.status}`);
+            // Si es error 400, asumimos que es porque el correo ya existe
+            if (response.status === 400) {
+              throw new Error("Correo electrónico ya registrado");
             }
-          } else {
-            data = await response.json();
+            throw new Error(
+              "Error en el registro. Por favor intenta de nuevo."
+            );
           }
 
           console.log("📡 Respuesta del servidor:", data);
