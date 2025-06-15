@@ -873,13 +873,24 @@
             }
           );
 
+          let data;
           if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Error response:", errorText);
-            throw new Error(`Error del servidor: ${response.status}`);
+            // Intentar extraer el mensaje real del backend
+            try {
+              data = await response.json();
+              const errorMsg =
+                data.error ||
+                data.message ||
+                `Error del servidor: ${response.status}`;
+              throw new Error(errorMsg);
+            } catch (e) {
+              // Si no es JSON, mostrar error genérico
+              throw new Error(`Error del servidor: ${response.status}`);
+            }
+          } else {
+            data = await response.json();
           }
 
-          const data = await response.json();
           console.log("📡 Respuesta del servidor:", data);
 
           if (data.success) {
