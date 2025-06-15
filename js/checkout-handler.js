@@ -62,21 +62,99 @@ let appliedDiscount = {
 // ======================================
 
 // Aplicar código de descuento
-function applyPromoCode() {
+async function applyPromoCode() {
   const promoInput = document.getElementById("promo-input");
   const promoBtn = document.querySelector(".promo-btn");
 
   if (!promoInput || !promoBtn) return;
 
-  const code = promoInput.value.trim().toUpperCase();
+  const code = promoInput.value.trim();
 
   if (!code) {
     showPromoNotification("Por favor ingresa un código válido", "error");
     return;
   }
 
-  // Verificar si el código existe y está activo
-  const promoData = PROMO_CODES[code];
+  // Mostrar estado de carga
+  promoBtn.textContent = "Validando...";
+  promoBtn.disabled = true;
+
+  try {
+    // 🆕 PRIMERO: Intentar validar con nuestra API de códigos únicos
+    console.log("🔍 Validando código único:", code);
+
+    const response = await fetch(
+      "https://newlifeclub.onrender.com/tienda-newsletter/validate-promo-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ promoCode: code }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      // ✅ Código único válido
+      console.log("✅ Código único válido:", data);
+
+      const cartInfo = getCartInfo();
+      const subtotal = cartInfo.total;
+
+      // Calcular descuento (10% para códigos únicos)
+      const discountAmount =
+        Math.round(subtotal * data.data.discountValue * 100) / 100;
+
+      // Aplicar descuento
+      appliedDiscount = {
+        code: code,
+        percentage: data.data.discountValue * 100, // Convertir a porcentaje
+        amount: discountAmount,
+        active: true,
+        description: "Código de descuento único",
+        isUniqueCode: true, // Marcar como código único
+      };
+
+      // Actualizar UI del input
+      promoInput.value = `${code} - APLICADO`;
+      promoInput.style.borderColor = "#4CAF50";
+      promoInput.style.color = "#4CAF50";
+      promoInput.disabled = true;
+
+      promoBtn.textContent = "✓ Aplicado";
+      promoBtn.style.background = "#4CAF50";
+      promoBtn.disabled = true;
+
+      // Mostrar notificación de éxito
+      showPromoNotification(
+        `✅ Código único aplicado! ${data.data.discount} de descuento`,
+        "success"
+      );
+
+      // Actualizar resumen del carrito
+      updateCartSummaryWithDiscount();
+
+      console.log("🎟️ Código único aplicado:", appliedDiscount);
+      return;
+    }
+  } catch (error) {
+    console.log(
+      "⚠️ Error al validar código único, intentando códigos hardcodeados:",
+      error.message
+    );
+  }
+
+  // 🔄 FALLBACK: Si no es código único, usar códigos hardcodeados
+  console.log("🔄 Validando con códigos hardcodeados...");
+
+  const codeUpper = code.toUpperCase();
+  const promoData = PROMO_CODES[codeUpper];
+
+  // Resetear botón
+  promoBtn.textContent = "Aplicar";
+  promoBtn.disabled = false;
 
   if (!promoData || !promoData.active) {
     showPromoNotification("Código de descuento no válido", "error");
@@ -107,15 +185,16 @@ function applyPromoCode() {
 
   // Aplicar descuento
   appliedDiscount = {
-    code: code,
+    code: codeUpper,
     percentage: promoData.percentage,
     amount: discountAmount,
     active: true,
     description: promoData.description,
+    isUniqueCode: false, // Marcar como código hardcodeado
   };
 
   // Actualizar UI del input
-  promoInput.value = `${code} - APLICADO`;
+  promoInput.value = `${codeUpper} - APLICADO`;
   promoInput.style.borderColor = "#4CAF50";
   promoInput.style.color = "#4CAF50";
   promoInput.disabled = true;
@@ -133,7 +212,7 @@ function applyPromoCode() {
   // Actualizar resumen del carrito
   updateCartSummaryWithDiscount();
 
-  console.log("🎟️ Descuento aplicado:", appliedDiscount);
+  console.log("🎟️ Descuento hardcodeado aplicado:", appliedDiscount);
 }
 
 // Remover código de descuento
@@ -467,6 +546,42 @@ async function procesarCompraCompleta(datosFormulario) {
         "✅ Compra guardada exitosamente:",
         resultado.data.token_compra
       );
+
+      // 🎟️ Marcar código único como usado si se aplicó uno
+      if (descuentoAplicado.active && descuentoAplicado.isUniqueCode) {
+        try {
+          console.log(
+            "🎟️ Marcando código único como usado:",
+            descuentoAplicado.code
+          );
+
+          const useCodeResponse = await fetch(
+            "https://newlifeclub.onrender.com/tienda-newsletter/use-promo-code",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ promoCode: descuentoAplicado.code }),
+            }
+          );
+
+          const useCodeData = await useCodeResponse.json();
+
+          if (useCodeResponse.ok && useCodeData.success) {
+            console.log("✅ Código único marcado como usado exitosamente");
+          } else {
+            console.warn(
+              "⚠️ No se pudo marcar el código como usado:",
+              useCodeData.message
+            );
+          }
+        } catch (error) {
+          console.warn("⚠️ Error al marcar código como usado:", error.message);
+          // No fallar la compra por esto
+        }
+      }
+
       return {
         success: true,
         token: resultado.data.token_compra,
