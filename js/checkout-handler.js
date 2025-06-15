@@ -434,8 +434,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const promoBtn = document.querySelector(".promo-btn");
     const promoInput = document.getElementById("promo-input");
 
+    console.log("🔧 Configurando event listeners...");
+    console.log("🔧 Botón encontrado:", promoBtn ? "✅ Sí" : "❌ No");
+    console.log("🔧 Input encontrado:", promoInput ? "✅ Sí" : "❌ No");
+
     if (promoBtn) {
       promoBtn.addEventListener("click", applyPromoCode);
+      console.log("✅ Event listener agregado al botón");
+
+      // Test adicional: agregar estilo hover para confirmar que el botón es clickeable
+      promoBtn.style.cursor = "pointer";
+      promoBtn.addEventListener("mouseenter", () => {
+        console.log("🖱️ Mouse sobre el botón");
+      });
+      promoBtn.addEventListener("click", () => {
+        console.log("🖱️ Clic detectado en el botón");
+      });
+    } else {
+      console.error("❌ No se encontró el botón .promo-btn");
     }
 
     if (promoInput) {
@@ -443,6 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
       promoInput.addEventListener("keypress", function (e) {
         if (e.key === "Enter") {
           e.preventDefault();
+          console.log("⌨️ Enter presionado en input");
           applyPromoCode();
         }
       });
@@ -453,6 +470,10 @@ document.addEventListener("DOMContentLoaded", function () {
           removePromoCode();
         }
       });
+
+      console.log("✅ Event listeners agregados al input");
+    } else {
+      console.error("❌ No se encontró el input #promo-input");
     }
 
     // Integrar con el sistema de carrito principal
@@ -701,6 +722,38 @@ window.debugDiscount = function () {
     availableCodes: Object.keys(PROMO_CODES),
     appliedDiscount: appliedDiscount,
   };
+};
+
+// 🧪 Función de test para verificar que el botón funcione
+window.testPromoButton = function () {
+  console.log("🧪 === TEST DEL BOTÓN PROMOCIONAL ===");
+
+  const promoBtn = document.querySelector(".promo-btn");
+  const promoInput = document.getElementById("promo-input");
+
+  console.log("Botón encontrado:", promoBtn ? "✅ Sí" : "❌ No");
+  console.log("Input encontrado:", promoInput ? "✅ Sí" : "❌ No");
+
+  if (promoBtn) {
+    console.log("Texto del botón:", promoBtn.textContent);
+    console.log("Botón deshabilitado:", promoBtn.disabled);
+    console.log("Estilo cursor:", promoBtn.style.cursor);
+  }
+
+  if (promoInput) {
+    console.log("Valor del input:", promoInput.value);
+    console.log("Input deshabilitado:", promoInput.disabled);
+  }
+
+  // Test manual del botón
+  if (promoBtn && promoInput) {
+    promoInput.value = "WELCOME10-TEST";
+    console.log("✅ Valor de test agregado al input");
+    console.log("🔄 Intentando aplicar código...");
+    applyPromoCode();
+  }
+
+  console.log("=================================");
 };
 
 console.log(
