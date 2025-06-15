@@ -525,103 +525,114 @@ async function procesarInscripcionRuta() {
   try {
     console.log("📤 Enviando datos de inscripción a ruta:", formData);
 
-    const response = await fetch(
+    // Probar múltiples URLs por si una no funciona
+    const urlsToTry = [
+      "https://newlifeclub.onrender.com/backend/routes/rutasRoutes",
+      "https://newlifeclub.onrender.com/rutasRoutes",
       "https://newlifeclub.onrender.com/api/rutasRoutes",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
+    ];
+
+    let response = null;
+    let lastError = null;
+
+    for (const url of urlsToTry) {
+      try {
+        console.log("🔄 Probando URL para rutas:", url);
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        console.log("📡 Respuesta de", url, "- Status:", response.status);
+
+        if (response.ok) {
+          console.log("✅ URL funcionando para rutas:", url);
+          break;
+        } else {
+          console.log(
+            "❌ URL falló para rutas:",
+            url,
+            "Status:",
+            response.status
+          );
+        }
+      } catch (error) {
+        console.log("❌ Error con URL de rutas:", url, error.message);
+        lastError = error;
+        continue;
       }
-    );
+    }
+
+    if (!response || !response.ok) {
+      throw lastError || new Error("Todas las URLs para rutas fallaron");
+    }
+
+    console.log("📥 Respuesta del servidor:", response.status);
 
     const data = await response.json();
-    console.log("📡 Respuesta del servidor:", data);
+    console.log("📄 Datos de respuesta:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al procesar la inscripción");
     }
 
-    // Ocultar el formulario
-    form.style.display = "none";
+    if (data.success) {
+      // Ocultar el formulario
+      form.style.display = "none";
 
-    // Crear y mostrar el banner de éxito
-    const banner = document.createElement("div");
-    banner.className = "success-banner animate__animated animate__fadeInDown";
-    banner.innerHTML = `
-      <div class="success-content">
-        <i class="fas fa-check-circle"></i>
-        <h3>¡Inscripción Exitosa!</h3>
-        <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
-        <p>Participantes: ${formData.participantes} persona(s)</p>
-        <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
-        <button class="close-banner">Cerrar</button>
-      </div>
-    `;
+      // Crear y mostrar el banner de éxito
+      const banner = document.createElement("div");
+      banner.className = "success-banner animate__animated animate__fadeInDown";
+      banner.innerHTML = `
+        <div class="success-content">
+          <i class="fas fa-check-circle"></i>
+          <h3>¡Inscripción Exitosa!</h3>
+          <p>Te has registrado exitosamente en la ruta <strong>${ruta.titulo}</strong>.</p>
+          <p>Participantes: ${formData.participantes} persona(s)</p>
+          <p>Fecha: ${ruta.fecha} | Duración: ${ruta.duracion}</p>
+          <button class="close-banner">Cerrar</button>
+        </div>
+      `;
 
-    document.body.appendChild(banner);
+      document.body.appendChild(banner);
 
-    // Agregar evento para cerrar el banner y permitir nuevo registro
-    banner.querySelector(".close-banner").addEventListener("click", () => {
-      banner.classList.remove("animate__fadeInDown");
-      banner.classList.add("animate__fadeOutUp");
-      setTimeout(() => {
-        banner.remove();
-        cerrarModalRuta();
-        // Mostrar el formulario de nuevo y limpiarlo
-        form.style.display = "block";
-        form.reset();
-      }, 500);
-    });
-
-    // Auto-cerrar después de 5 segundos
-    setTimeout(() => {
-      if (banner.parentNode) {
+      // Agregar evento para cerrar el banner
+      banner.querySelector(".close-banner").addEventListener("click", () => {
         banner.classList.remove("animate__fadeInDown");
         banner.classList.add("animate__fadeOutUp");
         setTimeout(() => {
           banner.remove();
           cerrarModalRuta();
-          // Mostrar el formulario de nuevo y limpiarlo
+          // Restaurar y limpiar el formulario para permitir nuevo registro
           form.style.display = "block";
           form.reset();
         }, 500);
-      }
-    }, 5000);
+      });
+
+      // Auto-cerrar después de 5 segundos
+      setTimeout(() => {
+        if (banner.parentNode) {
+          banner.classList.remove("animate__fadeInDown");
+          banner.classList.add("animate__fadeOutUp");
+          setTimeout(() => {
+            banner.remove();
+            cerrarModalRuta();
+            // Restaurar y limpiar el formulario para permitir nuevo registro
+            form.style.display = "block";
+            form.reset();
+          }, 500);
+        }
+      }, 5000);
+    } else {
+      throw new Error(data.message || "Error en el registro");
+    }
   } catch (error) {
     console.error("Error al procesar inscripción:", error);
-
-    // Mostrar mensaje de error en un banner rojo
-    const errorBanner = document.createElement("div");
-    errorBanner.className =
-      "error-banner animate__animated animate__fadeInDown";
-    errorBanner.innerHTML = `
-      <div class="error-content">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>${error.message}</p>
-        <button class="close-banner">Cerrar</button>
-      </div>
-    `;
-
-    document.body.appendChild(errorBanner);
-
-    // Agregar evento para cerrar el banner de error
-    errorBanner.querySelector(".close-banner").addEventListener("click", () => {
-      errorBanner.classList.remove("animate__fadeInDown");
-      errorBanner.classList.add("animate__fadeOutUp");
-      setTimeout(() => errorBanner.remove(), 500);
-    });
-
-    // Auto-cerrar después de 5 segundos
-    setTimeout(() => {
-      if (errorBanner.parentNode) {
-        errorBanner.classList.remove("animate__fadeInDown");
-        errorBanner.classList.add("animate__fadeOutUp");
-        setTimeout(() => errorBanner.remove(), 500);
-      }
-    }, 5000);
+    alert("Error al procesar la inscripción: " + error.message);
   } finally {
     // Restaurar el botón
     submitButton.disabled = false;
