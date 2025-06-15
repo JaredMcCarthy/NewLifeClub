@@ -482,3 +482,203 @@ window.debugCategories = function () {
 
   console.log("============================");
 };
+
+// ========================================
+// 📧 NEWSLETTER SUBSCRIPTION SYSTEM
+// ========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+  const newsletterForm = document.querySelector(".newsletter-form");
+
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const emailInput = this.querySelector('input[type="email"]');
+      const submitButton = this.querySelector('button[type="submit"]');
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        showNewsletterMessage("Por favor ingresa tu email", "error");
+        return;
+      }
+
+      // Mostrar estado de carga
+      const originalButtonText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Suscribiendo...';
+
+      try {
+        const response = await fetch(
+          "https://newlifeclub.onrender.com/tienda-newsletter/subscribe",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Mostrar mensaje de éxito
+          showNewsletterMessage(
+            "¡Gracias por suscribirte a la tienda! Recibirás un correo con un código de descuento del 10%",
+            "success"
+          );
+
+          // Limpiar formulario
+          emailInput.value = "";
+        } else {
+          showNewsletterMessage(
+            data.message || "Error al procesar la suscripción",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error("Error en suscripción:", error);
+        showNewsletterMessage("Error de conexión. Intenta de nuevo.", "error");
+      } finally {
+        // Restaurar botón
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+      }
+    });
+  }
+});
+
+// Función para mostrar mensajes del newsletter
+function showNewsletterMessage(message, type = "success") {
+  // Crear el banner
+  const banner = document.createElement("div");
+  banner.className = `newsletter-banner newsletter-${type}`;
+  banner.innerHTML = `
+    <div class="newsletter-banner-content">
+      <i class="fas ${
+        type === "success" ? "fa-check-circle" : "fa-exclamation-circle"
+      }"></i>
+      <p>${message}</p>
+      <button class="newsletter-banner-close">&times;</button>
+    </div>
+  `;
+
+  // Agregar estilos
+  banner.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 400px;
+    max-width: 90vw;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: ${
+      type === "success"
+        ? "linear-gradient(135deg, #4CAF50, #45a049)"
+        : "linear-gradient(135deg, #f44336, #d32f2f)"
+    };
+    color: white;
+    animation: slideInDown 0.5s ease-out;
+  `;
+
+  // Agregar al DOM
+  document.body.appendChild(banner);
+
+  // Evento para cerrar
+  banner
+    .querySelector(".newsletter-banner-close")
+    .addEventListener("click", () => {
+      banner.style.animation = "slideOutUp 0.5s ease-in";
+      setTimeout(() => banner.remove(), 500);
+    });
+
+  // Auto-cerrar después de 5 segundos
+  setTimeout(() => {
+    if (banner.parentNode) {
+      banner.style.animation = "slideOutUp 0.5s ease-in";
+      setTimeout(() => banner.remove(), 500);
+    }
+  }, 5000);
+}
+
+// Agregar estilos CSS para las animaciones
+const newsletterStyles = document.createElement("style");
+newsletterStyles.textContent = `
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+  
+  @keyframes slideOutUp {
+    from {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-30px);
+    }
+  }
+  
+  .newsletter-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .newsletter-banner-content i {
+    font-size: 1.5rem;
+  }
+  
+  .newsletter-banner-content p {
+    margin: 0;
+    flex: 1;
+    font-weight: 600;
+  }
+  
+  .newsletter-banner-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  
+  .newsletter-banner-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .newsletter-banner {
+      min-width: 300px !important;
+      padding: 15px 20px !important;
+      margin: 0 10px !important;
+    }
+    
+    .newsletter-banner-content p {
+      font-size: 0.9rem;
+    }
+  }
+`;
+document.head.appendChild(newsletterStyles);

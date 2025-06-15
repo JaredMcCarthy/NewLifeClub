@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const authRoutes = require("./backend/routes/authRoutes");
 const eventRoutes = require("./backend/routes/eventRegistration");
 const newsletterRoutes = require("./backend/routes/newsletter");
+const tiendaNewsletterRoutes = require("./backend/routes/tiendaNewsletter");
 const contactRoutes = require("./backend/routes/contacts");
 const rutasRoutes = require("./backend/routes/rutasRoutes");
 const comprasRoutes = require("./backend/routes/compras");
@@ -60,6 +61,9 @@ app.use("/event-registration", eventRoutes);
 
 // Newsletter completamente separado
 app.use("/newsletter-api", newsletterRoutes);
+
+// Newsletter de la tienda
+app.use("/tienda-newsletter", tiendaNewsletterRoutes);
 
 // Servir archivos estáticos
 app.get("/", (req, res) => {
