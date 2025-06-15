@@ -65,6 +65,9 @@ app.use("/newsletter-api", newsletterRoutes);
 // Newsletter de la tienda
 app.use("/tienda-newsletter", tiendaNewsletterRoutes);
 
+// Rutas de contacto
+app.use("/", contactRoutes);
+
 // Servir archivos estáticos
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
