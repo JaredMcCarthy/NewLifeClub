@@ -10,7 +10,35 @@
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
 
     <!-- 💳 PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AWWGfptnJHamPLRLTaLkeHbUV-gKiJ6HSu_uwaLmmXIWECgDNvT8n2HWQsZTBavAhPyYmo4IECfFhXd_&currency=USD"></script>
+    <script>
+      // Cargar PayPal SDK dinámicamente
+      function loadPayPalSDK() {
+        return new Promise((resolve, reject) => {
+          if (window.paypal) {
+            resolve(window.paypal);
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.src =
+            "https://www.paypal.com/sdk/js?client-id=AWWGfptnJHamPLRLTaLkeHbUV-gKiJ6HSu_uwaLmmXIWECgDNvT8n2HWQsZTBavAhPyYmo4IECfFhXd_&currency=USD";
+          script.onload = () => {
+            if (window.paypal) {
+              console.log("✅ PayPal SDK cargado exitosamente");
+              resolve(window.paypal);
+            } else {
+              console.error("❌ PayPal SDK no se inicializó correctamente");
+              reject(new Error("PayPal SDK failed to initialize"));
+            }
+          };
+          script.onerror = () => {
+            console.error("❌ Error cargando PayPal SDK");
+            reject(new Error("Failed to load PayPal SDK"));
+          };
+          document.head.appendChild(script);
+        });
+      }
+    </script>
 
     <style>
       * {
@@ -2136,10 +2164,8 @@
 
           // 💳 Inicializar PayPal por defecto (ya que está seleccionado)
           selectedPaymentMethod = "paypal";
-          // Esperar más tiempo para que PayPal SDK se cargue completamente
-          setTimeout(() => {
-            initializePayPal();
-          }, 1000);
+          // Inicializar PayPal con el nuevo método
+          initializePayPal();
         }, 200);
       });
 
@@ -2232,73 +2258,89 @@
       }
 
       // 💳 NUEVA FUNCIÓN: Inicializar PayPal
-      function initializePayPal() {
-        // Verificar si PayPal está disponible
-        if (typeof paypal === "undefined") {
-          console.log("⏳ PayPal SDK aún no está cargado, reintentando...");
-          setTimeout(initializePayPal, 500);
-          return;
-        }
+      async function initializePayPal() {
+        try {
+          console.log("🔄 Iniciando carga de PayPal SDK...");
 
-        // Limpiar contenedor anterior
-        const container = document.getElementById("paypal-button-container");
-        if (!container) {
-          console.error("❌ Contenedor de PayPal no encontrado");
-          return;
-        }
+          // Cargar PayPal SDK
+          const paypal = await loadPayPalSDK();
 
-        container.innerHTML = "";
+          // Limpiar contenedor anterior
+          const container = document.getElementById("paypal-button-container");
+          if (!container) {
+            console.error("❌ Contenedor de PayPal no encontrado");
+            return;
+          }
 
-        // Obtener información del carrito
-        const cartInfo = getCartInfo();
-        const totalAmount = cartInfo.total.toFixed(2);
+          container.innerHTML = "";
 
-        console.log("💳 Inicializando PayPal con total:", totalAmount);
+          // Obtener información del carrito
+          const cartInfo = getCartInfo();
+          const totalAmount = cartInfo.total.toFixed(2);
 
-        // Renderizar botones de PayPal
-        paypal
-          .Buttons({
-            style: {
-              color: "blue",
-              shape: "rect",
-              label: "pay",
-              height: 50,
-            },
+          console.log("💳 Inicializando PayPal con total:", totalAmount);
 
-            createOrder: function (data, actions) {
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    amount: {
-                      value: totalAmount,
-                      currency_code: "USD",
+          // Renderizar botones de PayPal
+          paypal
+            .Buttons({
+              style: {
+                color: "blue",
+                shape: "rect",
+                label: "pay",
+                height: 50,
+              },
+
+              createOrder: function (data, actions) {
+                return actions.order.create({
+                  purchase_units: [
+                    {
+                      amount: {
+                        value: totalAmount,
+                        currency_code: "USD",
+                      },
+                      description: "Compra en NewLifeRun Club",
                     },
-                    description: "Compra en NewLifeRun Club",
-                  },
-                ],
-              });
-            },
+                  ],
+                });
+              },
 
-            onApprove: function (data, actions) {
-              return actions.order.capture().then(function (details) {
-                console.log("✅ Pago PayPal exitoso:", details);
+              onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                  console.log("✅ Pago PayPal exitoso:", details);
 
-                // Procesar pago exitoso
-                handlePayPalSuccess(details);
-              });
-            },
+                  // Procesar pago exitoso
+                  handlePayPalSuccess(details);
+                });
+              },
 
-            onError: function (err) {
-              console.error("❌ Error en PayPal:", err);
-              showNotification("Error procesando el pago con PayPal", "error");
-            },
+              onError: function (err) {
+                console.error("❌ Error en PayPal:", err);
+                showNotification(
+                  "Error procesando el pago con PayPal",
+                  "error"
+                );
+              },
 
-            onCancel: function (data) {
-              console.log("⚠️ Pago PayPal cancelado:", data);
-              showNotification("Pago cancelado", "warning");
-            },
-          })
-          .render("#paypal-button-container");
+              onCancel: function (data) {
+                console.log("⚠️ Pago PayPal cancelado:", data);
+                showNotification("Pago cancelado", "warning");
+              },
+            })
+            .render("#paypal-button-container");
+        } catch (error) {
+          console.error("❌ Error inicializando PayPal:", error);
+
+          // Mostrar mensaje de error al usuario
+          const container = document.getElementById("paypal-button-container");
+          if (container) {
+            container.innerHTML = `
+              <div style="background: #ffebee; border: 1px solid #f44336; border-radius: 8px; padding: 15px; text-align: center; color: #d32f2f;">
+                <strong>⚠️ Error cargando PayPal</strong><br>
+                Por favor, usa el método de depósito bancario o recarga la página.
+              </div>
+            `;
+          }
+        }
       }
 
       // 💳 NUEVA FUNCIÓN: Manejar éxito de PayPal
