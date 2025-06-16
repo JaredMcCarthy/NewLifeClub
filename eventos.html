@@ -689,6 +689,10 @@
 
       <!-- Información principal con imágenes -->
       <div class="rutas-info">
+        <!-- Botones de navegación del carrusel (solo móvil) -->
+        <button class="carousel-nav prev" onclick="prevSlide()">‹</button>
+        <button class="carousel-nav next" onclick="nextSlide()">›</button>
+
         <div class="info-card animate__animated animate__fadeInUp">
           <div class="info-imagen">
             <img src="FotosEvento/FotoRutas1.png" alt="Corredor en montaña" />
@@ -736,6 +740,13 @@
             </p>
           </div>
         </div>
+      </div>
+
+      <!-- Indicadores del carrusel (solo móvil) -->
+      <div class="carousel-indicators">
+        <div class="carousel-dot active" onclick="goToSlide(0)"></div>
+        <div class="carousel-dot" onclick="goToSlide(1)"></div>
+        <div class="carousel-dot" onclick="goToSlide(2)"></div>
       </div>
 
       <div class="rutas-interactivas">
@@ -1007,5 +1018,83 @@
     <script src="js/auth-protection.js?v=1.0"></script>
     <!-- 📝 EVENT REGISTRATION SYSTEM -->
     <script src="js/event-registration.js?v=1.0"></script>
+
+    <!-- JavaScript para carrusel de rutas (solo móvil) -->
+    <script>
+      let currentSlide = 0;
+      const totalSlides = 3;
+
+      function updateCarousel() {
+        // Solo ejecutar en móvil
+        if (window.innerWidth <= 768) {
+          const rutasInfo = document.querySelector(".rutas-info");
+          const dots = document.querySelectorAll(".carousel-dot");
+
+          if (rutasInfo) {
+            // Calcular posición de scroll
+            const slideWidth = rutasInfo.scrollWidth / totalSlides;
+            rutasInfo.scrollTo({
+              left: slideWidth * currentSlide,
+              behavior: "smooth",
+            });
+          }
+
+          // Actualizar indicadores
+          dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === currentSlide);
+          });
+        }
+      }
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+      }
+
+      function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+      }
+
+      function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+      }
+
+      // Auto-slide cada 5 segundos (opcional)
+      let autoSlideInterval;
+
+      function startAutoSlide() {
+        if (window.innerWidth <= 768) {
+          autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+      }
+
+      function stopAutoSlide() {
+        if (autoSlideInterval) {
+          clearInterval(autoSlideInterval);
+        }
+      }
+
+      // Inicializar cuando cargue la página
+      document.addEventListener("DOMContentLoaded", function () {
+        updateCarousel();
+        startAutoSlide();
+
+        // Pausar auto-slide cuando el usuario interactúa
+        const rutasInfo = document.querySelector(".rutas-info");
+        if (rutasInfo) {
+          rutasInfo.addEventListener("touchstart", stopAutoSlide);
+          rutasInfo.addEventListener("scroll", stopAutoSlide);
+        }
+      });
+
+      // Reinicializar en cambio de tamaño de ventana
+      window.addEventListener("resize", function () {
+        updateCarousel();
+        stopAutoSlide();
+        startAutoSlide();
+      });
+    </script>
   </body>
 </html>

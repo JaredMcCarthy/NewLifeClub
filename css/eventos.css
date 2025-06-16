@@ -1000,84 +1000,218 @@ button:focus,
 
 /* Modal de detalle de ruta */
 .ruta-int-modal {
-  display: none;
   position: fixed;
-  z-index: 1000;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.85);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.ruta-int-modal.active {
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.ruta-int-modal.active {
   opacity: 1;
+  visibility: visible;
 }
 
 .modal-int-content {
+  background: #000;
+  border-radius: 20px;
   position: relative;
-  background: linear-gradient(135deg, #222222 0%, #000000 100%);
-  margin: auto;
   width: 90%;
-  max-width: 1000px;
-  max-height: 90vh;
-  border-radius: 15px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-  color: white;
-  animation: modalIntFadeIn 0.5s;
-  overflow: hidden;
-}
-
-@keyframes modalIntFadeIn {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.close-int-modal {
-  position: absolute;
-  right: 20px;
-  top: 15px;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  z-index: 10;
-  transition: color 0.3s;
-}
-
-.close-int-modal:hover {
-  color: #ff0080;
-}
-
-.modal-int-body {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
+  max-width: 1200px;
   max-height: 90vh;
   overflow-y: auto;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 105, 180, 0.2);
+  box-shadow: 0 10px 30px rgba(255, 105, 180, 0.1);
 }
 
-/* Diseño responsive para móvil */
+/* Mejoras específicas para móvil */
 @media (max-width: 768px) {
-  .modal-int-body {
-    flex-direction: column;
+  .ruta-int-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    display: flex !important;
   }
 
-  .modal-int-left,
+  .modal-int-content {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-int-body {
+    flex: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .modal-int-left {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .main-int-image {
+    width: 100% !important;
+    height: 40vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main-int-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+  }
+
+  .image-int-thumbnails {
+    width: 100% !important;
+    padding: 10px !important;
+    margin: 0 !important;
+  }
+
   .modal-int-right {
-    width: 100%;
+    flex: 1 !important;
+    width: 100% !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-int-right h2 {
+    font-size: 2rem !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+  }
+
+  .modal-int-info {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 20px 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+  }
+
+  .info-int-item {
+    font-size: 1rem !important;
+    padding: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+  }
+
+  .modal-int-description {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 20px 0 !important;
+  }
+
+  .modal-int-description h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .modal-int-description p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .modal-int-inscripcion {
+    width: 100% !important;
+    padding: 20px !important;
+    margin: 20px 0 0 0 !important;
+    background: rgba(255, 105, 180, 0.1) !important;
+    border-radius: 10px !important;
+  }
+
+  .modal-int-inscripcion h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .form-int-group {
+    width: 100% !important;
+    margin-bottom: 20px !important;
+    padding: 0 !important;
+  }
+
+  .form-int-group input {
+    width: 100% !important;
+    height: 50px !important;
+    padding: 0 15px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 105, 180, 0.3) !important;
+    color: #fff !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-inscribirse {
+    width: 100% !important;
+    height: 50px !important;
+    margin-top: 20px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .close-int-modal {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 45px !important;
+    height: 45px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 24px !important;
+    z-index: 99999 !important;
+    border: none !important;
+    color: white !important;
+    cursor: pointer !important;
   }
 }
 
@@ -1461,5 +1595,142 @@ button:focus,
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Carrusel para información de rutas - SOLO MÓVIL */
+@media (max-width: 768px) {
+  .rutas-info {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 100px;
+  }
+
+  .info-card {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 100% !important;
+    opacity: 1 !important;
+    margin-bottom: 0 !important;
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 15px !important;
+    margin: 0 10px !important;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.1) !important;
+  }
+
+  .info-imagen {
+    width: 100% !important;
+    height: 250px !important;
+    overflow: hidden !important;
+    border-radius: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .info-imagen img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .info-texto {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 0 !important;
+  }
+
+  .info-texto h2 {
+    font-size: 1.8rem !important;
+    margin-bottom: 15px !important;
+    color: var(--color-pink) !important;
+  }
+
+  .info-texto p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    color: #fff !important;
+  }
+
+  /* Contenedor del carrusel */
+  .rutas-info {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 20px !important;
+    padding: 20px 10px !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+  }
+
+  /* Ocultar scrollbar en WebKit */
+  .rutas-info::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Indicadores de carrusel */
+  .carousel-indicators {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 30px !important;
+    padding: 0 20px !important;
+  }
+
+  .carousel-dot {
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+  }
+
+  .carousel-dot.active {
+    background: var(--color-pink) !important;
+    transform: scale(1.2) !important;
+  }
+
+  /* Botones de navegación opcionales */
+  .carousel-nav {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: white !important;
+    border: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+  }
+
+  .carousel-nav.prev {
+    left: 10px !important;
+  }
+
+  .carousel-nav.next {
+    right: 10px !important;
+  }
+
+  .carousel-nav:hover {
+    background: rgba(255, 105, 180, 0.7) !important;
+  }
+}
+
+/* Mantener el diseño original en desktop */
+@media (min-width: 769px) {
+  .rutas-info {
+    /* Mantener estilos originales para desktop */
+  }
+
+  .carousel-indicators,
+  .carousel-nav {
+    display: none !important;
   }
 }
