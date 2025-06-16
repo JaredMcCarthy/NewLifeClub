@@ -9,6 +9,9 @@
     <!-- 🎨 CUSTOM POPUPS - NewLifeRun Club Style -->
     <link rel="stylesheet" href="css/custom-popups.css?v=1.0" />
 
+    <!-- 💳 PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AWWGfptnJHamPLRLTaLkeHbUV-gKiJ6HSu_uwaLmmXIWECgDNvT8n2HWQsZTBavAhPyYmo4IECfFhXd_&currency=USD"></script>
+
     <style>
       * {
         margin: 0;
@@ -1152,13 +1155,13 @@
           <div class="payment-methods">
             <div
               class="payment-option selected"
-              onclick="selectPayment(this, 'card')"
+              onclick="selectPayment(this, 'paypal')"
             >
               <div class="payment-left">
-                <div class="payment-icon">💳</div>
+                <div class="payment-icon">🅿️</div>
                 <div class="payment-info">
-                  <h4>Tarjeta de Crédito/Débito</h4>
-                  <p>Visa, MasterCard, American Express</p>
+                  <h4>PayPal</h4>
+                  <p>Paga con PayPal o tarjeta de crédito/débito</p>
                 </div>
               </div>
               <div class="radio-custom"></div>
@@ -1179,50 +1182,113 @@
             </div>
           </div>
 
-          <div id="card-details">
-            <div class="form-group">
-              <label class="form-label">Número de Tarjeta *</label>
-              <input
-                type="text"
-                class="form-input"
-                placeholder="0000 0000 0000 0000"
-                maxlength="19"
-                id="card-number"
-                required
-              />
-            </div>
+          <!-- Contenedor de PayPal (mostrado por defecto) -->
+          <div id="paypal-details">
+            <div
+              style="
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                border: 2px solid #0070ba;
+                border-radius: 12px;
+                padding: 25px;
+                margin: 20px 0;
+              "
+            >
+              <h3 style="color: #0070ba; margin-bottom: 15px; font-size: 18px">
+                💳 Pago con PayPal
+              </h3>
+              <p style="color: #495057; margin-bottom: 20px">
+                Serás redirigido a PayPal para completar tu pago de forma
+                segura. Puedes pagar con:
+              </p>
+              <div style="display: grid; gap: 10px; margin-bottom: 20px">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    color: #495057;
+                  "
+                >
+                  <div
+                    style="
+                      width: 20px;
+                      height: 20px;
+                      background: #0070ba;
+                      color: white;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 12px;
+                    "
+                  >
+                    ✓
+                  </div>
+                  <span
+                    ><strong>Tu cuenta PayPal</strong> - Si ya tienes una</span
+                  >
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    color: #495057;
+                  "
+                >
+                  <div
+                    style="
+                      width: 20px;
+                      height: 20px;
+                      background: #0070ba;
+                      color: white;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 12px;
+                    "
+                  >
+                    ✓
+                  </div>
+                  <span
+                    ><strong>Tarjeta de crédito/débito</strong> - Sin necesidad
+                    de cuenta PayPal</span
+                  >
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    color: #495057;
+                  "
+                >
+                  <div
+                    style="
+                      width: 20px;
+                      height: 20px;
+                      background: #0070ba;
+                      color: white;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 12px;
+                    "
+                  >
+                    ✓
+                  </div>
+                  <span
+                    ><strong>Protección del comprador</strong> - Garantía
+                    PayPal</span
+                  >
+                </div>
+              </div>
 
-            <div class="form-row-3">
-              <div class="form-group">
-                <label class="form-label">Nombre en la Tarjeta *</label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="Como aparece en tu tarjeta"
-                  id="card-holder-name"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Vencimiento *</label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="MM/AA"
-                  maxlength="5"
-                  id="expiry"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label">CVV *</label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="123"
-                  maxlength="4"
-                  required
-                />
+              <!-- Aquí se cargará el botón de PayPal -->
+              <div id="paypal-button-container" style="margin-top: 20px">
+                <!-- El botón de PayPal se cargará aquí dinámicamente -->
               </div>
             </div>
           </div>
@@ -1333,8 +1399,9 @@
             class="btn-primary"
             id="payment-button"
             onclick="processPayment()"
+            style="display: none"
           >
-            Completar Pago - L.0.00
+            Confirmar Pedido (Depósito Bancario) - L.0.00
           </button>
           <button class="btn-secondary" onclick="nextStep(2)">Regresar</button>
         </div>
@@ -1631,15 +1698,20 @@
         selectedPaymentMethod = method;
 
         // Mostrar/ocultar detalles según el método
-        const cardDetails = document.getElementById("card-details");
+        const paypalDetails = document.getElementById("paypal-details");
         const bankDetails = document.getElementById("bank-deposit-details");
+        const paymentButton = document.getElementById("payment-button");
 
-        if (method === "card") {
-          cardDetails.style.display = "block";
+        if (method === "paypal") {
+          paypalDetails.style.display = "block";
           bankDetails.style.display = "none";
+          paymentButton.style.display = "none"; // Ocultar botón (PayPal tiene el suyo)
+          // Inicializar PayPal cuando se selecciona
+          initializePayPal();
         } else if (method === "bank-deposit") {
-          cardDetails.style.display = "none";
+          paypalDetails.style.display = "none";
           bankDetails.style.display = "block";
+          paymentButton.style.display = "block"; // Mostrar botón para depósito
         }
       }
 
@@ -2061,6 +2133,10 @@
               window.location.href = "tienda.html";
             }, 3000);
           }
+
+          // 💳 Inicializar PayPal por defecto (ya que está seleccionado)
+          selectedPaymentMethod = "paypal";
+          initializePayPal();
         }, 200);
       });
 
@@ -2150,6 +2226,154 @@
         }
 
         console.log("✅ Página de éxito actualizada para depósito bancario");
+      }
+
+      // 💳 NUEVA FUNCIÓN: Inicializar PayPal
+      function initializePayPal() {
+        // Limpiar contenedor anterior
+        const container = document.getElementById("paypal-button-container");
+        container.innerHTML = "";
+
+        // Obtener información del carrito
+        const cartInfo = getCartInfo();
+        const totalAmount = cartInfo.total.toFixed(2);
+
+        console.log("💳 Inicializando PayPal con total:", totalAmount);
+
+        // Renderizar botones de PayPal
+        paypal
+          .Buttons({
+            style: {
+              color: "blue",
+              shape: "rect",
+              label: "pay",
+              height: 50,
+            },
+
+            createOrder: function (data, actions) {
+              return actions.order.create({
+                purchase_units: [
+                  {
+                    amount: {
+                      value: totalAmount,
+                      currency_code: "USD",
+                    },
+                    description: "Compra en NewLifeRun Club",
+                  },
+                ],
+              });
+            },
+
+            onApprove: function (data, actions) {
+              return actions.order.capture().then(function (details) {
+                console.log("✅ Pago PayPal exitoso:", details);
+
+                // Procesar pago exitoso
+                handlePayPalSuccess(details);
+              });
+            },
+
+            onError: function (err) {
+              console.error("❌ Error en PayPal:", err);
+              showNotification("Error procesando el pago con PayPal", "error");
+            },
+
+            onCancel: function (data) {
+              console.log("⚠️ Pago PayPal cancelado:", data);
+              showNotification("Pago cancelado", "warning");
+            },
+          })
+          .render("#paypal-button-container");
+      }
+
+      // 💳 NUEVA FUNCIÓN: Manejar éxito de PayPal
+      function handlePayPalSuccess(paypalDetails) {
+        // Generar token de orden
+        const orderToken = generateOrderToken();
+
+        // Recopilar datos del formulario
+        const datosFormulario = {
+          email: document.getElementById("email")?.value || "",
+          firstName: document.getElementById("first-name")?.value || "",
+          lastName: document.getElementById("last-name")?.value || "",
+          phone: document.getElementById("phone")?.value || "",
+          address: document.getElementById("address")?.value || "",
+          city: document.getElementById("city")?.value || "",
+          state: document.getElementById("state")?.value || "Honduras",
+          zip: document.getElementById("zip")?.value || "",
+          paymentMethod: "PayPal",
+          paypalTransactionId: paypalDetails.id,
+          paypalPayerEmail: paypalDetails.payer?.email_address,
+        };
+
+        // Guardar en historial
+        savePurchaseToHistory(orderToken, "PayPal");
+
+        // Actualizar token en la página
+        document.getElementById("purchase-token").textContent = orderToken;
+
+        // Actualizar página de éxito para PayPal
+        updateSuccessPageForPayPal(paypalDetails);
+
+        // Ir al paso de confirmación
+        nextStep(4);
+
+        // Limpiar carrito
+        clearCartAfterPurchase();
+
+        // Mostrar notificación de éxito
+        showNotification("¡Pago con PayPal exitoso!", "success");
+      }
+
+      // 💳 NUEVA FUNCIÓN: Actualizar página de éxito para PayPal
+      function updateSuccessPageForPayPal(paypalDetails) {
+        const successContainer = document.querySelector(".success-container");
+        if (successContainer) {
+          const subtitle = successContainer.querySelector(".section-subtitle");
+          if (subtitle) {
+            subtitle.textContent =
+              "Tu pago con PayPal ha sido procesado exitosamente";
+          }
+        }
+
+        // Actualizar instrucciones específicas para PayPal
+        const securityFeatures = document.querySelector(
+          "#section-4 .security-features"
+        );
+        if (securityFeatures) {
+          const securityTitle =
+            securityFeatures.querySelector(".security-title");
+          if (securityTitle) {
+            securityTitle.innerHTML = "<span>💳</span> Pago PayPal Confirmado";
+          }
+
+          const securityList = securityFeatures.querySelector(".security-list");
+          if (securityList) {
+            securityList.innerHTML = `
+              <div class="security-item">
+                <div class="security-icon">✓</div>
+                <span><strong>Pago procesado</strong> - ID: ${paypalDetails.id.substring(
+                  0,
+                  10
+                )}...</span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">✓</div>
+                <span><strong>Email de confirmación</strong> enviado a tu correo</span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">✓</div>
+                <span><strong>Pedido en preparación</strong> - Procesamiento en 24h</span>
+              </div>
+              <div class="security-item">
+                <div class="security-icon">✓</div>
+                <span><strong>Envío y seguimiento</strong> por SMS en 2-5 días</span>
+              </div>
+            `;
+          }
+        }
+
+        console.log("✅ Página de éxito actualizada para PayPal");
       }
     </script>
     <!-- 🎨 CUSTOM POPUPS SYSTEM -->
