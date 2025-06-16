@@ -109,8 +109,35 @@ async function applyPromoCode() {
       // ✅ Código único válido
       console.log("✅ Código único válido:", data);
 
-      const cartInfo = getCartInfo();
-      const subtotal = cartInfo.total;
+      // 🎯 CORREGIR: Calcular descuento solo sobre productos de tienda
+      const cartData = localStorage.getItem("newlife_cart");
+      let tiendaSubtotal = 0;
+
+      if (cartData) {
+        try {
+          const cart = JSON.parse(cartData);
+          const cartItems = Array.isArray(cart) ? cart : cart.items || [];
+
+          // Calcular subtotal solo de productos de tienda
+          cartItems.forEach((item) => {
+            if (item.source === "tienda") {
+              tiendaSubtotal += item.price * (item.quantity || 1);
+            }
+          });
+
+          console.log("🛒 Análisis para código único:", {
+            productosEnCarrito: cartItems.map((item) => ({
+              name: item.name,
+              source: item.source,
+              price: item.price,
+            })),
+            subtotalTienda: tiendaSubtotal,
+          });
+        } catch (e) {
+          console.error("Error al analizar productos del carrito:", e);
+          tiendaSubtotal = 0;
+        }
+      }
 
       // 🔧 CORREGIR: La API devuelve discount como porcentaje (ej: "10%")
       // Necesitamos extraer el número y convertirlo a decimal
@@ -124,12 +151,14 @@ async function applyPromoCode() {
 
       console.log("💰 Porcentaje de descuento calculado:", discountPercentage);
 
-      // Calcular descuento correctamente
+      // 🎯 CALCULAR DESCUENTO SOLO SOBRE PRODUCTOS DE TIENDA
       const discountAmount =
-        Math.round(subtotal * (discountPercentage / 100) * 100) / 100;
+        tiendaSubtotal > 0
+          ? Math.round(tiendaSubtotal * (discountPercentage / 100) * 100) / 100
+          : 0;
 
-      console.log("💸 Cálculo de descuento:", {
-        subtotal: subtotal,
+      console.log("💸 Cálculo de descuento corregido:", {
+        subtotalTienda: tiendaSubtotal,
         percentage: discountPercentage,
         amount: discountAmount,
       });
