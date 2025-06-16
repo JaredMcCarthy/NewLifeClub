@@ -274,10 +274,7 @@
             </p>
           </div>
           <div class="about-image">
-            <img
-              src="fotoslifepro/heropic2.png"
-              alt="Corredores en entrenamiento"
-            />
+            <img src="" alt="" />
           </div>
         </div>
         <div class="stats-container">
@@ -315,7 +312,14 @@
             nivel actual y objetivos de carrera.
           </p>
         </div>
-        <div class="plans-grid">
+
+        <!-- Controles de carrusel (solo móvil) -->
+        <div class="carousel-nav-plans">
+          <button class="carousel-btn-plans prev-plans">‹</button>
+          <button class="carousel-btn-plans next-plans">›</button>
+        </div>
+
+        <div class="plans-grid" id="plansCarousel">
           <div class="plan-card" data-distance="5K">
             <div class="plan-header">
               <h3>10K</h3>
@@ -384,6 +388,13 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Indicadores de carrusel (solo móvil) -->
+        <div class="carousel-indicators-plans">
+          <span class="indicator-plans active" data-slide="0"></span>
+          <span class="indicator-plans" data-slide="1"></span>
+          <span class="indicator-plans" data-slide="2"></span>
         </div>
       </div>
     </section>
@@ -506,64 +517,28 @@
         </div>
         <div class="features-container">
           <div class="feature-card" data-aos="fade-up">
-            <div class="feature-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <h3>Mejora Garantizada</h3>
-            <p>
-              Nuestros programas están diseñados para mostrar resultados
-              medibles desde las primeras semanas.
-            </p>
+            <div class="feature-number">100+</div>
+            <h3>Corredores graduados</h3>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="feature-icon">
-              <i class="fas fa-user-shield"></i>
-            </div>
-            <h3>Entrenamiento Seguro</h3>
-            <p>
-              Minimizamos el riesgo de lesiones con programas progresivos y
-              adaptados a cada nivel.
-            </p>
+            <div class="feature-number">90%</div>
+            <h3>Tasa de éxito</h3>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="feature-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <h3>Comunidad Activa</h3>
-            <p>
-              Únete a miles de corredores que comparten tus objetivos y te
-              motivarán día a día.
-            </p>
+            <div class="feature-number">4</div>
+            <h3>Entrenadores expertos</h3>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="feature-icon">
-              <i class="fas fa-brain"></i>
-            </div>
-            <h3>Conocimiento Experto</h3>
-            <p>
-              Aprende de entrenadores certificados con experiencia internacional
-              en competiciones.
-            </p>
+            <div class="feature-number">85%</div>
+            <h3>Mejora rendimiento</h3>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-            <div class="feature-icon">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3>Acceso 24/7</h3>
-            <p>
-              Entrena cuando y donde quieras con nuestro contenido disponible en
-              todos tus dispositivos.
-            </p>
+            <div class="feature-number">24/7</div>
+            <h3>Acceso completo</h3>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
-            <div class="feature-icon">
-              <i class="fas fa-medal"></i>
-            </div>
-            <h3>Resultados Reales</h3>
-            <p>
-              Más del 85% de nuestros miembros logran sus objetivos de carrera
-              en su primer intento.
-            </p>
+            <div class="feature-number">3+</div>
+            <h3>Años de experiencia</h3>
           </div>
         </div>
         <div class="testimonial-slider">
@@ -699,9 +674,6 @@
             </div>
           </div>
         </div>
-        <div class="editorial-cta">
-          <button class="editorial-button">VER TODOS LOS ARTÍCULOS</button>
-        </div>
       </div>
     </section>
 
@@ -803,6 +775,75 @@
           plan42kButton.addEventListener("click", function (e) {
             e.preventDefault();
             window.open("plan42k.html", "_blank");
+          });
+        }
+      });
+    </script>
+
+    <!-- Script para carrusel de planes de entrenamiento -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Solo ejecutar en móvil
+        if (window.innerWidth <= 768) {
+          const carousel = document.getElementById("plansCarousel");
+          const cards = carousel.querySelectorAll(".plan-card");
+          const indicators = document.querySelectorAll(".indicator-plans");
+          const prevBtn = document.querySelector(".prev-plans");
+          const nextBtn = document.querySelector(".next-plans");
+
+          let currentSlide = 0;
+          const totalSlides = cards.length;
+
+          // Función para actualizar el carrusel
+          function updateCarousel() {
+            const cardWidth = cards[0].offsetWidth + 20; // ancho + gap
+            carousel.scrollTo({
+              left: currentSlide * cardWidth,
+              behavior: "smooth",
+            });
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, index) => {
+              indicator.classList.toggle("active", index === currentSlide);
+            });
+          }
+
+          // Botón siguiente
+          nextBtn.addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+          });
+
+          // Botón anterior
+          prevBtn.addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+          });
+
+          // Click en indicadores
+          indicators.forEach((indicator, index) => {
+            indicator.addEventListener("click", () => {
+              currentSlide = index;
+              updateCarousel();
+            });
+          });
+
+          // Auto-advance cada 5 segundos
+          setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+          }, 5000);
+
+          // Detectar scroll manual para actualizar indicadores
+          carousel.addEventListener("scroll", () => {
+            const cardWidth = cards[0].offsetWidth + 20;
+            const newSlide = Math.round(carousel.scrollLeft / cardWidth);
+            if (newSlide !== currentSlide) {
+              currentSlide = newSlide;
+              indicators.forEach((indicator, index) => {
+                indicator.classList.toggle("active", index === currentSlide);
+              });
+            }
           });
         }
       });
