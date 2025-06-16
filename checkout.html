@@ -2283,9 +2283,14 @@
 
           // Obtener información del carrito
           const cartInfo = getCartInfo();
-          const totalAmount = cartInfo.total.toFixed(2);
+          // 💰 USAR EL TOTAL FINAL (con impuestos) y convertir a USD
+          const totalLempiras = cartInfo.total;
+          const exchangeRate = 0.04; // 1 Lempira = 0.04 USD (aproximado)
+          const totalUSD = (totalLempiras * exchangeRate).toFixed(2);
 
-          console.log("💳 Inicializando PayPal con total:", totalAmount);
+          console.log("💳 Inicializando PayPal:");
+          console.log("- Total en Lempiras:", totalLempiras);
+          console.log("- Total en USD:", totalUSD);
 
           // Renderizar botones de PayPal
           paypal
@@ -2302,10 +2307,12 @@
                   purchase_units: [
                     {
                       amount: {
-                        value: totalAmount,
+                        value: totalUSD,
                         currency_code: "USD",
                       },
-                      description: "Compra en NewLifeRun Club",
+                      description: `Compra NewLifeRun Club - L.${totalLempiras.toFixed(
+                        2
+                      )}`,
                     },
                   ],
                 });
