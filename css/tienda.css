@@ -163,29 +163,15 @@ body {
 }
 
 .info-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.info-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.settled-image {
+  flex-direction: column;
   max-width: 100%;
-  height: auto;
-  opacity: 0;
-  transform: translateX(-50px);
-  transition: all 0.4s ease;
+  padding: 0 20px;
+  text-align: center;
 }
 
-.settled-image.visible {
-  opacity: 1;
-  transform: translateX(0);
+.info-text {
+  text-align: center;
+  width: 100%;
 }
 
 .info-text h2 {
@@ -805,7 +791,7 @@ body {
   .product-info h3 {
     font-size: 1.1rem !important;
     margin-bottom: 10px !important;
-    color: #fff !important;
+    color: #000000 !important;
   }
 
   .product-info .price {
@@ -1014,8 +1000,91 @@ body {
     display: none !important;
   }
 
-  /* Asegurar que los títulos de productos sean negros en desktop */
-  .product-info h3 {
-    color: var(--color-black) !important;
+  /* Centrar perfectamente la sección info en desktop */
+  .info-content {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+  }
+
+  .info-text {
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .info-text h2 {
+    text-align: center !important;
+    margin-bottom: 40px !important;
+  }
+
+  .feature {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    margin-bottom: 30px !important;
+    gap: 20px !important;
+    text-align: left !important;
+  }
+
+  /* Restaurar diseño original de tarjetas de productos en desktop */
+  .product-card {
+    background: var(--color-white) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .product-card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .product-image {
+    height: 300px !important;
+  }
+
+  .product-info {
+    padding: 25px !important;
+    text-align: left !important;
+  }
+
+  /* FORZAR títulos negros con máxima especificidad CSS */
+  section#mujer .container .products-grid .product-card .product-info h3 {
+    color: #000000 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  section#hombre .container .products-grid .product-card .product-info h3 {
+    color: #000000 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  section#unisex .container .products-grid .product-card .product-info h3 {
+    color: #000000 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .product-info .price {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    background: var(--primary-gradient) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
   }
 }

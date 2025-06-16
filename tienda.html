@@ -103,14 +103,6 @@
     <section class="info-section" id="infoSection">
       <div class="container">
         <div class="info-content">
-          <div class="info-image">
-            <img
-              src="Fotostienda/Bannerpicture.jpeg"
-              alt="Calidad Superior"
-              class="settled-image"
-              id="settledImage"
-            />
-          </div>
           <div class="info-text">
             <h2>¿Por qué elegir nuestra ropa?</h2>
             <div class="feature">
@@ -183,7 +175,11 @@
     <section class="products-section" id="mujer">
       <div class="container">
         <h2>Colección Mujer</h2>
-        <div class="products-grid">
+        <!-- Botones de navegación del carrusel (solo móvil) -->
+        <button class="carousel-nav-tienda prev" onclick="prevSlideTienda('mujer')">‹</button>
+        <button class="carousel-nav-tienda next" onclick="nextSlideTienda('mujer')">›</button>
+        
+        <div class="products-grid" id="grid-mujer">
           <div class="product-card" data-product="camisa-mujer-1">
             <div class="product-image">
               <img src="Fotostienda/mujer1.png" alt="Camisa Mujer 1" />
@@ -212,6 +208,13 @@
             </div>
           </div>
         </div>
+        
+        <!-- Indicadores del carrusel (solo móvil) -->
+        <div class="carousel-indicators-tienda" id="indicators-mujer">
+          <div class="carousel-dot-tienda active" onclick="goToSlideTienda('mujer', 0)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('mujer', 1)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('mujer', 2)"></div>
+        </div>
       </div>
     </section>
 
@@ -219,7 +222,11 @@
     <section class="products-section" id="hombre">
       <div class="container">
         <h2>Colección Hombre</h2>
-        <div class="products-grid">
+        <!-- Botones de navegación del carrusel (solo móvil) -->
+        <button class="carousel-nav-tienda prev" onclick="prevSlideTienda('hombre')">‹</button>
+        <button class="carousel-nav-tienda next" onclick="nextSlideTienda('hombre')">›</button>
+        
+        <div class="products-grid" id="grid-hombre">
           <div class="product-card" data-product="camisa-hombre-1">
             <div class="product-image">
               <img src="Fotostienda/Hombre1.png" alt="Camisa Hombre 1" />
@@ -248,6 +255,13 @@
             </div>
           </div>
         </div>
+        
+        <!-- Indicadores del carrusel (solo móvil) -->
+        <div class="carousel-indicators-tienda" id="indicators-hombre">
+          <div class="carousel-dot-tienda active" onclick="goToSlideTienda('hombre', 0)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('hombre', 1)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('hombre', 2)"></div>
+        </div>
       </div>
     </section>
 
@@ -255,7 +269,11 @@
     <section class="products-section" id="unisex">
       <div class="container">
         <h2>Colección Unisex</h2>
-        <div class="products-grid">
+        <!-- Botones de navegación del carrusel (solo móvil) -->
+        <button class="carousel-nav-tienda prev" onclick="prevSlideTienda('unisex')">‹</button>
+        <button class="carousel-nav-tienda next" onclick="nextSlideTienda('unisex')">›</button>
+        
+        <div class="products-grid" id="grid-unisex">
           <div class="product-card" data-product="camisa-unisex-1">
             <div class="product-image">
               <img src="Fotostienda/unisex1.png" alt="Camisa Unisex 1" />
@@ -283,6 +301,13 @@
               <p class="price">L.500</p>
             </div>
           </div>
+        </div>
+        
+        <!-- Indicadores del carrusel (solo móvil) -->
+        <div class="carousel-indicators-tienda" id="indicators-unisex">
+          <div class="carousel-dot-tienda active" onclick="goToSlideTienda('unisex', 0)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('unisex', 1)"></div>
+          <div class="carousel-dot-tienda" onclick="goToSlideTienda('unisex', 2)"></div>
         </div>
       </div>
     </section>
@@ -402,5 +427,99 @@
     <script src="js/navbar-session.js"></script>
     <!-- 🔒 AUTH PROTECTION SYSTEM -->
     <script src="js/auth-protection.js?v=1.0"></script>
+    
+    <!-- JavaScript para carruseles de tienda (solo móvil) -->
+    <script>
+      // Estado de cada carrusel
+      const carouselState = {
+        mujer: { currentSlide: 0, totalSlides: 3 },
+        hombre: { currentSlide: 0, totalSlides: 3 },
+        unisex: { currentSlide: 0, totalSlides: 3 }
+      };
+
+      function updateCarouselTienda(section) {
+        // Solo ejecutar en móvil
+        if (window.innerWidth <= 768) {
+          const grid = document.getElementById(`grid-${section}`);
+          const dots = document.querySelectorAll(`#indicators-${section} .carousel-dot-tienda`);
+          
+          if (grid) {
+            // Calcular posición de scroll
+            const slideWidth = grid.scrollWidth / carouselState[section].totalSlides;
+            grid.scrollTo({
+              left: slideWidth * carouselState[section].currentSlide,
+              behavior: 'smooth'
+            });
+          }
+          
+          // Actualizar indicadores
+          dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === carouselState[section].currentSlide);
+          });
+        }
+      }
+
+      function nextSlideTienda(section) {
+        carouselState[section].currentSlide = (carouselState[section].currentSlide + 1) % carouselState[section].totalSlides;
+        updateCarouselTienda(section);
+      }
+
+      function prevSlideTienda(section) {
+        carouselState[section].currentSlide = (carouselState[section].currentSlide - 1 + carouselState[section].totalSlides) % carouselState[section].totalSlides;
+        updateCarouselTienda(section);
+      }
+
+      function goToSlideTienda(section, index) {
+        carouselState[section].currentSlide = index;
+        updateCarouselTienda(section);
+      }
+
+      // Auto-slide para cada sección (opcional)
+      let autoSlideIntervals = {};
+      
+      function startAutoSlideTienda(section) {
+        if (window.innerWidth <= 768) {
+          autoSlideIntervals[section] = setInterval(() => nextSlideTienda(section), 4000);
+        }
+      }
+
+      function stopAutoSlideTienda(section) {
+        if (autoSlideIntervals[section]) {
+          clearInterval(autoSlideIntervals[section]);
+          delete autoSlideIntervals[section];
+        }
+      }
+
+      function stopAllAutoSlides() {
+        Object.keys(autoSlideIntervals).forEach(section => {
+          stopAutoSlideTienda(section);
+        });
+      }
+
+      // Inicializar cuando cargue la página
+      document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar todos los carruseles
+        ['mujer', 'hombre', 'unisex'].forEach(section => {
+          updateCarouselTienda(section);
+          startAutoSlideTienda(section);
+          
+          // Pausar auto-slide cuando el usuario interactúa
+          const grid = document.getElementById(`grid-${section}`);
+          if (grid) {
+            grid.addEventListener('touchstart', () => stopAutoSlideTienda(section));
+            grid.addEventListener('scroll', () => stopAutoSlideTienda(section));
+          }
+        });
+      });
+
+      // Reinicializar en cambio de tamaño de ventana
+      window.addEventListener('resize', function() {
+        ['mujer', 'hombre', 'unisex'].forEach(section => {
+          updateCarouselTienda(section);
+          stopAutoSlideTienda(section);
+          startAutoSlideTienda(section);
+        });
+      });
+    </script>
   </body>
 </html>
