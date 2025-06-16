@@ -749,8 +749,132 @@ body {
   }
 
   .products-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 20px !important;
+    padding: 20px 10px !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+  }
+
+  /* Ocultar scrollbar en WebKit */
+  .products-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .product-card {
+    min-width: 280px !important;
+    max-width: 280px !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.1) !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px) !important;
+  }
+
+  .product-image {
+    width: 100% !important;
+    height: 200px !important;
+    overflow: hidden !important;
+  }
+
+  .product-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.05) !important;
+  }
+
+  .product-info {
+    padding: 15px !important;
+    text-align: center !important;
+  }
+
+  .product-info h3 {
+    font-size: 1.1rem !important;
+    margin-bottom: 10px !important;
+    color: #fff !important;
+  }
+
+  .product-info .price {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: #ff69b4 !important;
+  }
+
+  /* Indicadores de carrusel para cada sección */
+  .carousel-indicators-tienda {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-top: 20px !important;
+    padding: 0 20px !important;
+  }
+
+  .carousel-dot-tienda {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+  }
+
+  .carousel-dot-tienda.active {
+    background: #ff69b4 !important;
+    transform: scale(1.2) !important;
+  }
+
+  /* Botones de navegación */
+  .carousel-nav-tienda {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: white !important;
+    border: none !important;
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+  }
+
+  .carousel-nav-tienda.prev {
+    left: 5px !important;
+  }
+
+  .carousel-nav-tienda.next {
+    right: 5px !important;
+  }
+
+  .carousel-nav-tienda:hover {
+    background: rgba(255, 105, 180, 0.7) !important;
+  }
+
+  /* Contenedor de sección con posición relativa para botones */
+  .products-section {
+    position: relative !important;
+  }
+
+  .products-section .container {
+    position: relative !important;
   }
 
   .modal-content {
@@ -880,5 +1004,18 @@ body {
     padding: 16px;
     font-size: 1rem;
     margin-top: 25px;
+  }
+}
+
+/* Mantener diseño original en desktop */
+@media (min-width: 769px) {
+  .carousel-indicators-tienda,
+  .carousel-nav-tienda {
+    display: none !important;
+  }
+
+  /* Asegurar que los títulos de productos sean negros en desktop */
+  .product-info h3 {
+    color: var(--color-black) !important;
   }
 }
