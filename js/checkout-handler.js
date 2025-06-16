@@ -357,11 +357,53 @@ function updateCartSummaryWithDiscount() {
   const subtotal = cartInfo.total;
   const shipping = subtotal >= 75 ? 0 : 10; // Envío gratis en compras mayores a L.75
 
-  // Aplicar descuento si está activo
+  // 🎯 NUEVA LÓGICA: Solo aplicar descuento a productos de tienda
   let discountAmount = 0;
   if (appliedDiscount.active) {
-    discountAmount =
-      Math.round(subtotal * (appliedDiscount.percentage / 100) * 100) / 100;
+    // Obtener productos del carrito desde localStorage
+    const cartData = localStorage.getItem("newlife_cart");
+    let tiendaSubtotal = 0;
+
+    if (cartData) {
+      try {
+        const cart = JSON.parse(cartData);
+        const cartItems = Array.isArray(cart) ? cart : cart.items || [];
+
+        // Calcular subtotal solo de productos de tienda
+        cartItems.forEach((item) => {
+          if (item.source === "tienda") {
+            tiendaSubtotal += item.price * (item.quantity || 1);
+          }
+        });
+
+        console.log("🛒 Análisis de productos para descuento:", {
+          subtotalTotal: subtotal,
+          subtotalTienda: tiendaSubtotal,
+          productosEnCarrito: cartItems.map((item) => ({
+            name: item.name,
+            source: item.source,
+            price: item.price,
+          })),
+        });
+      } catch (e) {
+        console.error("Error al analizar productos del carrito:", e);
+        tiendaSubtotal = subtotal; // Fallback
+      }
+    }
+
+    // Solo aplicar descuento al subtotal de productos de tienda
+    if (tiendaSubtotal > 0) {
+      discountAmount =
+        Math.round(tiendaSubtotal * (appliedDiscount.percentage / 100) * 100) /
+        100;
+      console.log("💰 Descuento aplicado solo a productos de tienda:", {
+        tiendaSubtotal: tiendaSubtotal,
+        porcentajeDescuento: appliedDiscount.percentage,
+        montoDescuento: discountAmount,
+      });
+    } else {
+      console.log("⚠️ No hay productos de tienda en el carrito, descuento = 0");
+    }
   }
 
   const subtotalAfterDiscount = subtotal - discountAmount;
