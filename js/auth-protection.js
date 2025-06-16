@@ -211,6 +211,25 @@ class AuthProtection {
     // Aplicar estilos
     this.applyPopupStyles();
 
+    // 🔧 MEJORA PARA MÓVIL: Prevenir scroll y asegurar posicionamiento
+    if (window.innerWidth <= 768) {
+      // Prevenir scroll del body
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+
+      // Forzar scroll al top para centrado perfecto
+      window.scrollTo(0, 0);
+
+      // Aplicar estilos adicionales al overlay para móvil
+      overlay.style.position = "fixed";
+      overlay.style.top = "0";
+      overlay.style.left = "0";
+      overlay.style.width = "100vw";
+      overlay.style.height = "100vh";
+      overlay.style.zIndex = "999999";
+    }
+
     // Mostrar con animación
     setTimeout(() => {
       overlay.classList.add("show");
@@ -366,9 +385,39 @@ class AuthProtection {
       }
 
       @media (max-width: 600px) {
+        .auth-required-overlay {
+          /* Asegurar que el overlay cubra toda la pantalla visible */
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          /* Prevenir scroll del fondo */
+          overflow: hidden;
+          /* Forzar centrado perfecto */
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          /* Z-index muy alto para móvil */
+          z-index: 999999 !important;
+        }
+        
         .auth-required-popup {
           margin: 20px;
           padding: 30px 20px;
+          /* Asegurar que no se salga de la pantalla */
+          max-height: 90vh;
+          overflow-y: auto;
+          /* Posicionamiento absoluto dentro del overlay */
+          position: relative;
+          /* Centrado perfecto */
+          transform: none !important;
+        }
+        
+        .auth-required-overlay.show .auth-required-popup {
+          transform: none !important;
         }
         
         .popup-buttons {
@@ -389,6 +438,15 @@ class AuthProtection {
   // ==========================================
   closePopup(overlay) {
     overlay.classList.remove("show");
+
+    // 🔧 RESTAURAR SCROLL EN MÓVIL
+    if (window.innerWidth <= 768) {
+      // Restaurar scroll del body
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+
     setTimeout(() => {
       overlay.remove();
     }, 300);
