@@ -2136,7 +2136,10 @@
 
           // 💳 Inicializar PayPal por defecto (ya que está seleccionado)
           selectedPaymentMethod = "paypal";
-          initializePayPal();
+          // Esperar más tiempo para que PayPal SDK se cargue completamente
+          setTimeout(() => {
+            initializePayPal();
+          }, 1000);
         }, 200);
       });
 
@@ -2230,8 +2233,20 @@
 
       // 💳 NUEVA FUNCIÓN: Inicializar PayPal
       function initializePayPal() {
+        // Verificar si PayPal está disponible
+        if (typeof paypal === "undefined") {
+          console.log("⏳ PayPal SDK aún no está cargado, reintentando...");
+          setTimeout(initializePayPal, 500);
+          return;
+        }
+
         // Limpiar contenedor anterior
         const container = document.getElementById("paypal-button-container");
+        if (!container) {
+          console.error("❌ Contenedor de PayPal no encontrado");
+          return;
+        }
+
         container.innerHTML = "";
 
         // Obtener información del carrito
