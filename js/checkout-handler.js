@@ -422,9 +422,8 @@ function updateCartSummaryWithDiscount() {
 
     // Solo aplicar descuento al subtotal de productos de tienda
     if (tiendaSubtotal > 0) {
-      discountAmount =
-        Math.round(tiendaSubtotal * (appliedDiscount.percentage / 100) * 100) /
-        100;
+      // 🎯 USAR EL VALOR YA CALCULADO CORRECTAMENTE
+      discountAmount = appliedDiscount.amount;
       console.log("💰 Descuento aplicado solo a productos de tienda:", {
         tiendaSubtotal: tiendaSubtotal,
         porcentajeDescuento: appliedDiscount.percentage,
