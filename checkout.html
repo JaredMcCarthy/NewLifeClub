@@ -26,7 +26,7 @@
 
           // 🧪 SANDBOX MODE - PAGOS DE PRUEBA
           script.src =
-"https://www.paypal.com/sdk/js?client-id=AYw421e3EEAo-iQhrDugwvRLekjQe8y9V4gOgTJn1snL_0FNnOS1SPVb2fxE83_NHmaNLB3ePut4g_N1&currency=USD&intent=capture&enable-funding=venmo,paylater,card";
+            "https://www.paypal.com/sdk/js?client-id=AYw421e3EEAo-iQhrDugwvRLekjQe8y9V4gOgTJn1snL_0FNnOS1SPVb2fxE83_NHmaNLB3ePut4g_N1&currency=USD&intent=capture&enable-funding=venmo,paylater,card";
 
           script.onload = () => {
             console.log("📦 Script PayPal cargado, verificando...");
@@ -2361,43 +2361,82 @@
         }
       }
 
-      // 💳 NUEVA FUNCIÓN: Manejar éxito de PayPal
-      function handlePayPalSuccess(paypalDetails) {
-        // Generar token de orden
-        const orderToken = generateOrderToken();
-
-        // Recopilar datos del formulario
-        const datosFormulario = {
-          email: document.getElementById("email")?.value || "",
-          firstName: document.getElementById("first-name")?.value || "",
-          lastName: document.getElementById("last-name")?.value || "",
-          phone: document.getElementById("phone")?.value || "",
-          address: document.getElementById("address")?.value || "",
-          city: document.getElementById("city")?.value || "",
-          state: document.getElementById("state")?.value || "Honduras",
-          zip: document.getElementById("zip")?.value || "",
-          paymentMethod: "PayPal",
-          paypalTransactionId: paypalDetails.id,
-          paypalPayerEmail: paypalDetails.payer?.email_address,
-        };
-
-        // Guardar en historial
-        savePurchaseToHistory(orderToken, "PayPal");
-
-        // Actualizar token en la página
-        document.getElementById("purchase-token").textContent = orderToken;
-
-        // Actualizar página de éxito para PayPal
-        updateSuccessPageForPayPal(paypalDetails);
-
-        // Ir al paso de confirmación
-        nextStep(4);
-
-        // Limpiar carrito
-        clearCartAfterPurchase();
 
         // Mostrar notificación de éxito
         showNotification("¡Pago con PayPal exitoso!", "success");
+      }
+
+      // 💳 NUEVA FUNCIÓN: Manejar éxito de PayPal
+      async function handlePayPalSuccess(paypalDetails) {
+        try {
+          console.log("🎉 Procesando éxito de PayPal...");
+
+          // Recopilar datos del formulario
+          const datosFormulario = {
+            email: document.getElementById("email")?.value || "",
+            firstName: document.getElementById("first-name")?.value || "",
+            lastName: document.getElementById("last-name")?.value || "",
+            phone: document.getElementById("phone")?.value || "",
+            address: document.getElementById("address")?.value || "",
+            city: document.getElementById("city")?.value || "",
+            state: document.getElementById("state")?.value || "Honduras",
+            zip: document.getElementById("zip")?.value || "",
+            paymentMethod: "PayPal",
+            paypalTransactionId: paypalDetails.id,
+            paypalPayerEmail: paypalDetails.payer?.email_address,
+          };
+
+          // 🛒 PROCESAR COMPRA CON NUESTRA API
+          console.log("🔄 Guardando compra PayPal en base de datos...");
+          const resultadoAPI = await procesarCompraCompleta(datosFormulario);
+
+          let token;
+          if (resultadoAPI.success) {
+            // ✅ Compra exitosa en la API
+            token = resultadoAPI.token;
+            console.log("✅ Compra PayPal guardada exitosamente:", token);
+          } else {
+            // ❌ Error en la API, usar token local
+            console.error("❌ Error en la API:", resultadoAPI.error);
+            token = generateOrderToken();
+            showNotification(
+              "Advertencia: Pago exitoso, guardado localmente",
+              "warning"
+            );
+          }
+
+          // 🛍️ GUARDAR EN HISTORIAL LOCAL
+          savePurchaseToHistory(token, "PayPal");
+
+          // Actualizar token en la página
+          document.getElementById("purchase-token").textContent = token;
+
+          // Actualizar página de éxito para PayPal
+          updateSuccessPageForPayPal(paypalDetails);
+
+          // Ir al paso de confirmación
+          nextStep(4);
+
+          // Limpiar carrito
+          clearCartAfterPurchase();
+
+          // Mostrar notificación de éxito
+          showNotification("¡Pago con PayPal exitoso!", "success");
+        } catch (error) {
+          console.error("❌ Error procesando éxito de PayPal:", error);
+
+          // Generar token de fallback
+          const tokenFallback = generateOrderToken();
+          document.getElementById("purchase-token").textContent = tokenFallback;
+          savePurchaseToHistory(tokenFallback, "PayPal");
+
+          // Continuar con el flujo
+          updateSuccessPageForPayPal(paypalDetails);
+          nextStep(4);
+          clearCartAfterPurchase();
+
+          showNotification("Pago exitoso, guardado localmente", "warning");
+        }
       }
 
       // 💳 NUEVA FUNCIÓN: Actualizar página de éxito para PayPal
