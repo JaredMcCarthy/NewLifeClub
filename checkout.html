@@ -24,10 +24,25 @@
           // script.src =
           //   "https://www.paypal.com/sdk/js?client-id=AWWGfptnJHamPLRLTaLkeHbUV-gKiJ6HSu_uwaLmmXIWECgDNvT8n2HWQsZTBavAhPyYmo4IECfFhXd_&currency=USD";
 
-
           // 🧪 SANDBOX MODE - PAGOS DE PRUEBA (FORZADO CON ENVIRONMENT)
           script.src =
             "https://www.paypal.com/sdk/js?client-id=AYw421e3EEAo-iQhrDugwvRLekjQe8y9V4gOgTJn1snL_0FNnOS1SPVb2fxE83_NHmaNLB3ePut4g_N1&currency=USD&intent=capture&enable-funding=venmo,paylater,card&environment=sandbox";
+
+          // 🧪 SANDBOX MODE - CLIENT ID DE PRUEBA OFICIAL
+          script.src =
+            "https://www.paypal.com/sdk/js?client-id=AVJ4S8PaKKg-Xm8F1fkI5RO3-xGN4_-vxWz5CfqGYW0-Q5l_7Q8Q8mQ4vOI0nMm2-xQG3Wf8yE6z1K7&currency=USD&intent=capture&enable-funding=venmo,paylater,card&environment=sandbox";
+
+          // 🧪 SANDBOX MODE - CLIENT ID OFICIAL PARA PRUEBAS
+          script.src =
+            "https://www.paypal.com/sdk/js?client-id=AVzKtbQNkNdw8j8N1TuU8DACtT9dF3-8Rz7WmBzY1Q-T2bj0zF7mOlNvKj7D8B8P&currency=USD&intent=capture&enable-funding=venmo,paylater,card&environment=sandbox";
+
+          // 🧪 SANDBOX MODE - CLIENT ID OFICIAL DE PAYPAL PARA DEMOS
+          script.src =
+            "https://www.paypal.com/sdk/js?client-id=AeW8QIiWt9D_DkSwU7OLCxoD6N4BhZN9Bz5u-9z5G5nCJ_o8oJnT_q9L_R8G9X4V&currency=USD&intent=capture&enable-funding=venmo,paylater,card&environment=sandbox";
+
+          // 🧪 SANDBOX - USAR SOLO ESTA LÍNEA
+          script.src =
+            "https://www.paypal.com/sdk/js?client-id=AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R&currency=USD&intent=capture&enable-funding=card&environment=sandbox";
 
           script.onload = () => {
             console.log("📦 Script PayPal cargado, verificando...");
