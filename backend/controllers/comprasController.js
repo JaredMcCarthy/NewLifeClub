@@ -131,6 +131,24 @@ class ComprasController {
       const result = await client.query(query, values);
       await client.query("COMMIT");
 
+      // 📧 ENVIAR EMAIL DE CONFIRMACIÓN
+      try {
+        await this.enviarEmailConfirmacion({
+          email,
+          nombre,
+          apellido,
+          token_compra: result.rows[0].token_compra,
+          productos,
+          total: parseFloat(total),
+          metodo_pago,
+        });
+      } catch (emailError) {
+        console.warn(
+          "⚠️ Error enviando email (compra guardada exitosamente):",
+          emailError.message
+        );
+      }
+
       // 🎉 RESPUESTA EXITOSA
       res.status(201).json({
         success: true,
@@ -242,6 +260,214 @@ class ComprasController {
         success: false,
         message: "Error interno del servidor",
       });
+    }
+  }
+
+  // 📧 NUEVA FUNCIÓN: Enviar email de confirmación
+  static async enviarEmailConfirmacion(datosCompra) {
+    const nodemailer = require("nodemailer");
+
+    try {
+      // Configurar transporter
+      const transporter = nodemailer.createTransporter({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER || "newliferunclubhonduras@gmail.com",
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      // Crear HTML del email
+      const productosHTML = JSON.parse(datosCompra.productos)
+        .map(
+          (producto) => `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 10px; font-family: Arial, sans-serif;">${
+            producto.nombre
+          }</td>
+          <td style="padding: 10px; text-align: center; font-family: Arial, sans-serif;">${
+            producto.cantidad
+          }</td>
+          <td style="padding: 10px; text-align: right; font-family: Arial, sans-serif;">L.${producto.precio.toFixed(
+            2
+          )}</td>
+          <td style="padding: 10px; text-align: right; font-family: Arial, sans-serif; font-weight: bold;">L.${(
+            producto.precio * producto.cantidad
+          ).toFixed(2)}</td>
+        </tr>
+      `
+        )
+        .join("");
+
+      const emailHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Confirmación de Compra - NewLifeRun Club</title>
+        </head>
+        <body style="margin: 0; padding: 20px; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #000, #333); color: white; padding: 30px; text-align: center;">
+              <h1 style="margin: 0; font-size: 28px; font-weight: bold;">NewLifeRun Club</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">¡Gracias por tu compra!</p>
+            </div>
+
+            <!-- Contenido -->
+            <div style="padding: 30px;">
+              <div style="background: #e8f5e8; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                <h2 style="margin: 0; color: #4CAF50; font-size: 24px;">✅ ¡Compra Confirmada!</h2>
+                <p style="margin: 10px 0 0 0; color: #333;">Tu pedido ha sido procesado exitosamente</p>
+              </div>
+
+              <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+                Hola <strong>${datosCompra.nombre} ${
+        datosCompra.apellido
+      }</strong>,
+              </p>
+
+              <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                Hemos recibido tu ${
+                  datosCompra.metodo_pago === "PayPal" ? "pago" : "pedido"
+                } correctamente. 
+                ${
+                  datosCompra.metodo_pago === "deposito_bancario"
+                    ? "Para completar tu pedido, realiza el depósito y envía el comprobante a nuestro email."
+                    : "Tu compra será procesada en las próximas 24 horas."
+                }
+              </p>
+
+              <!-- Token de Compra -->
+              <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px dashed #000; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Token de Compra</p>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; font-family: 'Courier New', monospace; color: #000; letter-spacing: 3px;">${
+                  datosCompra.token_compra
+                }</p>
+                <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">Guarda este token para seguimiento</p>
+              </div>
+
+              <!-- Detalles de Productos -->
+              <h3 style="color: #333; border-bottom: 2px solid #000; padding-bottom: 10px; margin: 30px 0 20px 0;">📦 Detalles de tu Pedido</h3>
+              
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                <thead>
+                  <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 12px; text-align: left; font-family: Arial, sans-serif; border-bottom: 2px solid #000;">Producto</th>
+                    <th style="padding: 12px; text-align: center; font-family: Arial, sans-serif; border-bottom: 2px solid #000;">Cant.</th>
+                    <th style="padding: 12px; text-align: right; font-family: Arial, sans-serif; border-bottom: 2px solid #000;">Precio</th>
+                    <th style="padding: 12px; text-align: right; font-family: Arial, sans-serif; border-bottom: 2px solid #000;">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${productosHTML}
+                </tbody>
+                <tfoot>
+                  <tr style="border-top: 2px solid #000; background-color: #f8f9fa;">
+                    <td colspan="3" style="padding: 15px; text-align: right; font-weight: bold; font-family: Arial, sans-serif;">TOTAL:</td>
+                    <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px; font-family: Arial, sans-serif; color: #000;">L.${datosCompra.total.toFixed(
+                      2
+                    )}</td>
+                  </tr>
+                </tfoot>
+              </table>
+
+              <!-- Método de Pago -->
+              <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #333;">💳 Método de Pago</h4>
+                <p style="margin: 0; color: #666; font-size: 16px;">
+                  ${
+                    datosCompra.metodo_pago === "PayPal"
+                      ? "🅿️ PayPal"
+                      : datosCompra.metodo_pago === "tarjeta_credito"
+                      ? "💳 Tarjeta de Crédito"
+                      : datosCompra.metodo_pago === "tarjeta_debito"
+                      ? "💳 Tarjeta de Débito"
+                      : "🏦 Depósito Bancario"
+                  }
+                </p>
+              </div>
+
+              <!-- Próximos pasos -->
+              <div style="background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <h4 style="margin: 0 0 15px 0; color: #856404;">📋 ¿Qué sigue?</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #856404; line-height: 1.8;">
+                  ${
+                    datosCompra.metodo_pago === "deposito_bancario"
+                      ? `
+                    <li><strong>Realiza el depósito</strong> por L.${datosCompra.total.toFixed(
+                      2
+                    )}</li>
+                    <li><strong>Envía el comprobante</strong> a: newliferunclubhonduras@gmail.com</li>
+                    <li><strong>Procesaremos tu pedido</strong> en 24-48 horas</li>
+                  `
+                      : `
+                    <li><strong>Procesaremos tu pedido</strong> en las próximas 24 horas</li>
+                    <li><strong>Te enviaremos actualizaciones</strong> por email y SMS</li>
+                    <li><strong>Envío en 2-5 días</strong> hábiles</li>
+                  `
+                  }
+                  <li><strong>Seguimiento disponible</strong> con tu token de compra</li>
+                </ul>
+              </div>
+
+              <!-- Contacto -->
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="color: #666; margin-bottom: 10px;">¿Necesitas ayuda?</p>
+                <p style="color: #333; margin: 5px 0;">
+                  📧 <a href="mailto:newliferunclubhonduras@gmail.com" style="color: #000; text-decoration: none;">newliferunclubhonduras@gmail.com</a>
+                </p>
+                <p style="color: #333; margin: 5px 0;">📱 WhatsApp: +504 0000-0000</p>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+              <p style="margin: 0; color: #666; font-size: 14px;">
+                © 2025 NewLifeRun Club - Tu comunidad de running en Honduras
+              </p>
+              <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">
+                Este email fue enviado porque realizaste una compra en nuestra tienda
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Configurar opciones del email
+      const mailOptions = {
+        from: {
+          name: "NewLifeRun Club",
+          address: process.env.EMAIL_USER || "newliferunclubhonduras@gmail.com",
+        },
+        to: datosCompra.email,
+        subject: `✅ Confirmación de Compra #${datosCompra.token_compra} - NewLifeRun Club`,
+        html: emailHTML,
+        text: `¡Hola ${datosCompra.nombre}! Tu compra #${
+          datosCompra.token_compra
+        } por L.${datosCompra.total.toFixed(
+          2
+        )} ha sido confirmada. Total de productos: ${
+          JSON.parse(datosCompra.productos).length
+        }. Token: ${datosCompra.token_compra}`,
+      };
+
+      // Enviar email
+      const info = await transporter.sendMail(mailOptions);
+      console.log(
+        `📧 Email de confirmación enviado a ${datosCompra.email}: ${info.messageId}`
+      );
+
+      return {
+        success: true,
+        messageId: info.messageId,
+      };
+    } catch (error) {
+      console.error("❌ Error enviando email de confirmación:", error);
+      throw error;
     }
   }
 

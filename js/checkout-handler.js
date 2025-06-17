@@ -740,8 +740,13 @@ async function procesarCompraCompleta(datosFormulario) {
 
     console.log("📦 Datos preparados para envío:", datosCompra);
 
-    // Enviar a nuestra API
-    const response = await fetch("/api/compras/nueva-compra", {
+    // Enviar a nuestra API (URL completa para Render)
+    const apiUrl =
+      window.location.hostname === "localhost"
+        ? "/api/compras/nueva-compra"
+        : "https://newlifeclub.onrender.com/api/compras/nueva-compra";
+
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
