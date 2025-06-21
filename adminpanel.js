@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
-import { Users, ShoppingBag, CreditCard, Calendar, MapPin, Mail, UserCheck, TrendingUp, Search, Filter, Eye, Download } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Users,
+  ShoppingBag,
+  CreditCard,
+  Calendar,
+  MapPin,
+  Mail,
+  UserCheck,
+  TrendingUp,
+  Search,
+  Filter,
+  Eye,
+  Download,
+} from "lucide-react";
 
 const AdminPanel = () => {
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   // Datos de ejemplo - aquí pondrías tus datos reales
   const dashboardStats = {
@@ -13,82 +26,222 @@ const AdminPanel = () => {
     totalSales: 2890,
     activeTrainingPlans: 89,
     pendingEvents: 12,
-    weeklyRoutes: 8
+    weeklyRoutes: 8,
   };
 
   const memberships = [
-    { id: 1, user: 'María García', email: 'maria@email.com', plan: 'Premium', status: 'Activa', expiresAt: '2025-08-15', address: 'Col. Palmira, Tegucigalpa' },
-    { id: 2, user: 'Carlos López', email: 'carlos@email.com', plan: 'Basic', status: 'Por vencer', expiresAt: '2025-07-02', address: 'Col. Kennedy, Tegucigalpa' },
-    { id: 3, user: 'Ana Rodríguez', email: 'ana@email.com', plan: 'VIP', status: 'Activa', expiresAt: '2025-09-20', address: 'Comayagüela, Francisco Morazán' }
+    {
+      id: 1,
+      user: "María García",
+      email: "maria@email.com",
+      plan: "Premium",
+      status: "Activa",
+      expiresAt: "2025-08-15",
+      address: "Col. Palmira, Tegucigalpa",
+    },
+    {
+      id: 2,
+      user: "Carlos López",
+      email: "carlos@email.com",
+      plan: "Basic",
+      status: "Por vencer",
+      expiresAt: "2025-07-02",
+      address: "Col. Kennedy, Tegucigalpa",
+    },
+    {
+      id: 3,
+      user: "Ana Rodríguez",
+      email: "ana@email.com",
+      plan: "VIP",
+      status: "Activa",
+      expiresAt: "2025-09-20",
+      address: "Comayagüela, Francisco Morazán",
+    },
   ];
 
   const orders = [
-    { id: 1001, user: 'Pedro Martínez', email: 'pedro@email.com', items: 'Camiseta Running x2', total: 1200, status: 'Pendiente', address: 'Col. Lomas del Guijarro, Tegucigalpa', date: '2025-06-20' },
-    { id: 1002, user: 'Laura Sánchez', email: 'laura@email.com', items: 'Shorts + Gorra', total: 850, status: 'Enviado', address: 'Col. Miraflores, Tegucigalpa', date: '2025-06-19' },
-    { id: 1003, user: 'Roberto Kim', email: 'roberto@email.com', items: 'Kit Completo', total: 2500, status: 'Entregado', address: 'Res. Loma Linda, Tegucigalpa', date: '2025-06-18' }
+    {
+      id: 1001,
+      user: "Pedro Martínez",
+      email: "pedro@email.com",
+      items: "Camiseta Running x2",
+      total: 1200,
+      status: "Pendiente",
+      address: "Col. Lomas del Guijarro, Tegucigalpa",
+      date: "2025-06-20",
+    },
+    {
+      id: 1002,
+      user: "Laura Sánchez",
+      email: "laura@email.com",
+      items: "Shorts + Gorra",
+      total: 850,
+      status: "Enviado",
+      address: "Col. Miraflores, Tegucigalpa",
+      date: "2025-06-19",
+    },
+    {
+      id: 1003,
+      user: "Roberto Kim",
+      email: "roberto@email.com",
+      items: "Kit Completo",
+      total: 2500,
+      status: "Entregado",
+      address: "Res. Loma Linda, Tegucigalpa",
+      date: "2025-06-18",
+    },
   ];
 
   const trainingPlans = [
-    { id: 1, user: 'Sofía Hernández', email: 'sofia@email.com', plan: '5K Principiante', status: 'Activo', startDate: '2025-06-01', endDate: '2025-08-01' },
-    { id: 2, user: 'Diego Flores', email: 'diego@email.com', plan: '10K Intermedio', status: 'Completado', startDate: '2025-04-15', endDate: '2025-06-15' },
-    { id: 3, user: 'Isabella Cruz', email: 'isabella@email.com', plan: 'Maratón Avanzado', status: 'Activo', startDate: '2025-05-01', endDate: '2025-12-01' }
+    {
+      id: 1,
+      user: "Sofía Hernández",
+      email: "sofia@email.com",
+      plan: "5K Principiante",
+      status: "Activo",
+      startDate: "2025-06-01",
+      endDate: "2025-08-01",
+    },
+    {
+      id: 2,
+      user: "Diego Flores",
+      email: "diego@email.com",
+      plan: "10K Intermedio",
+      status: "Completado",
+      startDate: "2025-04-15",
+      endDate: "2025-06-15",
+    },
+    {
+      id: 3,
+      user: "Isabella Cruz",
+      email: "isabella@email.com",
+      plan: "Maratón Avanzado",
+      status: "Activo",
+      startDate: "2025-05-01",
+      endDate: "2025-12-01",
+    },
   ];
 
   const contacts = [
-    { id: 1, name: 'Miguel Ángel', email: 'miguel@email.com', subject: 'Consulta sobre membresías', message: 'Hola, quisiera información sobre los planes premium...', date: '2025-06-21', status: 'Nuevo' },
-    { id: 2, name: 'Carla Mejía', email: 'carla@email.com', subject: 'Problema con pedido', message: 'Mi pedido no ha llegado y ya pasaron 5 días...', date: '2025-06-20', status: 'Respondido' }
+    {
+      id: 1,
+      name: "Miguel Ángel",
+      email: "miguel@email.com",
+      subject: "Consulta sobre membresías",
+      message: "Hola, quisiera información sobre los planes premium...",
+      date: "2025-06-21",
+      status: "Nuevo",
+    },
+    {
+      id: 2,
+      name: "Carla Mejía",
+      email: "carla@email.com",
+      subject: "Problema con pedido",
+      message: "Mi pedido no ha llegado y ya pasaron 5 días...",
+      date: "2025-06-20",
+      status: "Respondido",
+    },
   ];
 
   const events = [
-    { id: 1, name: 'Juan Carlos', email: 'juan@email.com', event: 'Carrera 5K Solidaria', date: '2025-07-15', registeredAt: '2025-06-20' },
-    { id: 2, name: 'Melissa Torres', email: 'melissa@email.com', event: 'Maratón de Tegucigalpa', date: '2025-08-20', registeredAt: '2025-06-19' }
+    {
+      id: 1,
+      name: "Juan Carlos",
+      email: "juan@email.com",
+      event: "Carrera 5K Solidaria",
+      date: "2025-07-15",
+      registeredAt: "2025-06-20",
+    },
+    {
+      id: 2,
+      name: "Melissa Torres",
+      email: "melissa@email.com",
+      event: "Maratón de Tegucigalpa",
+      date: "2025-08-20",
+      registeredAt: "2025-06-19",
+    },
   ];
 
   const routes = [
-    { id: 1, name: 'Andrea Vásquez', email: 'andrea@email.com', route: 'Ruta Cerro Juana Laínez', day: 'Sábado 7:00 AM', registeredAt: '2025-06-21' },
-    { id: 2, name: 'Fernando Paz', email: 'fernando@email.com', route: 'Ruta Boulevard Morazán', day: 'Domingo 6:00 AM', registeredAt: '2025-06-20' }
+    {
+      id: 1,
+      name: "Andrea Vásquez",
+      email: "andrea@email.com",
+      route: "Ruta Cerro Juana Laínez",
+      day: "Sábado 7:00 AM",
+      registeredAt: "2025-06-21",
+    },
+    {
+      id: 2,
+      name: "Fernando Paz",
+      email: "fernando@email.com",
+      route: "Ruta Boulevard Morazán",
+      day: "Domingo 6:00 AM",
+      registeredAt: "2025-06-20",
+    },
   ];
 
   const allUsers = [
-    { id: 1, name: 'María García', email: 'maria@email.com', type: 'Membresía Premium', joinDate: '2025-01-15', status: 'Activo' },
-    { id: 2, name: 'Carlos López', email: 'carlos@email.com', type: 'Cliente Tienda', joinDate: '2025-03-22', status: 'Activo' },
-    { id: 3, name: 'Ana Rodríguez', email: 'ana@email.com', type: 'Plan Entrenamiento', joinDate: '2025-02-10', status: 'Activo' }
+    {
+      id: 1,
+      name: "María García",
+      email: "maria@email.com",
+      type: "Membresía Premium",
+      joinDate: "2025-01-15",
+      status: "Activo",
+    },
+    {
+      id: 2,
+      name: "Carlos López",
+      email: "carlos@email.com",
+      type: "Cliente Tienda",
+      joinDate: "2025-03-22",
+      status: "Activo",
+    },
+    {
+      id: 3,
+      name: "Ana Rodríguez",
+      email: "ana@email.com",
+      type: "Plan Entrenamiento",
+      joinDate: "2025-02-10",
+      status: "Activo",
+    },
   ];
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
-    { id: 'memberships', label: 'Membresías Activas', icon: UserCheck },
-    { id: 'orders', label: 'Compras/Pedidos', icon: ShoppingBag },
-    { id: 'training', label: 'Planes de Entrenamiento', icon: Calendar },
-    { id: 'contacts', label: 'Contactos', icon: Mail },
-    { id: 'events', label: 'Registro Eventos', icon: Calendar },
-    { id: 'routes', label: 'Rutas Semanales', icon: MapPin },
-    { id: 'users', label: 'Todos los Usuarios', icon: Users }
+    { id: "dashboard", label: "Dashboard", icon: TrendingUp },
+    { id: "memberships", label: "Membresías Activas", icon: UserCheck },
+    { id: "orders", label: "Compras/Pedidos", icon: ShoppingBag },
+    { id: "training", label: "Planes de Entrenamiento", icon: Calendar },
+    { id: "contacts", label: "Contactos", icon: Mail },
+    { id: "events", label: "Registro Eventos", icon: Calendar },
+    { id: "routes", label: "Rutas Semanales", icon: MapPin },
+    { id: "users", label: "Todos los Usuarios", icon: Users },
   ];
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'activa':
-      case 'activo':
-      case 'entregado':
-      case 'completado':
-        return 'text-green-400';
-      case 'por vencer':
-      case 'pendiente':
-      case 'nuevo':
-        return 'text-yellow-400';
-      case 'vencida':
-      case 'cancelado':
-        return 'text-red-400';
-      case 'enviado':
-      case 'respondido':
-        return 'text-blue-400';
+      case "activa":
+      case "activo":
+      case "entregado":
+      case "completado":
+        return "text-green-400";
+      case "por vencer":
+      case "pendiente":
+      case "nuevo":
+        return "text-yellow-400";
+      case "vencida":
+      case "cancelado":
+        return "text-red-400";
+      case "enviado":
+      case "respondido":
+        return "text-blue-400";
       default:
-        return 'text-gray-400';
+        return "text-gray-400";
     }
   };
 
-  const StatCard = ({ title, value, icon: Icon, color = 'text-pink-400' }) => (
+  const StatCard = ({ title, value, icon: Icon, color = "text-pink-400" }) => (
     <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
       <div className="flex items-center justify-between">
         <div>
@@ -107,7 +260,10 @@ const AdminPanel = () => {
           <thead className="bg-gray-900">
             <tr>
               {columns.map((column, index) => (
-                <th key={index} className="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th
+                  key={index}
+                  className="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                >
                   {column}
                 </th>
               ))}
@@ -115,19 +271,30 @@ const AdminPanel = () => {
           </thead>
           <tbody className="divide-y divide-gray-700">
             {data.map((item, index) => (
-              <tr key={index} className="hover:bg-gray-700/50 transition-colors">
-                {type === 'memberships' && (
+              <tr
+                key={index}
+                className="hover:bg-gray-700/50 transition-colors"
+              >
+                {type === "memberships" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.user}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.plan}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.plan}
+                    </td>
                     <td className="px-6 py-4">
-                      <span className={`font-medium ${getStatusColor(item.status)}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(item.status)}`}
+                      >
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-300">{item.expiresAt}</td>
-                    <td className="px-6 py-4 text-gray-300 text-sm">{item.address}</td>
+                    <td className="px-6 py-4 text-gray-300">
+                      {item.expiresAt}
+                    </td>
+                    <td className="px-6 py-4 text-gray-300 text-sm">
+                      {item.address}
+                    </td>
                     <td className="px-6 py-4">
                       <button className="text-pink-400 hover:text-pink-300">
                         <Eye className="h-4 w-4" />
@@ -135,19 +302,27 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'orders' && (
+                {type === "orders" && (
                   <>
-                    <td className="px-6 py-4 text-pink-400 font-medium">#{item.id}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      #{item.id}
+                    </td>
                     <td className="px-6 py-4 text-white">{item.user}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
                     <td className="px-6 py-4 text-gray-300">{item.items}</td>
-                    <td className="px-6 py-4 text-green-400 font-medium">L{item.total}</td>
+                    <td className="px-6 py-4 text-green-400 font-medium">
+                      L{item.total}
+                    </td>
                     <td className="px-6 py-4">
-                      <span className={`font-medium ${getStatusColor(item.status)}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(item.status)}`}
+                      >
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-300 text-sm">{item.address}</td>
+                    <td className="px-6 py-4 text-gray-300 text-sm">
+                      {item.address}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.date}</td>
                     <td className="px-6 py-4">
                       <button className="text-pink-400 hover:text-pink-300">
@@ -156,17 +331,23 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'training' && (
+                {type === "training" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.user}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.plan}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.plan}
+                    </td>
                     <td className="px-6 py-4">
-                      <span className={`font-medium ${getStatusColor(item.status)}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(item.status)}`}
+                      >
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-300">{item.startDate}</td>
+                    <td className="px-6 py-4 text-gray-300">
+                      {item.startDate}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.endDate}</td>
                     <td className="px-6 py-4">
                       <button className="text-pink-400 hover:text-pink-300">
@@ -175,15 +356,21 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'contacts' && (
+                {type === "contacts" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.name}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.subject}</td>
-                    <td className="px-6 py-4 text-gray-300 max-w-xs truncate">{item.message}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.subject}
+                    </td>
+                    <td className="px-6 py-4 text-gray-300 max-w-xs truncate">
+                      {item.message}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.date}</td>
                     <td className="px-6 py-4">
-                      <span className={`font-medium ${getStatusColor(item.status)}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(item.status)}`}
+                      >
                         {item.status}
                       </span>
                     </td>
@@ -194,13 +381,17 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'events' && (
+                {type === "events" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.name}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.event}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.event}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.date}</td>
-                    <td className="px-6 py-4 text-gray-300">{item.registeredAt}</td>
+                    <td className="px-6 py-4 text-gray-300">
+                      {item.registeredAt}
+                    </td>
                     <td className="px-6 py-4">
                       <button className="text-pink-400 hover:text-pink-300">
                         <Eye className="h-4 w-4" />
@@ -208,13 +399,17 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'routes' && (
+                {type === "routes" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.name}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.route}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.route}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.day}</td>
-                    <td className="px-6 py-4 text-gray-300">{item.registeredAt}</td>
+                    <td className="px-6 py-4 text-gray-300">
+                      {item.registeredAt}
+                    </td>
                     <td className="px-6 py-4">
                       <button className="text-pink-400 hover:text-pink-300">
                         <Eye className="h-4 w-4" />
@@ -222,14 +417,18 @@ const AdminPanel = () => {
                     </td>
                   </>
                 )}
-                {type === 'users' && (
+                {type === "users" && (
                   <>
                     <td className="px-6 py-4 text-white">{item.name}</td>
                     <td className="px-6 py-4 text-gray-300">{item.email}</td>
-                    <td className="px-6 py-4 text-pink-400 font-medium">{item.type}</td>
+                    <td className="px-6 py-4 text-pink-400 font-medium">
+                      {item.type}
+                    </td>
                     <td className="px-6 py-4 text-gray-300">{item.joinDate}</td>
                     <td className="px-6 py-4">
-                      <span className={`font-medium ${getStatusColor(item.status)}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(item.status)}`}
+                      >
                         {item.status}
                       </span>
                     </td>
@@ -250,27 +449,57 @@ const AdminPanel = () => {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'dashboard':
+      case "dashboard":
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <StatCard title="Total Usuarios" value={dashboardStats.totalUsers} icon={Users} />
-              <StatCard title="Membresías Activas" value={dashboardStats.activeMemberships} icon={UserCheck} />
-              <StatCard title="Ventas Totales" value={dashboardStats.totalSales} icon={ShoppingBag} />
-              <StatCard title="Planes Activos" value={dashboardStats.activeTrainingPlans} icon={Calendar} />
-              <StatCard title="Eventos Pendientes" value={dashboardStats.pendingEvents} icon={Calendar} />
-              <StatCard title="Rutas Semanales" value={dashboardStats.weeklyRoutes} icon={MapPin} />
+              <StatCard
+                title="Total Usuarios"
+                value={dashboardStats.totalUsers}
+                icon={Users}
+              />
+              <StatCard
+                title="Membresías Activas"
+                value={dashboardStats.activeMemberships}
+                icon={UserCheck}
+              />
+              <StatCard
+                title="Ventas Totales"
+                value={dashboardStats.totalSales}
+                icon={ShoppingBag}
+              />
+              <StatCard
+                title="Planes Activos"
+                value={dashboardStats.activeTrainingPlans}
+                icon={Calendar}
+              />
+              <StatCard
+                title="Eventos Pendientes"
+                value={dashboardStats.pendingEvents}
+                icon={Calendar}
+              />
+              <StatCard
+                title="Rutas Semanales"
+                value={dashboardStats.weeklyRoutes}
+                icon={MapPin}
+              />
             </div>
-            
+
             <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-xl font-bold text-white mb-4">Resumen General</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                Resumen General
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-pink-400 font-medium mb-2">Membresías por vencer (próximos 30 días)</h4>
+                  <h4 className="text-pink-400 font-medium mb-2">
+                    Membresías por vencer (próximos 30 días)
+                  </h4>
                   <p className="text-2xl font-bold text-yellow-400">8</p>
                 </div>
                 <div>
-                  <h4 className="text-pink-400 font-medium mb-2">Pedidos pendientes de envío</h4>
+                  <h4 className="text-pink-400 font-medium mb-2">
+                    Pedidos pendientes de envío
+                  </h4>
                   <p className="text-2xl font-bold text-yellow-400">5</p>
                 </div>
               </div>
@@ -278,11 +507,13 @@ const AdminPanel = () => {
           </div>
         );
 
-      case 'memberships':
+      case "memberships":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="text-2xl font-bold text-white">Membresías Activas</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Membresías Activas
+              </h2>
               <div className="flex gap-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -300,19 +531,29 @@ const AdminPanel = () => {
                 </button>
               </div>
             </div>
-            <Table 
-              data={memberships} 
-              columns={['Usuario', 'Email', 'Plan', 'Estado', 'Vence', 'Dirección', 'Acciones']}
+            <Table
+              data={memberships}
+              columns={[
+                "Usuario",
+                "Email",
+                "Plan",
+                "Estado",
+                "Vence",
+                "Dirección",
+                "Acciones",
+              ]}
               type="memberships"
             />
           </div>
         );
 
-      case 'orders':
+      case "orders":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="text-2xl font-bold text-white">Compras y Pedidos</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Compras y Pedidos
+              </h2>
               <div className="flex gap-3">
                 <select className="bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                   <option value="all">Todos los estados</option>
@@ -326,33 +567,53 @@ const AdminPanel = () => {
                 </button>
               </div>
             </div>
-            <Table 
-              data={orders} 
-              columns={['Pedido', 'Usuario', 'Email', 'Productos', 'Total', 'Estado', 'Dirección', 'Fecha', 'Acciones']}
+            <Table
+              data={orders}
+              columns={[
+                "Pedido",
+                "Usuario",
+                "Email",
+                "Productos",
+                "Total",
+                "Estado",
+                "Dirección",
+                "Fecha",
+                "Acciones",
+              ]}
               type="orders"
             />
           </div>
         );
 
-      case 'training':
+      case "training":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="text-2xl font-bold text-white">Planes de Entrenamiento</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Planes de Entrenamiento
+              </h2>
               <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                 <Download className="h-4 w-4" />
                 Exportar
               </button>
             </div>
-            <Table 
-              data={trainingPlans} 
-              columns={['Usuario', 'Email', 'Plan', 'Estado', 'Inicio', 'Fin', 'Acciones']}
+            <Table
+              data={trainingPlans}
+              columns={[
+                "Usuario",
+                "Email",
+                "Plan",
+                "Estado",
+                "Inicio",
+                "Fin",
+                "Acciones",
+              ]}
               type="training"
             />
           </div>
         );
 
-      case 'contacts':
+      case "contacts":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
@@ -369,33 +630,50 @@ const AdminPanel = () => {
                 </button>
               </div>
             </div>
-            <Table 
-              data={contacts} 
-              columns={['Nombre', 'Email', 'Asunto', 'Mensaje', 'Fecha', 'Estado', 'Acciones']}
+            <Table
+              data={contacts}
+              columns={[
+                "Nombre",
+                "Email",
+                "Asunto",
+                "Mensaje",
+                "Fecha",
+                "Estado",
+                "Acciones",
+              ]}
               type="contacts"
             />
           </div>
         );
 
-      case 'events':
+      case "events":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="text-2xl font-bold text-white">Registro a Eventos</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Registro a Eventos
+              </h2>
               <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                 <Download className="h-4 w-4" />
                 Exportar
               </button>
             </div>
-            <Table 
-              data={events} 
-              columns={['Nombre', 'Email', 'Evento', 'Fecha Evento', 'Registrado', 'Acciones']}
+            <Table
+              data={events}
+              columns={[
+                "Nombre",
+                "Email",
+                "Evento",
+                "Fecha Evento",
+                "Registrado",
+                "Acciones",
+              ]}
               type="events"
             />
           </div>
         );
 
-      case 'routes':
+      case "routes":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
@@ -405,19 +683,28 @@ const AdminPanel = () => {
                 Exportar
               </button>
             </div>
-            <Table 
-              data={routes} 
-              columns={['Nombre', 'Email', 'Ruta', 'Día/Hora', 'Registrado', 'Acciones']}
+            <Table
+              data={routes}
+              columns={[
+                "Nombre",
+                "Email",
+                "Ruta",
+                "Día/Hora",
+                "Registrado",
+                "Acciones",
+              ]}
               type="routes"
             />
           </div>
         );
 
-      case 'users':
+      case "users":
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="text-2xl font-bold text-white">Todos los Usuarios</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Todos los Usuarios
+              </h2>
               <div className="flex gap-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -439,9 +726,16 @@ const AdminPanel = () => {
                 </button>
               </div>
             </div>
-            <Table 
-              data={allUsers} 
-              columns={['Nombre', 'Email', 'Tipo', 'Registro', 'Estado', 'Acciones']}
+            <Table
+              data={allUsers}
+              columns={[
+                "Nombre",
+                "Email",
+                "Tipo",
+                "Registro",
+                "Estado",
+                "Acciones",
+              ]}
               type="users"
             />
           </div>
@@ -460,7 +754,9 @@ const AdminPanel = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-bold text-white">NewLifeRun Club</h1>
-              <span className="text-pink-400 text-sm font-medium">Panel Admin</span>
+              <span className="text-pink-400 text-sm font-medium">
+                Panel Admin
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
@@ -487,8 +783,8 @@ const AdminPanel = () => {
                   onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                     activeSection === item.id
-                      ? 'bg-pink-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? "bg-pink-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800 hover:text-white"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -500,9 +796,7 @@ const AdminPanel = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          {renderContent()}
-        </main>
+        <main className="flex-1 p-6">{renderContent()}</main>
       </div>
     </div>
   );
