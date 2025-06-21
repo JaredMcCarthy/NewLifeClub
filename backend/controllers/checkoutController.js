@@ -74,6 +74,18 @@ const guardarDatosCheckout = async (req, res) => {
       const impuestosAmount = total ? (parseFloat(total) * 0.15) / 1.15 : 0; // 15% de impuestos
       const productosJson = cartItems ? JSON.stringify(cartItems) : "[]";
 
+      // 🎯 DETERMINAR ESTADO SEGÚN MÉTODO DE PAGO
+      let estadoCompra = "pendiente"; // Por defecto
+      if (paymentMethod === "PayPal" || paymentMethod === "paypal") {
+        estadoCompra = "completado"; // PayPal es pago instantáneo
+      } else if (paymentMethod === "bank-deposit" || paymentMethod === "bank") {
+        estadoCompra = "pendiente"; // Depósito bancario requiere confirmación
+      }
+
+      console.log(
+        `💳 Método de pago: ${paymentMethod} → Estado: ${estadoCompra}`
+      );
+
       const compraResult = await client.query(compraQuery, [
         email, // $1
         firstName, // $2
@@ -86,7 +98,7 @@ const guardarDatosCheckout = async (req, res) => {
         tokenCompra, // $9
         paymentMethod || "bank-deposit", // $10
         parseFloat(total) || 0, // $11
-        "pendiente", // $12
+        estadoCompra, // $12 - AHORA DINÁMICO SEGÚN MÉTODO DE PAGO
         productosJson, // $13
         subtotalAmount, // $14
         impuestosAmount, // $15
@@ -127,7 +139,7 @@ const guardarDatosCheckout = async (req, res) => {
           impuestos: impuestosAmount,
           descuentos: 0,
           productos: productosJson,
-          estado: "pendiente",
+          estado: estadoCompra,
           fecha_compra: fechaCompra,
         },
       });
