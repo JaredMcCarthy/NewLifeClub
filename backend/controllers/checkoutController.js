@@ -50,16 +50,7 @@ const guardarDatosCheckout = async (req, res) => {
     const client = await checkoutPool.connect();
 
     try {
-      // 🛒 INSERTAR SOLO EN TABLA 'compras' - TODO EN UNA SOLA TABLA
-      const compraQuery = `
-        INSERT INTO compras (
-          email, nombre, apellido, telefono, direccion, ciudad, departamento, codigo_postal,
-          token_compra, metodo_pago, total, estado, fecha_compra
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
-        RETURNING id, token_compra
-      `;
-
+      // 🛒 INSERTAR EN NUEVA TABLA COMPRAS SIMPLIFICADA
       const tokenCompra =
         orderToken ||
         `NRC-${Date.now()}-${Math.random()
@@ -67,35 +58,60 @@ const guardarDatosCheckout = async (req, res) => {
           .substr(2, 4)
           .toUpperCase()}`;
 
+      const compraQuery = `
+        INSERT INTO compras (
+          email, nombre, apellido, telefono, 
+          direccion, ciudad, departamento, codigo_postal,
+          token_compra, metodo_pago, total, estado,
+          productos, subtotal, impuestos, descuentos
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        RETURNING id, token_compra, fecha_compra
+      `;
+
+      // Calcular totales
+      const subtotalAmount = total ? parseFloat(total) / 1.15 : 0; // Quitar impuestos del total
+      const impuestosAmount = total ? (parseFloat(total) * 0.15) / 1.15 : 0; // 15% de impuestos
+      const productosJson = cartItems ? JSON.stringify(cartItems) : "[]";
+
       const compraResult = await client.query(compraQuery, [
-        email,
-        firstName,
-        lastName,
-        phone,
-        address,
-        city,
-        state || "Honduras",
-        zip || "",
-        tokenCompra,
-        paymentMethod || "bank-deposit",
-        total || 0,
-        "pendiente",
+        email, // $1
+        firstName, // $2
+        lastName, // $3
+        phone, // $4
+        address, // $5
+        city, // $6
+        state || "Honduras", // $7
+        zip || "", // $8
+        tokenCompra, // $9
+        paymentMethod || "bank-deposit", // $10
+        parseFloat(total) || 0, // $11
+        "pendiente", // $12
+        productosJson, // $13
+        subtotalAmount, // $14
+        impuestosAmount, // $15
+        0, // $16 - descuentos
       ]);
 
       const compraId = compraResult.rows[0].id;
       const tokenFinal = compraResult.rows[0].token_compra;
+      const fechaCompra = compraResult.rows[0].fecha_compra;
 
-      console.log("✅ Compra guardada exitosamente:");
+      console.log("✅ Compra guardada exitosamente en Neon:");
       console.log("- ID:", compraId);
       console.log("- Token:", tokenFinal);
+      console.log("- Fecha:", fechaCompra);
+      console.log("- Total:", total);
 
-      // 🎉 RESPUESTA EXITOSA SIMPLIFICADA
+      // 🎉 RESPUESTA EXITOSA
       res.status(200).json({
         success: true,
-        message: "Compra guardada exitosamente en Neon",
+        message: "Compra guardada exitosamente en Neon Database",
         token: tokenFinal,
         compraId: compraId,
+        fechaCompra: fechaCompra,
         data: {
+          id: compraId,
           email,
           nombre: firstName,
           apellido: lastName,
@@ -103,10 +119,16 @@ const guardarDatosCheckout = async (req, res) => {
           direccion: address,
           ciudad: city,
           departamento: state || "Honduras",
-          codigo_postal: zip,
-          metodoPago: paymentMethod,
-          total: total,
+          codigo_postal: zip || "",
+          token_compra: tokenFinal,
+          metodo_pago: paymentMethod || "bank-deposit",
+          total: parseFloat(total) || 0,
+          subtotal: subtotalAmount,
+          impuestos: impuestosAmount,
+          descuentos: 0,
+          productos: productosJson,
           estado: "pendiente",
+          fecha_compra: fechaCompra,
         },
       });
     } catch (dbError) {
