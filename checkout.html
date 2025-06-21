@@ -1759,8 +1759,12 @@
           paypalDetails.style.display = "block";
           bankDetails.style.display = "none";
           paymentButton.style.display = "none"; // Ocultar botón (PayPal tiene el suyo)
-          // Inicializar PayPal cuando se selecciona
-          initializePayPal();
+
+          // Asegurar que PayPal se inicialice después de que el DOM esté listo
+          setTimeout(() => {
+            console.log("🔄 Inicializando PayPal tras selección...");
+            initializePayPal();
+          }, 300); // Esperar a que el contenedor esté completamente visible
         } else if (method === "bank-deposit") {
           paypalDetails.style.display = "none";
           bankDetails.style.display = "block";
@@ -2301,9 +2305,25 @@
           container.innerHTML = "";
 
           // Asegurar que el contenedor esté visible y disponible
+          // Forzar que el contenedor sea visible antes de inicializar
+          container.style.display = "block";
+          container.style.visibility = "visible";
+          container.style.opacity = "1";
+
+          // Pequeña espera para que el DOM se actualice
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
           if (container.offsetParent === null) {
-            console.warn("⚠️ Contenedor PayPal no está visible");
-            return;
+            console.warn(
+              "⚠️ Contenedor PayPal aún no está visible, forzando visibilidad..."
+            );
+            // Forzar visibilidad del contenedor padre también
+            const paypalDetails = document.getElementById("paypal-details");
+            if (paypalDetails) {
+              paypalDetails.style.display = "block";
+            }
+            // Esperar un poco más
+            await new Promise((resolve) => setTimeout(resolve, 200));
           }
 
           // Obtener información del carrito
@@ -2316,6 +2336,12 @@
           console.log("💳 Inicializando PayPal:");
           console.log("- Total en Lempiras:", totalLempiras);
           console.log("- Total en USD:", totalUSD);
+          console.log("- Contenedor visible:", container.offsetParent !== null);
+          console.log("- Dimensiones del contenedor:", {
+            width: container.offsetWidth,
+            height: container.offsetHeight,
+            display: getComputedStyle(container).display,
+          });
 
           // Renderizar botones de PayPal
           paypal
@@ -2365,7 +2391,19 @@
                 showNotification("Pago cancelado", "warning");
               },
             })
-            .render("#paypal-button-container");
+            .render("#paypal-button-container")
+            .then(() => {
+              console.log("✅ Botones de PayPal renderizados exitosamente");
+              // Mostrar notificación de éxito
+              showNotification("PayPal cargado correctamente", "success");
+            })
+            .catch((renderError) => {
+              console.error(
+                "❌ Error renderizando botones PayPal:",
+                renderError
+              );
+              throw renderError;
+            });
         } catch (error) {
           console.error("❌ Error inicializando PayPal:", error);
 
