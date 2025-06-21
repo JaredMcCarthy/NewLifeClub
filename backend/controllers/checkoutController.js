@@ -50,15 +50,22 @@ const guardarDatosCheckout = async (req, res) => {
     const client = await checkoutPool.connect();
 
     try {
-      // 🚀 INICIAR TRANSACCIÓN
-      await client.query("BEGIN");
-
-      // 📋 1. INSERTAR EN TABLA 'compras' (incluyendo departamento)
+      // 🛒 INSERTAR SOLO EN TABLA 'compras' - TODO EN UNA SOLA TABLA
       const compraQuery = `
-        INSERT INTO compras (email, nombre, apellido, telefono, direccion, ciudad, departamento)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING id
+        INSERT INTO compras (
+          email, nombre, apellido, telefono, direccion, ciudad, departamento, codigo_postal,
+          token_compra, metodo_pago, total, estado, fecha_compra
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+        RETURNING id, token_compra
       `;
+
+      const tokenCompra =
+        orderToken ||
+        `NRC-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 4)
+          .toUpperCase()}`;
 
       const compraResult = await client.query(compraQuery, [
         email,
@@ -67,41 +74,27 @@ const guardarDatosCheckout = async (req, res) => {
         phone,
         address,
         city,
-        state || "Honduras", // Usar state o Honduras por defecto
+        state || "Honduras",
+        zip || "",
+        tokenCompra,
+        paymentMethod || "bank-deposit",
+        total || 0,
+        "pendiente",
       ]);
 
       const compraId = compraResult.rows[0].id;
-      console.log("✅ Compra guardada con ID:", compraId);
+      const tokenFinal = compraResult.rows[0].token_compra;
 
-      // 📦 2. INSERTAR EN TABLA 'informacion_envio'
-      const envioQuery = `
-        INSERT INTO informacion_envio (nombre, apellido, direccion_envio, ciudad, codigo_postal, telefono)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id
-      `;
+      console.log("✅ Compra guardada exitosamente:");
+      console.log("- ID:", compraId);
+      console.log("- Token:", tokenFinal);
 
-      const envioResult = await client.query(envioQuery, [
-        firstName,
-        lastName,
-        address,
-        city,
-        zip || "",
-        phone,
-      ]);
-
-      const envioId = envioResult.rows[0].id;
-      console.log("✅ Información de envío guardada con ID:", envioId);
-
-      // ✅ CONFIRMAR TRANSACCIÓN
-      await client.query("COMMIT");
-
-      // 🎉 RESPUESTA EXITOSA
+      // 🎉 RESPUESTA EXITOSA SIMPLIFICADA
       res.status(200).json({
         success: true,
-        message: "Datos del checkout guardados exitosamente",
-        token: orderToken || `NRC-${Date.now()}`,
+        message: "Compra guardada exitosamente en Neon",
+        token: tokenFinal,
         compraId: compraId,
-        envioId: envioId,
         data: {
           email,
           nombre: firstName,
@@ -109,14 +102,16 @@ const guardarDatosCheckout = async (req, res) => {
           telefono: phone,
           direccion: address,
           ciudad: city,
+          departamento: state || "Honduras",
+          codigo_postal: zip,
           metodoPago: paymentMethod,
           total: total,
+          estado: "pendiente",
         },
       });
-    } catch (transactionError) {
-      // ❌ ROLLBACK EN CASO DE ERROR
-      await client.query("ROLLBACK");
-      throw transactionError;
+    } catch (dbError) {
+      // ❌ ERROR EN BASE DE DATOS
+      throw dbError;
     } finally {
       client.release();
     }
