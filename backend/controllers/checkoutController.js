@@ -53,10 +53,10 @@ const guardarDatosCheckout = async (req, res) => {
       // 🚀 INICIAR TRANSACCIÓN
       await client.query("BEGIN");
 
-      // 📋 1. INSERTAR EN TABLA 'compras'
+      // 📋 1. INSERTAR EN TABLA 'compras' (incluyendo departamento)
       const compraQuery = `
-        INSERT INTO compras (email, nombre, apellido, telefono, direccion, ciudad)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO compras (email, nombre, apellido, telefono, direccion, ciudad, departamento)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
       `;
 
@@ -67,6 +67,7 @@ const guardarDatosCheckout = async (req, res) => {
         phone,
         address,
         city,
+        state || "Honduras", // Usar state o Honduras por defecto
       ]);
 
       const compraId = compraResult.rows[0].id;
