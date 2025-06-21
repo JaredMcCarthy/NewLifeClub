@@ -304,27 +304,28 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ========== EDITORIAL BUTTON ==========
-  const editorialButton = document.querySelector(".editorial-button");
+  // // ========== EDITORIAL BUTTON ==========
+  // Este boton queda sustituido porque no hay mas editoriales que los principales.
+  // const editorialButton = document.querySelector(".editorial-button");
 
-  if (editorialButton) {
-    editorialButton.addEventListener("click", function () {
-      // This would typically link to a blog or articles page
-      // Usar popup personalizado para funcionalidad editorial
-      if (typeof CustomPopups !== "undefined") {
-        CustomPopups.showAlert(
-          "Esta funcionalidad te llevaría a la página completa de artículos motivacionales.",
-          "info",
-          "📚 Editoriales"
-        );
-      } else {
-        alert(
-          "Esta funcionalidad te llevaría a la página completa de artículos."
-        );
-      }
-      // window.location.href = '/articulos';
-    });
-  }
+  // if (editorialButton) {
+  //   editorialButton.addEventListener("click", function () {
+  //     // This would typically link to a blog or articles page
+  //     // Usar popup personalizado para funcionalidad editorial
+  //     if (typeof CustomPopups !== "undefined") {
+  //       CustomPopups.showAlert(
+  //         "Esta funcionalidad te llevaría a la página completa de artículos motivacionales.",
+  //         "info",
+  //         "📚 Editoriales"
+  //       );
+  //     } else {
+  //       alert(
+  //         "Esta funcionalidad te llevaría a la página completa de artículos."
+  //       );
+  //     }
+  //     // window.location.href = '/articulos';
+  //   });
+  // }
 
   // ========== MOBILE RESPONSIVENESS ==========
   function handleResize() {

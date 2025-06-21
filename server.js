@@ -10,6 +10,7 @@ const tiendaNewsletterRoutes = require("./backend/routes/tiendaNewsletter");
 const contactRoutes = require("./backend/routes/contacts");
 const rutasRoutes = require("./backend/routes/rutasRoutes");
 const comprasRoutes = require("./backend/routes/compras");
+const checkoutRoutes = require("./backend/routes/checkoutRoutes");
 
 const app = express();
 
@@ -52,6 +53,9 @@ app.use("/backend/routes", rutasRoutes);
 
 // 🛒 NUEVA RUTA PARA COMPRAS - COMPLETAMENTE INDEPENDIENTE
 app.use("/api/compras", comprasRoutes);
+
+// 🛒 NUEVA RUTA PARA CHECKOUT - COMPLETAMENTE INDEPENDIENTE
+app.use("/api/checkout", checkoutRoutes);
 
 // Rutas adicionales para rutas (fallback)
 app.use("/rutasRoutes", rutasRoutes);

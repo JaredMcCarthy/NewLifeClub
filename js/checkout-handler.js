@@ -740,27 +740,45 @@ async function procesarCompraCompleta(datosFormulario) {
 
     console.log("📦 Datos preparados para envío:", datosCompra);
 
-    // Enviar a nuestra API (URL completa para Render)
+    // 🛒 ENVIAR A NUEVA API DE CHECKOUT EN NEON
     const apiUrl =
       window.location.hostname === "localhost"
-        ? "/api/compras/nueva-compra"
-        : "https://newlifeclub.onrender.com/api/compras/nueva-compra";
+        ? "/api/checkout/save-order"
+        : "https://newlifeclub.onrender.com/api/checkout/save-order";
+
+    // Preparar datos específicos para las tablas de Neon
+    const datosNeon = {
+      email: datosFormulario.email,
+      firstName: datosFormulario.firstName,
+      lastName: datosFormulario.lastName,
+      phone: datosFormulario.phone,
+      address: datosFormulario.address,
+      city: datosFormulario.city,
+      state: datosFormulario.state,
+      zip: datosFormulario.zip,
+      paymentMethod: datosFormulario.paymentMethod,
+      cartItems: cartInfo.items,
+      total: cartInfo.finalTotal,
+      orderToken: `NRC-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 4)
+        .toUpperCase()}`,
+    };
+
+    console.log("🛒 Enviando a Neon checkout API:", datosNeon);
 
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(datosCompra),
+      body: JSON.stringify(datosNeon),
     });
 
     const resultado = await response.json();
 
     if (resultado.success) {
-      console.log(
-        "✅ Compra guardada exitosamente:",
-        resultado.data.token_compra
-      );
+      console.log("✅ Compra guardada exitosamente en Neon:", resultado.token);
 
       // 🎟️ Marcar código único como usado si se aplicó uno
       if (descuentoAplicado.active && descuentoAplicado.isUniqueCode) {
@@ -799,7 +817,7 @@ async function procesarCompraCompleta(datosFormulario) {
 
       return {
         success: true,
-        token: resultado.data.token_compra,
+        token: resultado.token,
         data: resultado.data,
       };
     } else {
