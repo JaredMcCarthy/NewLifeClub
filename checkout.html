@@ -21,9 +21,9 @@
 
           const script = document.createElement("script");
 
-          // 🧪 SANDBOX MODE - Tu Client ID original (sin environment parameter)
+          // 🧪 SANDBOX MODE - Client ID de tu app "NewLifeRun Club Payments"
           script.src =
-            "https://www.paypal.com/sdk/js?client-id=AYw421e3EEAo-iQhrDugwvRLekjQe8y9V4gOgTJn1snL_0FNnOS1SPVb2fxE83_NHmaNLB3ePut4g_N1&currency=USD&intent=capture&enable-funding=card";
+            "https://www.paypal.com/sdk/js?client-id=EEwUpzv3xaSHTOHzovrdhlkYnV7egUp8Xcp326I2_iweZxnXQLrawTFyHnLcAbLOGRfsn2GLhOkZP_Jy&currency=USD&intent=capture&enable-funding=card";
 
           script.onload = () => {
             console.log("✅ PayPal SDK cargado exitosamente");
@@ -2283,14 +2283,21 @@
           // Cargar PayPal SDK
           const paypal = await loadPayPalSDK();
 
-          // Limpiar contenedor anterior
+          // Limpiar contenedor anterior y verificar que existe
           const container = document.getElementById("paypal-button-container");
           if (!container) {
             console.error("❌ Contenedor de PayPal no encontrado");
             return;
           }
 
+          // Limpiar contenedor de forma segura
           container.innerHTML = "";
+
+          // Asegurar que el contenedor esté visible y disponible
+          if (container.offsetParent === null) {
+            console.warn("⚠️ Contenedor PayPal no está visible");
+            return;
+          }
 
           // Obtener información del carrito
           const cartInfo = getCartInfo();
