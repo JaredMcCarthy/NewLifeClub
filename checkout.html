@@ -1891,6 +1891,9 @@
             // ✅ Pedido exitoso
             token = resultadoAPI.token;
             console.log("✅ Pedido registrado exitosamente:", token);
+
+            // 🎯 NUEVA FUNCIONALIDAD: Procesar membresías y planes por separado
+            await procesarMembresiasYPlanes(datosFormulario, token);
           } else {
             // ❌ Error en la API, usar token local
             console.error("❌ Error en la API:", resultadoAPI.error);
@@ -2420,6 +2423,181 @@
         }
       }
 
+      // 🎯 NUEVA FUNCIÓN: Procesar membresías y planes por separado
+      async function procesarMembresiasYPlanes(datosFormulario, tokenCompra) {
+        try {
+          console.log("🔄 Analizando productos para membresías y planes...");
+
+          // Obtener productos del carrito
+          const cartItems = getCartItems();
+          if (!cartItems || cartItems.length === 0) {
+            console.log("⚠️ No hay productos en el carrito para procesar");
+            return;
+          }
+
+          console.log("📦 Productos en el carrito:", cartItems);
+
+          // Procesar cada producto
+          for (const item of cartItems) {
+            const productName = item.name?.toLowerCase() || "";
+            const productCategory = item.category?.toLowerCase() || "";
+
+            // 💪 DETECTAR MEMBRESÍAS
+            if (
+              productName.includes("membresia") ||
+              productCategory.includes("membresia")
+            ) {
+              console.log("💪 Membresía detectada:", item.name);
+              await guardarMembresia(datosFormulario, item, tokenCompra);
+            }
+
+            // 🏃‍♂️ DETECTAR PLANES
+            if (
+              productName.includes("plan") ||
+              productCategory.includes("plan")
+            ) {
+              console.log("🏃‍♂️ Plan detectado:", item.name);
+              await guardarPlan(datosFormulario, item, tokenCompra);
+            }
+          }
+        } catch (error) {
+          console.error("❌ Error procesando membresías y planes:", error);
+          // No detener el flujo principal si falla esto
+        }
+      }
+
+      // 💪 FUNCIÓN: Guardar membresía en tabla específica
+      async function guardarMembresia(datosFormulario, item, tokenCompra) {
+        try {
+          const membresiaDatos = {
+            email: datosFormulario.email,
+            nombre: datosFormulario.firstName,
+            apellido: datosFormulario.lastName,
+            telefono: datosFormulario.phone,
+            direccion: datosFormulario.address,
+            ciudad: datosFormulario.city,
+            departamento: datosFormulario.state || "Honduras",
+            codigo_postal: datosFormulario.zip || "",
+            metodo_pago:
+              datosFormulario.paymentMethod === "PayPal"
+                ? "paypal"
+                : "bank-deposit",
+            banco_seleccionado:
+              datosFormulario.paymentMethod === "PayPal"
+                ? "PayPal"
+                : "Banco seleccionado",
+            tipo_membresia: determinarTipoMembresia(item.name),
+            nivel_membresia: "principiante",
+            precio_membresia: parseFloat(item.price),
+            duracion_meses: 1,
+            descuento_aplicado: 0.0,
+            codigo_promocional: "",
+            token_compra_original: tokenCompra,
+          };
+
+          console.log("📤 Enviando membresía a API:", membresiaDatos);
+
+          const response = await fetch("/api/membresias/save-membresia", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(membresiaDatos),
+          });
+
+          const resultado = await response.json();
+
+          if (resultado.success) {
+            console.log("✅ Membresía guardada exitosamente:", resultado.data);
+          } else {
+            console.error("❌ Error guardando membresía:", resultado.message);
+          }
+        } catch (error) {
+          console.error("❌ Error en guardarMembresia:", error);
+        }
+      }
+
+      // 🏃‍♂️ FUNCIÓN: Guardar plan en tabla específica
+      async function guardarPlan(datosFormulario, item, tokenCompra) {
+        try {
+          const planDatos = {
+            email: datosFormulario.email,
+            nombre: datosFormulario.firstName,
+            apellido: datosFormulario.lastName,
+            telefono: datosFormulario.phone,
+            direccion: datosFormulario.address,
+            ciudad: datosFormulario.city,
+            departamento: datosFormulario.state || "Honduras",
+            codigo_postal: datosFormulario.zip || "",
+            metodo_pago:
+              datosFormulario.paymentMethod === "PayPal"
+                ? "paypal"
+                : "bank-deposit",
+            banco_seleccionado:
+              datosFormulario.paymentMethod === "PayPal"
+                ? "PayPal"
+                : "Banco seleccionado",
+            tipo_plan: determinarTipoPlan(item.name),
+            nivel_plan: "principiante",
+            precio_plan: parseFloat(item.price),
+            duracion_meses: 2,
+            objetivo_plan: `Completar ${item.name}`,
+            descuento_aplicado: 0.0,
+            codigo_promocional: "",
+            token_compra_original: tokenCompra,
+          };
+
+          console.log("📤 Enviando plan a API:", planDatos);
+
+          const response = await fetch("/api/planes/save-plan", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(planDatos),
+          });
+
+          const resultado = await response.json();
+
+          if (resultado.success) {
+            console.log("✅ Plan guardado exitosamente:", resultado.data);
+          } else {
+            console.error("❌ Error guardando plan:", resultado.message);
+          }
+        } catch (error) {
+          console.error("❌ Error en guardarPlan:", error);
+        }
+      }
+
+      // 🔍 FUNCIÓN: Determinar tipo de membresía
+      function determinarTipoMembresia(nombre) {
+        const nombreLower = nombre.toLowerCase();
+        if (nombreLower.includes("básica") || nombreLower.includes("basica")) {
+          return "basica";
+        } else if (nombreLower.includes("premium")) {
+          return "premium";
+        } else if (
+          nombreLower.includes("vip") ||
+          nombreLower.includes("elite")
+        ) {
+          return "vip";
+        }
+        return "basica"; // Por defecto
+      }
+
+      // 🔍 FUNCIÓN: Determinar tipo de plan
+      function determinarTipoPlan(nombre) {
+        const nombreLower = nombre.toLowerCase();
+        if (nombreLower.includes("10k")) {
+          return "plan10k";
+        } else if (nombreLower.includes("21k")) {
+          return "plan21k";
+        } else if (nombreLower.includes("42k")) {
+          return "plan42k";
+        }
+        return "plan10k"; // Por defecto
+      }
+
       // 💳 NUEVA FUNCIÓN: Manejar éxito de PayPal
       async function handlePayPalSuccess(paypalDetails) {
         try {
@@ -2449,6 +2627,9 @@
             // ✅ Compra exitosa en la API
             token = resultadoAPI.token;
             console.log("✅ Compra PayPal guardada exitosamente:", token);
+
+            // 🎯 NUEVA FUNCIONALIDAD: Procesar membresías y planes por separado
+            await procesarMembresiasYPlanes(datosFormulario, token);
           } else {
             // ❌ Error en la API, usar token local
             console.error("❌ Error en la API:", resultadoAPI.error);

@@ -53,6 +53,14 @@ const guardarCompraMembresia = async (req, res) => {
     const fecha_fin = new Date();
     fecha_fin.setMonth(fecha_fin.getMonth() + duracion_meses);
 
+    // 🎯 DETERMINAR ESTADO SEGÚN MÉTODO DE PAGO
+    let estadoMembresia = "activa"; // Por defecto
+    if (metodo_pago === "PayPal" || metodo_pago === "paypal") {
+      estadoMembresia = "activa"; // PayPal es pago instantáneo → membresía activa
+    } else if (metodo_pago === "bank-deposit" || metodo_pago === "bank") {
+      estadoMembresia = "pendiente"; // Depósito bancario → membresía pendiente hasta confirmación
+    }
+
     // Insertar en tabla compras_membresias
     const query = `
       INSERT INTO compras_membresias (
@@ -85,7 +93,7 @@ const guardarCompraMembresia = async (req, res) => {
       fecha_fin,
       descuento_aplicado,
       codigo_promocional,
-      "activa",
+      estadoMembresia,
     ];
 
     const result = await client.query(query, values);
@@ -101,7 +109,7 @@ const guardarCompraMembresia = async (req, res) => {
         tipo_membresia: tipo_membresia,
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
-        estado: "activa",
+        estado: estadoMembresia,
       },
     });
   } catch (error) {

@@ -63,6 +63,14 @@ const guardarCompraPlan = async (req, res) => {
     const fecha_fin = new Date();
     fecha_fin.setMonth(fecha_fin.getMonth() + duracion_meses);
 
+    // 🎯 DETERMINAR ESTADO SEGÚN MÉTODO DE PAGO
+    let estadoPlan = "activo"; // Por defecto
+    if (metodo_pago === "PayPal" || metodo_pago === "paypal") {
+      estadoPlan = "activo"; // PayPal es pago instantáneo → plan activo
+    } else if (metodo_pago === "bank-deposit" || metodo_pago === "bank") {
+      estadoPlan = "pendiente"; // Depósito bancario → plan pendiente hasta confirmación
+    }
+
     // Insertar en tabla compras_planes
     const query = `
       INSERT INTO compras_planes (
@@ -96,7 +104,7 @@ const guardarCompraPlan = async (req, res) => {
       objetivo_plan,
       descuento_aplicado,
       codigo_promocional,
-      "activo",
+      estadoPlan,
     ];
 
     const result = await client.query(query, values);
@@ -116,7 +124,7 @@ const guardarCompraPlan = async (req, res) => {
         nivel_plan: nivel_plan,
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
-        estado: "activo",
+        estado: estadoPlan,
       },
     });
   } catch (error) {
