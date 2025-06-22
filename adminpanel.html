@@ -179,6 +179,12 @@
         transition: background 0.3s ease;
       }
 
+      .table-row.orders-row {
+        grid-template-columns: 1.5fr 2fr 2fr 1fr 1.5fr 1fr 1fr 1fr 1fr 1.5fr;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+
       .table-row:hover {
         background: rgba(255, 255, 255, 0.02);
       }
@@ -425,11 +431,21 @@
             id="orders-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="
+                grid-template-columns: 1.5fr 2fr 2fr 1fr 1.5fr 1fr 1fr 1fr 1fr 1.5fr;
+              "
+            >
               <div>Usuario</div>
               <div>Email</div>
               <div>Productos</div>
               <div>Total</div>
+              <div>Dirección</div>
+              <div>Ciudad</div>
+              <div>Departamento</div>
+              <div>Teléfono</div>
+              <div>Método Pago</div>
               <div>Estado</div>
             </div>
             <div id="orders-table-body">
@@ -752,6 +768,148 @@
       }
 
       // ========================================
+      // 🛒 CARGAR PEDIDOS DE TIENDA REALES DESDE NEON
+      // ========================================
+      async function loadStoreOrders() {
+        const tableBody = document.getElementById("orders-table-body");
+
+        try {
+          console.log("🛒 Cargando pedidos de tienda reales desde Neon...");
+          const response = await fetch(`${API_BASE_URL}/store-orders`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar pedidos");
+          }
+
+          console.log("✅ Pedidos cargados:", data);
+
+          // Limpiar tabla
+          tableBody.innerHTML = "";
+
+          if (data.orders.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                📋 No hay pedidos de tienda registrados aún.<br>
+                <small>Los pedidos aparecerán aquí cuando los usuarios compren productos físicos.</small>
+              </div>
+            `;
+          } else {
+            // Mostrar pedidos reales
+            data.orders.forEach((order) => {
+              const row = document.createElement("div");
+              row.className = "table-row orders-row";
+
+              const statusClass =
+                order.status === "entregado"
+                  ? "status-active"
+                  : "status-pending";
+              const statusText =
+                order.status === "entregado" ? "Entregado" : "Pendiente";
+
+              row.innerHTML = `
+                <div>${order.user}</div>
+                <div>${order.email}</div>
+                <div title="${order.productos}">${
+                order.productos.length > 30
+                  ? order.productos.substring(0, 30) + "..."
+                  : order.productos
+              }</div>
+                <div>L.${order.total}</div>
+                <div title="${order.direccion}">${
+                order.direccion.length > 20
+                  ? order.direccion.substring(0, 20) + "..."
+                  : order.direccion
+              }</div>
+                <div>${order.ciudad}</div>
+                <div>${order.departamento}</div>
+                <div>${order.telefono}</div>
+                <div>${order.metodo_pago}</div>
+                <div>
+                  <span class="status-badge ${statusClass}">${statusText}</span>
+                  <button 
+                    onclick="toggleStoreOrder(${order.id}, '${
+                order.status === "entregado" ? "pending" : "deliver"
+              }')"
+                    class="toggle-btn ${
+                      order.status === "entregado" ? "deactivate" : "activate"
+                    }"
+                    style="margin-left: 0.5rem; font-size: 0.75rem; padding: 0.25rem 0.5rem;"
+                  >
+                    ${
+                      order.status === "entregado"
+                        ? "↩️ Pendiente"
+                        : "✅ Entregar"
+                    }
+                  </button>
+                </div>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error("❌ Error cargando pedidos:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #ef4444; grid-column: 1 / -1;">
+              ❌ Error al cargar pedidos: ${error.message}<br>
+              <small>Verifica la conexión con la base de datos.</small>
+            </div>
+          `;
+        }
+      }
+
+      // ========================================
+      // 🔄 MARCAR PEDIDO COMO ENTREGADO/PENDIENTE
+      // ========================================
+      async function toggleStoreOrder(id, action) {
+        try {
+          const actionText =
+            action === "deliver"
+              ? "marcar como entregado"
+              : "marcar como pendiente";
+
+          if (
+            !confirm(`¿Estás seguro de que quieres ${actionText} este pedido?`)
+          ) {
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/store-orders/${id}/toggle`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ action: action }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || `Error al ${actionText} pedido`);
+          }
+
+          console.log(`✅ Pedido ${actionText}:`, data);
+
+          // Recargar pedidos para mostrar el cambio
+          loadStoreOrders();
+
+          // Mostrar mensaje de éxito (opcional)
+          alert(`✅ Pedido ${actionText} exitosamente`);
+        } catch (error) {
+          console.error(
+            `❌ Error al ${
+              action === "deliver" ? "entregar" : "marcar como pendiente"
+            } pedido:`,
+            error
+          );
+          alert(`❌ Error: ${error.message}`);
+        }
+      }
+
+      // ========================================
       // 🔄 ACTIVAR/DESACTIVAR MEMBRESÍA
       // ========================================
       async function toggleMembership(id, action) {
@@ -813,6 +971,9 @@
           case "memberships":
             loadMemberships();
             break;
+          case "orders":
+            loadStoreOrders();
+            break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"
             const tableBody = document.getElementById(
@@ -871,10 +1032,33 @@
             filterUsersTable(searchTerm);
           });
         }
+
+        // 🔍 BÚSQUEDA EN TIEMPO REAL PARA PEDIDOS
+        const ordersSearchInput = document.getElementById("orders-search");
+        if (ordersSearchInput) {
+          ordersSearchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterOrdersTable(searchTerm);
+          });
+        }
       });
 
       function filterUsersTable(searchTerm) {
         const tableBody = document.getElementById("users-table-body");
+        const rows = tableBody.querySelectorAll(".table-row");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function filterOrdersTable(searchTerm) {
+        const tableBody = document.getElementById("orders-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {

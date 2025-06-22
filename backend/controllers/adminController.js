@@ -70,6 +70,7 @@ const getDashboardStats = async (req, res) => {
       eventsResult,
       newsletterResult,
       contactResult,
+      membershipsResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
       pool.query(
@@ -80,11 +81,20 @@ const getDashboardStats = async (req, res) => {
       ),
       pool.query("SELECT COUNT(*) as count FROM newsletter"),
       pool.query("SELECT COUNT(*) as count FROM contacto"),
+      pool.query(`
+        SELECT COUNT(*) as count FROM compras
+        WHERE estado = 'completada' 
+        AND (productos ILIKE '%membership%' 
+             OR productos ILIKE '%membresia%'
+             OR productos ILIKE '%premium%'
+             OR productos ILIKE '%basic%'
+             OR productos ILIKE '%vip%')
+      `),
     ]);
 
     const stats = {
       totalUsers: parseInt(usersResult.rows[0].count),
-      activeMemberships: parseInt(newsletterResult.rows[0].count), // Usar newsletter como membresías
+      activeMemberships: parseInt(membershipsResult.rows[0].count), // CONTEO REAL de membresías activas
       totalSales: parseInt(salesResult.rows[0].count),
       totalRevenue: parseFloat(salesResult.rows[0].total || 0),
       activeTrainingPlans: parseInt(contactResult.rows[0].count), // Usar contactos como planes
@@ -253,9 +263,159 @@ const toggleMembership = async (req, res) => {
   }
 };
 
+// ============================================
+// 🛒 OBTENER PEDIDOS DE TIENDA (PRODUCTOS FÍSICOS)
+// ============================================
+const getStoreOrders = async (req, res) => {
+  try {
+    console.log("🛒 Consultando pedidos de tienda desde tabla COMPRAS...");
+
+    const query = `
+      SELECT 
+        id,
+        email,
+        nombre,
+        apellido,
+        telefono,
+        direccion,
+        ciudad,
+        departamento,
+        productos,
+        total,
+        fecha_compra,
+        estado,
+        metodo_pago
+      FROM compras
+      WHERE NOT (productos ILIKE '%membership%' 
+                 OR productos ILIKE '%membresia%'
+                 OR productos ILIKE '%premium%'
+                 OR productos ILIKE '%basic%'
+                 OR productos ILIKE '%vip%')
+      ORDER BY fecha_compra DESC
+    `;
+
+    const result = await pool.query(query);
+
+    console.log(`✅ Encontrados ${result.rows.length} pedidos de tienda`);
+
+    const storeOrders = result.rows.map((compra) => {
+      // Parsear el JSON de productos para extraer info de productos físicos
+      let productsList = "Productos";
+      let productInfo = {};
+
+      try {
+        const productos = JSON.parse(compra.productos);
+        if (Array.isArray(productos) && productos.length > 0) {
+          // Crear lista de productos
+          productsList = productos
+            .map(
+              (p) =>
+                `${p.name || p.nombre || "Producto"} (${
+                  p.quantity || p.cantidad || 1
+                })`
+            )
+            .join(", ");
+        }
+      } catch (e) {
+        console.log("Info de producto:", compra.productos);
+        productsList = "Ver detalles";
+      }
+
+      return {
+        id: compra.id,
+        user: `${compra.nombre} ${compra.apellido}`,
+        email: compra.email,
+        productos: productsList,
+        total: compra.total,
+        direccion: compra.direccion,
+        ciudad: compra.ciudad,
+        departamento: compra.departamento,
+        telefono: compra.telefono,
+        metodo_pago: compra.metodo_pago,
+        fecha_compra: new Date(compra.fecha_compra).toLocaleDateString("es-ES"),
+        status: compra.estado === "completada" ? "entregado" : "pendiente",
+        rawStatus: compra.estado,
+      };
+    });
+
+    res.json({
+      success: true,
+      orders: storeOrders,
+      total: storeOrders.length,
+    });
+  } catch (error) {
+    console.error("❌ Error obteniendo pedidos de tienda:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener pedidos de tienda",
+      error: error.message,
+    });
+  }
+};
+
+// ============================================
+// 🔄 ACTIVAR/DESACTIVAR PEDIDO DE TIENDA
+// ============================================
+const toggleStoreOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'deliver' o 'pending'
+
+    console.log(
+      `🔄 ${
+        action === "deliver"
+          ? "Marcando como entregado"
+          : "Marcando como pendiente"
+      } pedido ID: ${id}`
+    );
+
+    const newStatus = action === "deliver" ? "completada" : "pendiente";
+
+    const query = `
+      UPDATE compras 
+      SET estado = $1
+      WHERE id = $2
+      RETURNING id, nombre, email, estado
+    `;
+
+    const result = await pool.query(query, [newStatus, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Pedido no encontrado",
+      });
+    }
+
+    const order = result.rows[0];
+
+    res.json({
+      success: true,
+      message: `Pedido marcado como ${
+        action === "deliver" ? "entregado" : "pendiente"
+      } exitosamente`,
+      order: {
+        id: order.id,
+        user: order.nombre,
+        email: order.email,
+        status: order.estado,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando pedido:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar pedido",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
   getMemberships,
   toggleMembership,
+  getStoreOrders,
+  toggleStoreOrder,
 };
