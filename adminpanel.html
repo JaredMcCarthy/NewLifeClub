@@ -1353,8 +1353,26 @@
             return;
           }
 
-          // Generar filas de la tabla
-          tableBody.innerHTML = data.registrations
+          // 🛡️ FILTRAR DUPLICADOS PARA MOSTRAR SOLO ÚNICOS
+          const uniqueRegistrations = [];
+          const seen = new Set();
+
+          data.registrations.forEach((registration) => {
+            // Crear clave única: email + ruta
+            const uniqueKey = `${registration.email.toLowerCase()}_${registration.route.toLowerCase()}`;
+
+            if (!seen.has(uniqueKey)) {
+              seen.add(uniqueKey);
+              uniqueRegistrations.push(registration);
+            }
+          });
+
+          console.log(
+            `🔄 Total registros: ${data.registrations.length}, Únicos: ${uniqueRegistrations.length}`
+          );
+
+          // Generar filas de la tabla (SOLO ÚNICOS)
+          tableBody.innerHTML = uniqueRegistrations
             .map(
               (registration) => `
             <div class="table-row" style="grid-template-columns: 1.3fr 1.8fr 1.5fr 1.2fr 1.3fr 1.5fr 1fr 0.8fr; min-height: 80px; align-items: center;">
