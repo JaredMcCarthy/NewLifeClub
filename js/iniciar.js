@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         // 1. Registro
         const response = await fetch(
-          "https://newlife-club.vercel.app/register",
+          "https://newlifeclub.onrender.com/api/register",
           {
             method: "POST",
             headers: {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 2. Auto-login después de registro exitoso
         const loginResponse = await fetch(
-          "https://newlife-club.vercel.app/login",
+          "https://newlifeclub.onrender.com/api/login",
           {
             method: "POST",
             headers: {
@@ -148,18 +148,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        const response = await fetch("https://newlife-club.vercel.app/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            correo: email,
-            contraseña: password,
-          }),
-        });
+        const response = await fetch(
+          "https://newlifeclub.onrender.com/api/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              correo: email,
+              contraseña: password,
+            }),
+          }
+        );
 
         const data = await response.json();
 
