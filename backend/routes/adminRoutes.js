@@ -15,6 +15,9 @@ router.get("/dashboard-stats", adminController.getDashboardStats);
 // Obtener membresías activas
 router.get("/memberships", adminController.getMemberships);
 
+// Activar/Desactivar membresía
+router.put("/memberships/:id/toggle", adminController.toggleMembership);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({
