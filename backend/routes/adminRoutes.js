@@ -39,6 +39,9 @@ router.put(
   adminController.toggleEventParticipation
 );
 
+// Obtener registros de rutas
+router.get("/route-registrations", adminController.getRouteRegistrations);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({

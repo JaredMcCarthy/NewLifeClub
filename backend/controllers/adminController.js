@@ -707,6 +707,92 @@ const toggleEventParticipation = async (req, res) => {
   }
 };
 
+// ============================================
+// 🗺️ OBTENER REGISTROS DE RUTAS
+// ============================================
+const getRouteRegistrations = async (req, res) => {
+  try {
+    console.log(
+      "🗺️ Consultando registros de rutas desde tabla RUTAS_REGISTROS..."
+    );
+
+    const query = `
+      SELECT 
+        id,
+        ruta_id,
+        ruta_nombre,
+        nombre_participante,
+        email,
+        telefono,
+        num_participantes,
+        fecha,
+        duracion,
+        ubicacion,
+        dificultad,
+        fecha_registro
+      FROM rutas_registros
+      ORDER BY fecha_registro DESC
+    `;
+
+    const result = await pool.query(query);
+
+    console.log(`✅ Encontrados ${result.rows.length} registros de rutas`);
+
+    const routeRegistrations = result.rows.map((registro) => {
+      // Formatear el día y hora basado en la fecha
+      let dayTime = "Por definir";
+
+      if (registro.fecha) {
+        const fecha = registro.fecha.toLowerCase();
+        if (fecha.includes("sábado")) {
+          dayTime = "Sábados";
+        } else if (fecha.includes("domingo")) {
+          dayTime = "Domingos";
+        } else if (fecha.includes("viernes")) {
+          dayTime = "Viernes";
+        } else if (fecha.includes("miércoles")) {
+          dayTime = "Miércoles";
+        } else {
+          dayTime = registro.fecha;
+        }
+
+        // Agregar duración si existe
+        if (registro.duracion) {
+          dayTime += ` (${registro.duracion})`;
+        }
+      }
+
+      return {
+        id: registro.id,
+        participant: registro.nombre_participante || "Sin nombre",
+        email: registro.email,
+        route: registro.ruta_nombre || `Ruta ${registro.ruta_id}`,
+        phone: registro.telefono || "Sin teléfono",
+        dayTime: dayTime,
+        location: registro.ubicacion || "Sin ubicación",
+        difficulty: registro.dificultad || "Sin especificar",
+        participants: registro.num_participantes || 1,
+        registrationDate: new Date(registro.fecha_registro).toLocaleDateString(
+          "es-ES"
+        ),
+      };
+    });
+
+    res.json({
+      success: true,
+      registrations: routeRegistrations,
+      total: routeRegistrations.length,
+    });
+  } catch (error) {
+    console.error("❌ Error obteniendo registros de rutas:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener registros de rutas",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
@@ -718,4 +804,5 @@ module.exports = {
   toggleTrainingPlan,
   getEventRegistrations,
   toggleEventParticipation,
+  getRouteRegistrations,
 };
