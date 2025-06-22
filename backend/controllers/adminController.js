@@ -574,6 +574,139 @@ const toggleTrainingPlan = async (req, res) => {
   }
 };
 
+// ============================================
+// 🎪 OBTENER REGISTROS DE EVENTOS
+// ============================================
+const getEventRegistrations = async (req, res) => {
+  try {
+    console.log(
+      "🎪 Consultando registros de eventos desde tabla EVENT_REGISTRATIONS..."
+    );
+
+    const query = `
+      SELECT 
+        id,
+        event_id,
+        event_name,
+        user_name,
+        user_email,
+        user_phone,
+        registration_date,
+        status
+      FROM event_registrations
+      ORDER BY registration_date DESC
+    `;
+
+    const result = await pool.query(query);
+
+    console.log(`✅ Encontrados ${result.rows.length} registros de eventos`);
+
+    const eventRegistrations = result.rows.map((registro) => {
+      // Calcular fecha del evento basada en el nombre del evento
+      let fechaEvento = "Por definir";
+
+      if (registro.event_name) {
+        const eventName = registro.event_name.toLowerCase();
+        if (eventName.includes("maratón urbano")) {
+          fechaEvento = "15 Mayo, 2025";
+        } else if (eventName.includes("trail running")) {
+          fechaEvento = "22 Mayo, 2025";
+        } else if (eventName.includes("carrera nocturna")) {
+          fechaEvento = "29 Mayo, 2025";
+        } else if (eventName.includes("entrenamiento grupal")) {
+          fechaEvento = "5 Junio, 2025";
+        }
+      }
+
+      return {
+        id: registro.id,
+        participant: registro.user_name || "Sin nombre",
+        email: registro.user_email,
+        event: registro.event_name || registro.event_id,
+        phone: registro.user_phone || "Sin teléfono",
+        eventDate: fechaEvento,
+        status: registro.status === "active" ? "registrado" : "participó",
+        rawStatus: registro.status,
+        registrationDate: new Date(
+          registro.registration_date
+        ).toLocaleDateString("es-ES"),
+      };
+    });
+
+    res.json({
+      success: true,
+      registrations: eventRegistrations,
+      total: eventRegistrations.length,
+    });
+  } catch (error) {
+    console.error("❌ Error obteniendo registros de eventos:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener registros de eventos",
+      error: error.message,
+    });
+  }
+};
+
+// ============================================
+// 🔄 MARCAR PARTICIPACIÓN EN EVENTO
+// ============================================
+const toggleEventParticipation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'participate' o 'register'
+
+    console.log(
+      `🔄 ${
+        action === "participate"
+          ? "Marcando participación"
+          : "Marcando como registrado"
+      } en evento ID: ${id}`
+    );
+
+    const newStatus = action === "participate" ? "participated" : "active";
+
+    const query = `
+      UPDATE event_registrations 
+      SET status = $1
+      WHERE id = $2
+      RETURNING id, user_name, user_email, event_name, status
+    `;
+
+    const result = await pool.query(query, [newStatus, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Registro de evento no encontrado",
+      });
+    }
+
+    const registration = result.rows[0];
+
+    res.json({
+      success: true,
+      message: `Participación ${
+        action === "participate" ? "confirmada" : "registrada"
+      } exitosamente`,
+      registration: {
+        id: registration.id,
+        participant: registration.user_name,
+        email: registration.user_email,
+        event: registration.event_name,
+        status: registration.status,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando participación en evento:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar participación en evento",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
@@ -583,4 +716,6 @@ module.exports = {
   toggleStoreOrder,
   getTrainingPlans,
   toggleTrainingPlan,
+  getEventRegistrations,
+  toggleEventParticipation,
 };
