@@ -83,6 +83,7 @@ const getDashboardStats = async (req, res) => {
       ),
       pool.query("SELECT COUNT(*) as count FROM newsletter"),
       pool.query("SELECT COUNT(*) as count FROM contacto"),
+      // MEMBRESÍAS con filtros corregidos
       pool.query(`
         SELECT COUNT(*) as count FROM compras
         WHERE estado = 'completada' 
@@ -90,7 +91,17 @@ const getDashboardStats = async (req, res) => {
              OR productos ILIKE '%membresia%'
              OR productos ILIKE '%"membership"%'
              OR productos ILIKE '%"membresia"%')
+        AND NOT (productos ILIKE '%10k%'
+                 OR productos ILIKE '%21k%'
+                 OR productos ILIKE '%42k%'
+                 OR productos ILIKE '%plan%'
+                 OR productos ILIKE '%entrenamiento%'
+                 OR productos ILIKE '%camisa%'
+                 OR productos ILIKE '%blusa%'
+                 OR productos ILIKE '%hoodie%'
+                 OR productos ILIKE '%top%')
       `),
+      // PLANES DE ENTRENAMIENTO con filtros corregidos
       pool.query(`
         SELECT COUNT(*) as count FROM compras
         WHERE estado = 'completada' 
@@ -99,11 +110,23 @@ const getDashboardStats = async (req, res) => {
              OR productos ILIKE '%42k%'
              OR productos ILIKE '%plan%'
              OR productos ILIKE '%entrenamiento%')
+        AND NOT (productos ILIKE '%membership%' 
+                 OR productos ILIKE '%membresia%'
+                 OR productos ILIKE '%"membership"%'
+                 OR productos ILIKE '%"membresia"%'
+                 OR productos ILIKE '%camisa%'
+                 OR productos ILIKE '%blusa%'
+                 OR productos ILIKE '%hoodie%'
+                 OR productos ILIKE '%top%')
       `),
-      // Nueva consulta para calcular ingresos reales de todas las ventas completadas
+      // INGRESOS TOTALES - Consulta mejorada para calcular correctamente
       pool.query(`
-        SELECT COALESCE(SUM(total), 0) as total_revenue FROM compras
-        WHERE estado = 'completada' AND total > 0
+        SELECT COALESCE(SUM(CAST(total AS DECIMAL)), 0) as total_revenue 
+        FROM compras
+        WHERE estado = 'completada' 
+        AND total IS NOT NULL 
+        AND total != '' 
+        AND CAST(total AS DECIMAL) > 0
       `),
     ]);
 
@@ -152,10 +175,19 @@ const getMemberships = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE productos ILIKE '%membership%' 
+      WHERE (productos ILIKE '%membership%' 
          OR productos ILIKE '%membresia%'
          OR productos ILIKE '%"membership"%'
-         OR productos ILIKE '%"membresia"%'
+         OR productos ILIKE '%"membresia"%')
+      AND NOT (productos ILIKE '%10k%'
+               OR productos ILIKE '%21k%'
+               OR productos ILIKE '%42k%'
+               OR productos ILIKE '%plan%'
+               OR productos ILIKE '%entrenamiento%'
+               OR productos ILIKE '%camisa%'
+               OR productos ILIKE '%blusa%'
+               OR productos ILIKE '%hoodie%'
+               OR productos ILIKE '%top%')
       ORDER BY fecha_compra DESC
     `;
 
@@ -311,7 +343,12 @@ const getStoreOrders = async (req, res) => {
       WHERE NOT (productos ILIKE '%membership%' 
                  OR productos ILIKE '%membresia%'
                  OR productos ILIKE '%"membership"%'
-                 OR productos ILIKE '%"membresia"%')
+                 OR productos ILIKE '%"membresia"%'
+                 OR productos ILIKE '%10k%'
+                 OR productos ILIKE '%21k%'
+                 OR productos ILIKE '%42k%'
+                 OR productos ILIKE '%plan%'
+                 OR productos ILIKE '%entrenamiento%')
       ORDER BY fecha_compra DESC
     `;
 
@@ -460,11 +497,19 @@ const getTrainingPlans = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE productos ILIKE '%10k%' 
+      WHERE (productos ILIKE '%10k%' 
          OR productos ILIKE '%21k%'
          OR productos ILIKE '%42k%'
          OR productos ILIKE '%plan%'
-         OR productos ILIKE '%entrenamiento%'
+         OR productos ILIKE '%entrenamiento%')
+      AND NOT (productos ILIKE '%membership%' 
+               OR productos ILIKE '%membresia%'
+               OR productos ILIKE '%"membership"%'
+               OR productos ILIKE '%"membresia"%'
+               OR productos ILIKE '%camisa%'
+               OR productos ILIKE '%blusa%'
+               OR productos ILIKE '%hoodie%'
+               OR productos ILIKE '%top%')
       ORDER BY fecha_compra DESC
     `;
 
