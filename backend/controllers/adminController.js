@@ -298,17 +298,21 @@ const getStoreOrders = async (req, res) => {
     const storeOrders = result.rows.map((compra) => {
       // Parsear el JSON de productos para extraer info de productos físicos
       let productsList = "Productos";
-      let productInfo = {};
+      let calculatedTotal = 0;
 
       try {
         const productos = JSON.parse(compra.productos);
         if (Array.isArray(productos) && productos.length > 0) {
-          // Crear lista de productos con formato mejorado
+          // Crear lista de productos con formato mejorado y calcular total
           productsList = productos
             .map((p) => {
               const name = p.name || p.nombre || "Producto";
               const qty = p.quantity || p.cantidad || 1;
-              const price = p.price || p.precio || 0;
+              const price = parseFloat(p.price || p.precio || 0);
+
+              // Sumar al total calculado
+              calculatedTotal += price * qty;
+
               return `• ${name} (${qty}x) - L.${price}`;
             })
             .join("<br>");
@@ -318,12 +322,15 @@ const getStoreOrders = async (req, res) => {
         productsList = "Ver detalles";
       }
 
+      // Usar el total de la BD, pero si es 0 o null, usar el calculado
+      const finalTotal = parseFloat(compra.total) || calculatedTotal;
+
       return {
         id: compra.id,
         user: `${compra.nombre} ${compra.apellido}`,
         email: compra.email,
         productos: productsList,
-        total: compra.total,
+        total: finalTotal,
         direccion: compra.direccion,
         ciudad: compra.ciudad,
         departamento: compra.departamento,
