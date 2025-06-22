@@ -502,148 +502,15 @@
     </div>
 
     <script>
-      // Datos de ejemplo (posteriormente se conectarán a la API)
-      const sampleData = {
-        users: [
-          {
-            name: "María García",
-            email: "maria@email.com",
-            type: "Membresía Premium",
-            joinDate: "2025-01-15",
-            status: "Activo",
-          },
-          {
-            name: "Carlos López",
-            email: "carlos@email.com",
-            type: "Cliente Tienda",
-            joinDate: "2025-03-22",
-            status: "Activo",
-          },
-          {
-            name: "Ana Rodríguez",
-            email: "ana@email.com",
-            type: "Plan Entrenamiento",
-            joinDate: "2025-02-10",
-            status: "Activo",
-          },
-        ],
-        memberships: [
-          {
-            user: "María García",
-            email: "maria@email.com",
-            plan: "Premium",
-            status: "Activa",
-            expiresAt: "2025-08-15",
-          },
-          {
-            user: "Carlos López",
-            email: "carlos@email.com",
-            plan: "Basic",
-            status: "Por vencer",
-            expiresAt: "2025-07-02",
-          },
-          {
-            user: "Ana Rodríguez",
-            email: "ana@email.com",
-            plan: "VIP",
-            status: "Activa",
-            expiresAt: "2025-09-20",
-          },
-        ],
-        orders: [
-          {
-            user: "Pedro Martínez",
-            email: "pedro@email.com",
-            items: "Camiseta Running x2",
-            total: 1200,
-            status: "Pendiente",
-          },
-          {
-            user: "Laura Sánchez",
-            email: "laura@email.com",
-            items: "Shorts + Gorra",
-            total: 850,
-            status: "Enviado",
-          },
-          {
-            user: "Roberto Kim",
-            email: "roberto@email.com",
-            items: "Kit Completo",
-            total: 2500,
-            status: "Entregado",
-          },
-        ],
-        plans: [
-          {
-            user: "Sofía Hernández",
-            email: "sofia@email.com",
-            plan: "5K Principiante",
-            status: "Activo",
-            progress: "60%",
-          },
-          {
-            user: "Diego Flores",
-            email: "diego@email.com",
-            plan: "10K Intermedio",
-            status: "Completado",
-            progress: "100%",
-          },
-          {
-            user: "Isabella Cruz",
-            email: "isabella@email.com",
-            plan: "Maratón Avanzado",
-            status: "Activo",
-            progress: "30%",
-          },
-        ],
-        events: [
-          {
-            name: "Juan Carlos",
-            email: "juan@email.com",
-            event: "Carrera 5K Solidaria",
-            date: "2025-07-15",
-            registeredAt: "2025-06-20",
-          },
-          {
-            name: "Melissa Torres",
-            email: "melissa@email.com",
-            event: "Maratón de Tegucigalpa",
-            date: "2025-08-20",
-            registeredAt: "2025-06-19",
-          },
-        ],
-        routes: [
-          {
-            name: "Andrea Vásquez",
-            email: "andrea@email.com",
-            route: "Ruta Cerro Juana Laínez",
-            day: "Sábado 7:00 AM",
-            registeredAt: "2025-06-21",
-          },
-          {
-            name: "Fernando Paz",
-            email: "fernando@email.com",
-            route: "Ruta Boulevard Morazán",
-            day: "Domingo 6:00 AM",
-            registeredAt: "2025-06-20",
-          },
-        ],
-        contacts: [
-          {
-            name: "Miguel Ángel",
-            email: "miguel@email.com",
-            subject: "Consulta sobre membresías",
-            date: "2025-06-21",
-            status: "Nuevo",
-          },
-          {
-            name: "Carla Mejía",
-            email: "carla@email.com",
-            subject: "Problema con pedido",
-            date: "2025-06-20",
-            status: "Respondido",
-          },
-        ],
+      // ========================================
+      // 🔗 CONFIGURACIÓN DE API PARA DATOS REALES DE NEON
+      // ========================================
+      const API_BASE_URL = "https://newlifeclub.onrender.com/api/admin";
+
+      // Datos en tiempo real desde la base de datos Neon
+      let realData = {
+        users: [],
+        dashboardStats: {},
       };
 
       // Función para mostrar secciones
@@ -666,102 +533,140 @@
         loadSectionData(sectionName);
       }
 
-      // Función para cargar datos de cada sección
-      function loadSectionData(sectionName) {
-        if (sectionName === "dashboard") return;
+      // ========================================
+      // 📊 CARGAR ESTADÍSTICAS DEL DASHBOARD (DATOS REALES)
+      // ========================================
+      async function loadDashboardStats() {
+        try {
+          console.log("🔄 Cargando estadísticas del dashboard...");
+          const response = await fetch(`${API_BASE_URL}/dashboard-stats`);
+          const data = await response.json();
 
-        const data = sampleData[sectionName];
-        if (!data) return;
-
-        const tableBody = document.getElementById(sectionName + "-table-body");
-        tableBody.innerHTML = "";
-
-        data.forEach((item) => {
-          const row = document.createElement("div");
-          row.className = "table-row";
-
-          switch (sectionName) {
-            case "users":
-              row.innerHTML = `
-                            <div>${item.name}</div>
-                            <div>${item.email}</div>
-                            <div>${item.type}</div>
-                            <div>${item.joinDate}</div>
-                            <div><span class="status-badge status-active">${item.status}</span></div>
-                        `;
-              break;
-            case "memberships":
-              const statusClass =
-                item.status === "Activa" ? "status-active" : "status-pending";
-              row.innerHTML = `
-                            <div>${item.user}</div>
-                            <div>${item.email}</div>
-                            <div>${item.plan}</div>
-                            <div><span class="status-badge ${statusClass}">${item.status}</span></div>
-                            <div>${item.expiresAt}</div>
-                        `;
-              break;
-            case "orders":
-              const orderStatusClass =
-                item.status === "Entregado"
-                  ? "status-active"
-                  : item.status === "Enviado"
-                  ? "status-pending"
-                  : "status-expired";
-              row.innerHTML = `
-                            <div>${item.user}</div>
-                            <div>${item.email}</div>
-                            <div>${item.items}</div>
-                            <div>L.${item.total}</div>
-                            <div><span class="status-badge ${orderStatusClass}">${item.status}</span></div>
-                        `;
-              break;
-            case "plans":
-              const planStatusClass =
-                item.status === "Completado"
-                  ? "status-active"
-                  : "status-pending";
-              row.innerHTML = `
-                            <div>${item.user}</div>
-                            <div>${item.email}</div>
-                            <div>${item.plan}</div>
-                            <div><span class="status-badge ${planStatusClass}">${item.status}</span></div>
-                            <div>${item.progress}</div>
-                        `;
-              break;
-            case "events":
-              row.innerHTML = `
-                            <div>${item.name}</div>
-                            <div>${item.email}</div>
-                            <div>${item.event}</div>
-                            <div>${item.date}</div>
-                            <div>${item.registeredAt}</div>
-                        `;
-              break;
-            case "routes":
-              row.innerHTML = `
-                            <div>${item.name}</div>
-                            <div>${item.email}</div>
-                            <div>${item.route}</div>
-                            <div>${item.day}</div>
-                            <div>${item.registeredAt}</div>
-                        `;
-              break;
-            case "contacts":
-              const contactStatusClass =
-                item.status === "Nuevo" ? "status-pending" : "status-active";
-              row.innerHTML = `
-                            <div>${item.name}</div>
-                            <div>${item.email}</div>
-                            <div>${item.subject}</div>
-                            <div>${item.date}</div>
-                            <div><span class="status-badge ${contactStatusClass}">${item.status}</span></div>
-                        `;
-              break;
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar estadísticas");
           }
 
-          tableBody.appendChild(row);
-        });
+          console.log("✅ Estadísticas cargadas:", data);
+          realData.dashboardStats = data.stats;
+
+          // Actualizar las estadísticas en el dashboard
+          updateDashboardUI(data.stats);
+        } catch (error) {
+          console.error("❌ Error cargando estadísticas:", error);
+        }
+      }
+
+      // Actualizar interfaz del dashboard
+      function updateDashboardUI(stats) {
+        const statsGrid = document.querySelector(".stats-grid");
+        statsGrid.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-number">${stats.totalUsers}</div>
+            <div class="stat-label">Usuarios Totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${stats.activeMemberships}</div>
+            <div class="stat-label">Membresías Activas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${stats.totalSales}</div>
+            <div class="stat-label">Ventas Totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${stats.activeTrainingPlans}</div>
+            <div class="stat-label">Planes Activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${stats.pendingEvents}</div>
+            <div class="stat-label">Eventos Pendientes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">L.${
+              stats.totalRevenue?.toFixed(2) || "0.00"
+            }</div>
+            <div class="stat-label">Ingresos Totales</div>
+          </div>
+        `;
+      }
+
+      // ========================================
+      // 👥 CARGAR USUARIOS REALES DESDE NEON
+      // ========================================
+      async function loadUsers() {
+        const tableBody = document.getElementById("users-table-body");
+
+        try {
+          console.log("🔄 Cargando usuarios reales desde Neon...");
+          const response = await fetch(`${API_BASE_URL}/users`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar usuarios");
+          }
+
+          console.log("✅ Usuarios cargados:", data);
+          realData.users = data.users;
+
+          // Limpiar tabla
+          tableBody.innerHTML = "";
+
+          if (data.users.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                📋 No hay usuarios registrados aún.<br>
+                <small>Los usuarios aparecerán aquí cuando se registren en el sitio web.</small>
+              </div>
+            `;
+          } else {
+            // Mostrar usuarios reales
+            data.users.forEach((user) => {
+              const row = document.createElement("div");
+              row.className = "table-row";
+              row.innerHTML = `
+                <div>${user.name}</div>
+                <div>${user.email}</div>
+                <div>${user.type}</div>
+                <div>${user.joinDate}</div>
+                <div><span class="status-badge status-active">${user.status}</span></div>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error("❌ Error cargando usuarios:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #ef4444; grid-column: 1 / -1;">
+              ❌ Error al cargar usuarios: ${error.message}<br>
+              <small>Verifica la conexión con la base de datos.</small>
+            </div>
+          `;
+        }
+      }
+
+      // Función para cargar datos de cada sección
+      function loadSectionData(sectionName) {
+        switch (sectionName) {
+          case "dashboard":
+            loadDashboardStats();
+            break;
+          case "users":
+            loadUsers();
+            break;
+          default:
+            // Para otras secciones, mostrar mensaje de "próximamente"
+            const tableBody = document.getElementById(
+              sectionName + "-table-body"
+            );
+            if (tableBody) {
+              tableBody.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                  🚧 Sección en desarrollo<br>
+                  <small>Esta funcionalidad estará disponible pronto.</small>
+                </div>
+              `;
+            }
+            break;
+        }
       }
 
       // Función de logout
@@ -794,20 +699,21 @@
         }
       });
 
-      // Funcionalidad de búsqueda (básica)
+      // ========================================
+      // 🔍 BÚSQUEDA EN TIEMPO REAL PARA USUARIOS
+      // ========================================
       document.addEventListener("DOMContentLoaded", function () {
-        const searchInputs = document.querySelectorAll(".search-bar");
-        searchInputs.forEach((input) => {
-          input.addEventListener("input", function (e) {
+        const searchInput = document.getElementById("users-search");
+        if (searchInput) {
+          searchInput.addEventListener("input", function (e) {
             const searchTerm = e.target.value.toLowerCase();
-            const sectionName = e.target.id.replace("-search", "");
-            filterTable(sectionName, searchTerm);
+            filterUsersTable(searchTerm);
           });
-        });
+        }
       });
 
-      function filterTable(sectionName, searchTerm) {
-        const tableBody = document.getElementById(sectionName + "-table-body");
+      function filterUsersTable(searchTerm) {
+        const tableBody = document.getElementById("users-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {
