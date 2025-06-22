@@ -18,6 +18,12 @@ router.get("/memberships", adminController.getMemberships);
 // Activar/Desactivar membresía
 router.put("/memberships/:id/toggle", adminController.toggleMembership);
 
+// Obtener pedidos de tienda (productos físicos)
+router.get("/store-orders", adminController.getStoreOrders);
+
+// Marcar pedido como entregado/pendiente
+router.put("/store-orders/:id/toggle", adminController.toggleStoreOrder);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({
