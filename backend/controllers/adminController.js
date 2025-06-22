@@ -16,35 +16,19 @@ const getUsers = async (req, res) => {
   try {
     console.log("📊 Consultando usuarios registrados...");
 
-    // Consulta para obtener usuarios con información de membresías
+    // Consulta simplificada para obtener usuarios reales
     const query = `
       SELECT 
         u.id,
         u.nombre,
         u.correo,
         u.fecha_registro,
-        'Activo' as estado,
+        u.status as estado,
         CASE 
-          WHEN cm.tipo_membresia IS NOT NULL AND cm.estado = 'activa' THEN 
-            CASE 
-              WHEN cm.tipo_membresia = 'basica' THEN 'Membresía Básica'
-              WHEN cm.tipo_membresia = 'premium' THEN 'Membresía Premium'
-              WHEN cm.tipo_membresia = 'vip' THEN 'Membresía VIP'
-              ELSE 'Membresía ' || INITCAP(cm.tipo_membresia)
-            END
-          WHEN cp.tipo_plan IS NOT NULL AND cp.estado = 'activo' THEN 
-            CASE 
-              WHEN cp.tipo_plan = 'plan10k' THEN 'Plan 10K'
-              WHEN cp.tipo_plan = 'plan21k' THEN 'Plan 21K'
-              WHEN cp.tipo_plan = 'plan42k' THEN 'Plan 42K'
-              ELSE 'Plan ' || UPPER(cp.tipo_plan)
-            END
           WHEN c.email IS NOT NULL THEN 'Cliente Tienda'
-          ELSE 'Normal'
+          ELSE 'Usuario Registrado'
         END as tipo_usuario
       FROM usuarios u
-      LEFT JOIN compras_membresias cm ON u.correo = cm.email AND cm.estado = 'activa'
-      LEFT JOIN compras_planes cp ON u.correo = cp.email AND cp.estado = 'activo'
       LEFT JOIN compras c ON u.correo = c.email
       ORDER BY u.fecha_registro DESC
     `;
@@ -85,39 +69,33 @@ const getDashboardStats = async (req, res) => {
   try {
     console.log("📊 Obteniendo estadísticas del dashboard...");
 
-    // Consultas paralelas para obtener todas las estadísticas
+    // Consultas simplificadas para estadísticas reales
     const [
       usersResult,
-      membershipsResult,
       salesResult,
-      plansResult,
       eventsResult,
-      routesResult,
+      newsletterResult,
+      contactResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
-      pool.query(
-        "SELECT COUNT(*) as count FROM compras_membresias WHERE estado = 'activa'"
-      ),
       pool.query(
         "SELECT COUNT(*) as count, COALESCE(SUM(total), 0) as total FROM compras"
       ),
       pool.query(
-        "SELECT COUNT(*) as count FROM compras_planes WHERE estado = 'activo'"
-      ),
-      pool.query(
         "SELECT COUNT(*) as count FROM event_registrations WHERE status = 'active'"
       ),
-      pool.query("SELECT COUNT(*) as count FROM rutas_registros"),
+      pool.query("SELECT COUNT(*) as count FROM newsletter"),
+      pool.query("SELECT COUNT(*) as count FROM contacto"),
     ]);
 
     const stats = {
       totalUsers: parseInt(usersResult.rows[0].count),
-      activeMemberships: parseInt(membershipsResult.rows[0].count),
+      activeMemberships: parseInt(newsletterResult.rows[0].count), // Usar newsletter como membresías
       totalSales: parseInt(salesResult.rows[0].count),
       totalRevenue: parseFloat(salesResult.rows[0].total || 0),
-      activeTrainingPlans: parseInt(plansResult.rows[0].count),
+      activeTrainingPlans: parseInt(contactResult.rows[0].count), // Usar contactos como planes
       pendingEvents: parseInt(eventsResult.rows[0].count),
-      weeklyRoutes: parseInt(routesResult.rows[0].count),
+      weeklyRoutes: 0, // Por ahora 0 hasta que tengas esa tabla
     };
 
     console.log("✅ Estadísticas obtenidas:", stats);
@@ -141,45 +119,30 @@ const getDashboardStats = async (req, res) => {
 // ============================================
 const getMemberships = async (req, res) => {
   try {
-    console.log("📊 Consultando membresías activas...");
+    console.log("📊 Consultando suscripciones al newsletter...");
 
     const query = `
       SELECT 
-        cm.id,
-        cm.nombre,
-        cm.email,
-        cm.tipo_membresia,
-        cm.estado,
-        cm.fecha_inicio,
-        cm.fecha_expiracion,
-        cm.metodo_pago
-      FROM compras_membresias cm
-      ORDER BY cm.fecha_inicio DESC
+        n.id,
+        n.correo,
+        n.fecha_suscripcion,
+        u.nombre,
+        'Newsletter' as tipo,
+        'Activa' as estado
+      FROM newsletter n
+      LEFT JOIN usuarios u ON n.correo = u.correo
+      ORDER BY n.fecha_suscripcion DESC
     `;
 
     const result = await pool.query(query);
 
     const memberships = result.rows.map((membership) => ({
       id: membership.id,
-      user: membership.nombre,
-      email: membership.email,
-      plan:
-        membership.tipo_membresia === "basica"
-          ? "Básica"
-          : membership.tipo_membresia === "premium"
-          ? "Premium"
-          : membership.tipo_membresia === "vip"
-          ? "VIP"
-          : membership.tipo_membresia,
-      status:
-        membership.estado === "activa"
-          ? "Activa"
-          : membership.estado === "pendiente"
-          ? "Pendiente"
-          : "Vencida",
-      expiresAt: new Date(membership.fecha_expiracion).toLocaleDateString(
-        "es-ES"
-      ),
+      user: membership.nombre || "Usuario Newsletter",
+      email: membership.correo,
+      plan: membership.tipo,
+      status: membership.estado,
+      expiresAt: "Permanente",
     }));
 
     res.json({
