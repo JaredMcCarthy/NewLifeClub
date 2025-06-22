@@ -303,15 +303,15 @@ const getStoreOrders = async (req, res) => {
       try {
         const productos = JSON.parse(compra.productos);
         if (Array.isArray(productos) && productos.length > 0) {
-          // Crear lista de productos
+          // Crear lista de productos con formato mejorado
           productsList = productos
-            .map(
-              (p) =>
-                `${p.name || p.nombre || "Producto"} (${
-                  p.quantity || p.cantidad || 1
-                })`
-            )
-            .join(", ");
+            .map((p) => {
+              const name = p.name || p.nombre || "Producto";
+              const qty = p.quantity || p.cantidad || 1;
+              const price = p.price || p.precio || 0;
+              return `• ${name} (${qty}x) - L.${price}`;
+            })
+            .join("<br>");
         }
       } catch (e) {
         console.log("Info de producto:", compra.productos);
