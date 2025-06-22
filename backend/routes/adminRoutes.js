@@ -30,6 +30,15 @@ router.get("/training-plans", adminController.getTrainingPlans);
 // Activar/Desactivar plan de entrenamiento
 router.put("/training-plans/:id/toggle", adminController.toggleTrainingPlan);
 
+// Obtener registros de eventos
+router.get("/event-registrations", adminController.getEventRegistrations);
+
+// Marcar participación en evento
+router.put(
+  "/event-registrations/:id/toggle",
+  adminController.toggleEventParticipation
+);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({

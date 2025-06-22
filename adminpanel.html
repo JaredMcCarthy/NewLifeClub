@@ -520,12 +520,16 @@
             id="events-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="grid-template-columns: 1.5fr 2fr 2fr 1.2fr 1.5fr 1.3fr"
+            >
               <div>Participante</div>
               <div>Email</div>
               <div>Evento</div>
+              <div>Teléfono</div>
               <div>Fecha Evento</div>
-              <div>Registrado</div>
+              <div>Estado</div>
             </div>
             <div id="events-table-body">
               <!-- Se llenará dinámicamente -->
@@ -1172,6 +1176,149 @@
         }
       }
 
+      // ========================================
+      // 🎪 CARGAR REGISTROS DE EVENTOS REALES
+      // ========================================
+      async function loadEventRegistrations() {
+        const tableBody = document.getElementById("events-table-body");
+
+        try {
+          console.log("🔄 Cargando registros de eventos reales...");
+          const response = await fetch(`${API_BASE_URL}/event-registrations`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar eventos");
+          }
+
+          console.log("✅ Registros de eventos cargados:", data);
+
+          if (data.registrations.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                🎪 No hay registros de eventos
+              </div>
+            `;
+            return;
+          }
+
+          // Generar filas de la tabla
+          tableBody.innerHTML = data.registrations
+            .map(
+              (registration) => `
+            <div class="table-row" style="grid-template-columns: 1.5fr 2fr 2fr 1.2fr 1.5fr 1.3fr; min-height: 80px; align-items: center;">
+              <div style="font-weight: 500;">${registration.participant}</div>
+              <div style="color: #666;">${registration.email}</div>
+              <div style="font-weight: 600; color: #2196F3;">${
+                registration.event
+              }</div>
+              <div style="color: #FF9800;">${registration.phone}</div>
+              <div style="color: #4CAF50; font-weight: 500;">${
+                registration.eventDate
+              }</div>
+              <div>
+                <select 
+                  onchange="toggleEventParticipation(${
+                    registration.id
+                  }, this.value)"
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                         background: ${
+                           registration.status === "registrado"
+                             ? "#E3F2FD"
+                             : "#E8F5E8"
+                         }; 
+                         color: ${
+                           registration.status === "registrado"
+                             ? "#1976D2"
+                             : "#2E7D32"
+                         }; font-weight: 600;"
+                >
+                  <option value="register" ${
+                    registration.status === "registrado" ? "selected" : ""
+                  }>📝 Registrado</option>
+                  <option value="participate" ${
+                    registration.status === "participó" ? "selected" : ""
+                  }>✅ Participó</option>
+                </select>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("❌ Error cargando registros de eventos:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #f44336; grid-column: 1 / -1;">
+              ❌ Error al cargar eventos: ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      // ========================================
+      // 🔄 MARCAR PARTICIPACIÓN EN EVENTO
+      // ========================================
+      async function toggleEventParticipation(id, action) {
+        try {
+          const actionText =
+            action === "participate"
+              ? "marcar participación"
+              : "marcar como registrado";
+
+          if (
+            !confirm(
+              `¿Estás seguro de que quieres ${actionText} para este evento?`
+            )
+          ) {
+            // Recargar para revertir el cambio visual del dropdown
+            loadEventRegistrations();
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/event-registrations/${id}/toggle`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ action: action }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || `Error al ${actionText}`);
+          }
+
+          console.log(`✅ ${actionText} exitoso:`, data);
+
+          // Recargar eventos para mostrar el cambio
+          loadEventRegistrations();
+
+          // Mostrar mensaje de éxito (opcional)
+          alert(
+            `✅ ${
+              actionText.charAt(0).toUpperCase() + actionText.slice(1)
+            } exitosamente`
+          );
+        } catch (error) {
+          console.error(
+            `❌ Error al ${
+              action === "participate"
+                ? "marcar participación"
+                : "marcar como registrado"
+            }:`,
+            error
+          );
+          alert(`❌ Error: ${error.message}`);
+
+          // Recargar para revertir el cambio visual
+          loadEventRegistrations();
+        }
+      }
+
       // Función para cargar datos de cada sección
       function loadSectionData(sectionName) {
         switch (sectionName) {
@@ -1189,6 +1336,9 @@
             break;
           case "plans":
             loadTrainingPlans();
+            break;
+          case "events":
+            loadEventRegistrations();
             break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"
@@ -1266,6 +1416,15 @@
             filterPlansTable(searchTerm);
           });
         }
+
+        // 🔍 BÚSQUEDA EN TIEMPO REAL PARA EVENTOS
+        const eventsSearchInput = document.getElementById("events-search");
+        if (eventsSearchInput) {
+          eventsSearchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterEventsTable(searchTerm);
+          });
+        }
       });
 
       function filterUsersTable(searchTerm) {
@@ -1298,6 +1457,20 @@
 
       function filterPlansTable(searchTerm) {
         const tableBody = document.getElementById("plans-table-body");
+        const rows = tableBody.querySelectorAll(".table-row");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function filterEventsTable(searchTerm) {
+        const tableBody = document.getElementById("events-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {
