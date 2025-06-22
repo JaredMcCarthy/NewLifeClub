@@ -13,6 +13,7 @@ const comprasRoutes = require("./backend/routes/compras");
 const checkoutRoutes = require("./backend/routes/checkoutRoutes");
 const membresiasRoutes = require("./backend/routes/membresiasRoutes");
 const planesRoutes = require("./backend/routes/planesRoutes");
+const adminRoutes = require("./backend/routes/adminRoutes");
 
 const app = express();
 
@@ -64,6 +65,9 @@ app.use("/api/membresias", membresiasRoutes);
 
 // 🏃‍♂️ NUEVAS RUTAS PARA PLANES - COMPLETAMENTE INDEPENDIENTES
 app.use("/api/planes", planesRoutes);
+
+// 👨‍💼 NUEVAS RUTAS PARA PANEL ADMINISTRATIVO - COMPLETAMENTE INDEPENDIENTES
+app.use("/api/admin", adminRoutes);
 
 // Rutas adicionales para rutas (fallback)
 app.use("/rutasRoutes", rutasRoutes);
