@@ -113,35 +113,74 @@ const getDashboardStats = async (req, res) => {
 // ============================================
 const getMemberships = async (req, res) => {
   try {
-    console.log("📊 Consultando membresías reales desde Neon...");
+    console.log("📊 Consultando membresías desde tabla COMPRAS...");
 
     const query = `
       SELECT 
         id,
         email,
         nombre,
-        tipo_membresia,
-        estado_membresia,
-        fecha_inicio,
-        fecha_expiracion,
-        fecha_compra
-      FROM compras_membresias
+        apellido,
+        productos,
+        total,
+        fecha_compra,
+        estado,
+        metodo_pago
+      FROM compras
+      WHERE productos ILIKE '%membership%' 
+         OR productos ILIKE '%membresia%'
+         OR productos ILIKE '%premium%'
+         OR productos ILIKE '%basic%'
+         OR productos ILIKE '%vip%'
       ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
 
-    const memberships = result.rows.map((membership) => ({
-      id: membership.id,
-      user: membership.nombre,
-      email: membership.email,
-      plan: membership.tipo_membresia || "Básica",
-      status: membership.estado_membresia || "activa",
-      expiresAt: membership.fecha_expiracion
-        ? new Date(membership.fecha_expiracion).toLocaleDateString("es-ES")
-        : "Sin fecha",
-      startDate: new Date(membership.fecha_inicio).toLocaleDateString("es-ES"),
-    }));
+    console.log(`✅ Encontradas ${result.rows.length} compras de membresías`);
+
+    const memberships = result.rows.map((compra) => {
+      // Parsear el JSON de productos para extraer info de membresía
+      let planType = "Membresía";
+      let productInfo = {};
+
+      try {
+        const productos = JSON.parse(compra.productos);
+        if (Array.isArray(productos) && productos.length > 0) {
+          productInfo = productos[0];
+          if (productInfo.name) {
+            if (productInfo.name.toLowerCase().includes("premium")) {
+              planType = "Premium";
+            } else if (productInfo.name.toLowerCase().includes("basic")) {
+              planType = "Básica";
+            } else if (productInfo.name.toLowerCase().includes("vip")) {
+              planType = "VIP";
+            } else {
+              planType = productInfo.name;
+            }
+          }
+        }
+      } catch (e) {
+        console.log("Info de producto:", compra.productos);
+      }
+
+      // Calcular fecha de expiración (ejemplo: 1 año desde la compra)
+      const fechaCompra = new Date(compra.fecha_compra);
+      const fechaExpiracion = new Date(fechaCompra);
+      fechaExpiracion.setFullYear(fechaExpiracion.getFullYear() + 1);
+
+      return {
+        id: compra.id,
+        user: `${compra.nombre} ${compra.apellido}`,
+        email: compra.email,
+        plan: planType,
+        status: compra.estado === "completada" ? "activa" : "pendiente",
+        expiresAt: fechaExpiracion.toLocaleDateString("es-ES"),
+        startDate: fechaCompra.toLocaleDateString("es-ES"),
+        total: compra.total,
+        paymentMethod: compra.metodo_pago,
+      };
+    });
 
     res.json({
       success: true,
@@ -172,13 +211,13 @@ const toggleMembership = async (req, res) => {
       } membresía ID: ${id}`
     );
 
-    const newStatus = action === "activate" ? "activa" : "inactiva";
+    const newStatus = action === "activate" ? "completada" : "cancelada";
 
     const query = `
-      UPDATE compras_membresias 
-      SET estado_membresia = $1
+      UPDATE compras 
+      SET estado = $1
       WHERE id = $2
-      RETURNING id, nombre, email, estado_membresia
+      RETURNING id, nombre, email, estado
     `;
 
     const result = await pool.query(query, [newStatus, id]);
@@ -201,7 +240,7 @@ const toggleMembership = async (req, res) => {
         id: membership.id,
         user: membership.nombre,
         email: membership.email,
-        status: membership.estado_membresia,
+        status: membership.estado,
       },
     });
   } catch (error) {
