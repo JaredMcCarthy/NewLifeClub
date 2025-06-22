@@ -71,6 +71,7 @@ const getDashboardStats = async (req, res) => {
       newsletterResult,
       contactResult,
       membershipsResult,
+      trainingPlansResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
       pool.query(
@@ -89,6 +90,15 @@ const getDashboardStats = async (req, res) => {
              OR productos ILIKE '%"membership"%'
              OR productos ILIKE '%"membresia"%')
       `),
+      pool.query(`
+        SELECT COUNT(*) as count FROM compras
+        WHERE estado = 'completada' 
+        AND (productos ILIKE '%10k%' 
+             OR productos ILIKE '%21k%'
+             OR productos ILIKE '%42k%'
+             OR productos ILIKE '%plan%'
+             OR productos ILIKE '%entrenamiento%')
+      `),
     ]);
 
     const stats = {
@@ -96,7 +106,7 @@ const getDashboardStats = async (req, res) => {
       activeMemberships: parseInt(membershipsResult.rows[0].count), // CONTEO REAL de membresías activas
       totalSales: parseInt(salesResult.rows[0].count),
       totalRevenue: parseFloat(salesResult.rows[0].total || 0),
-      activeTrainingPlans: parseInt(contactResult.rows[0].count), // Usar contactos como planes
+      activeTrainingPlans: parseInt(trainingPlansResult.rows[0].count), // CONTEO REAL de planes activos
       pendingEvents: parseInt(eventsResult.rows[0].count),
       weeklyRoutes: 0, // Por ahora 0 hasta que tengas esa tabla
     };
