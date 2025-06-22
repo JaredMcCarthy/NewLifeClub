@@ -547,12 +547,20 @@
             id="routes-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="
+                grid-template-columns: 1.3fr 1.8fr 1.5fr 1.2fr 1.3fr 1.5fr 1fr 0.8fr;
+              "
+            >
               <div>Participante</div>
               <div>Email</div>
               <div>Ruta</div>
+              <div>Teléfono</div>
               <div>Día/Hora</div>
-              <div>Registrado</div>
+              <div>Ubicación</div>
+              <div>Dificultad</div>
+              <div>Personas</div>
             </div>
             <div id="routes-table-body">
               <!-- Se llenará dinámicamente -->
@@ -1319,6 +1327,94 @@
         }
       }
 
+      // ========================================
+      // 🗺️ CARGAR REGISTROS DE RUTAS REALES
+      // ========================================
+      async function loadRouteRegistrations() {
+        const tableBody = document.getElementById("routes-table-body");
+
+        try {
+          console.log("🔄 Cargando registros de rutas reales...");
+          const response = await fetch(`${API_BASE_URL}/route-registrations`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar rutas");
+          }
+
+          console.log("✅ Registros de rutas cargados:", data);
+
+          if (data.registrations.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                🗺️ No hay registros de rutas
+              </div>
+            `;
+            return;
+          }
+
+          // Generar filas de la tabla
+          tableBody.innerHTML = data.registrations
+            .map(
+              (registration) => `
+            <div class="table-row" style="grid-template-columns: 1.3fr 1.8fr 1.5fr 1.2fr 1.3fr 1.5fr 1fr 0.8fr; min-height: 80px; align-items: center;">
+              <div style="font-weight: 500;">${registration.participant}</div>
+              <div style="color: #666;">${registration.email}</div>
+              <div style="font-weight: 600; color: #2196F3;">${
+                registration.route
+              }</div>
+              <div style="color: #FF9800;">${registration.phone}</div>
+              <div style="color: #4CAF50; font-weight: 500;">${
+                registration.dayTime
+              }</div>
+              <div style="color: #9C27B0; font-size: 0.9em;">${
+                registration.location
+              }</div>
+              <div>
+                <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;
+                             background: ${getDifficultyColor(
+                               registration.difficulty
+                             )}; 
+                             color: white;">
+                  ${registration.difficulty}
+                </span>
+              </div>
+              <div style="text-align: center; font-weight: 600; color: #FF5722;">
+                ${registration.participants}
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("❌ Error cargando registros de rutas:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #f44336; grid-column: 1 / -1;">
+              ❌ Error al cargar rutas: ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      // ========================================
+      // 🎨 OBTENER COLOR SEGÚN DIFICULTAD
+      // ========================================
+      function getDifficultyColor(difficulty) {
+        const difficultyLower = difficulty.toLowerCase();
+        if (difficultyLower.includes("fácil")) {
+          return "#4CAF50"; // Verde
+        } else if (difficultyLower.includes("moderado")) {
+          return "#FF9800"; // Naranja
+        } else if (
+          difficultyLower.includes("avanzado") ||
+          difficultyLower.includes("difícil")
+        ) {
+          return "#F44336"; // Rojo
+        } else {
+          return "#9E9E9E"; // Gris por defecto
+        }
+      }
+
       // Función para cargar datos de cada sección
       function loadSectionData(sectionName) {
         switch (sectionName) {
@@ -1339,6 +1435,9 @@
             break;
           case "events":
             loadEventRegistrations();
+            break;
+          case "routes":
+            loadRouteRegistrations();
             break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"
@@ -1425,6 +1524,15 @@
             filterEventsTable(searchTerm);
           });
         }
+
+        // 🔍 BÚSQUEDA EN TIEMPO REAL PARA RUTAS
+        const routesSearchInput = document.getElementById("routes-search");
+        if (routesSearchInput) {
+          routesSearchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterRoutesTable(searchTerm);
+          });
+        }
       });
 
       function filterUsersTable(searchTerm) {
@@ -1471,6 +1579,20 @@
 
       function filterEventsTable(searchTerm) {
         const tableBody = document.getElementById("events-table-body");
+        const rows = tableBody.querySelectorAll(".table-row");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function filterRoutesTable(searchTerm) {
+        const tableBody = document.getElementById("routes-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {
