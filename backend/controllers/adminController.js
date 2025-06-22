@@ -72,15 +72,14 @@ const getDashboardStats = async (req, res) => {
       contactResult,
       membershipsResult,
       trainingPlansResult,
+      routesResult,
       revenueResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
       pool.query(
         "SELECT COUNT(*) as count FROM compras WHERE estado = 'completada'"
       ),
-      pool.query(
-        "SELECT COUNT(*) as count FROM event_registrations WHERE status = 'active'"
-      ),
+      pool.query("SELECT COUNT(*) as count FROM event_registrations"),
       pool.query("SELECT COUNT(*) as count FROM newsletter"),
       pool.query("SELECT COUNT(*) as count FROM contacto"),
       // MEMBRESÍAS con filtros corregidos
@@ -119,6 +118,8 @@ const getDashboardStats = async (req, res) => {
                  OR productos ILIKE '%hoodie%'
                  OR productos ILIKE '%top%')
       `),
+      // RUTAS SEMANALES - Conteo real de la tabla rutas_registros
+      pool.query("SELECT COUNT(*) as count FROM rutas_registros"),
       // INGRESOS TOTALES - Consulta mejorada para calcular correctamente
       pool.query(`
         SELECT COALESCE(SUM(CAST(total AS DECIMAL)), 0) as total_revenue 
@@ -137,7 +138,7 @@ const getDashboardStats = async (req, res) => {
       totalRevenue: parseFloat(revenueResult.rows[0].total_revenue || 0), // INGRESOS REALES de todas las ventas
       activeTrainingPlans: parseInt(trainingPlansResult.rows[0].count), // CONTEO REAL de planes activos
       pendingEvents: parseInt(eventsResult.rows[0].count),
-      weeklyRoutes: 0, // Por ahora 0 hasta que tengas esa tabla
+      weeklyRoutes: parseInt(routesResult.rows[0].count), // CONTEO REAL de rutas registradas
     };
 
     console.log("✅ Estadísticas obtenidas:", stats);
