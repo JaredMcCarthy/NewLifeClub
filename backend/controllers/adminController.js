@@ -415,6 +415,155 @@ const toggleStoreOrder = async (req, res) => {
   }
 };
 
+// ============================================
+// 🏃‍♂️ OBTENER PLANES DE ENTRENAMIENTO
+// ============================================
+const getTrainingPlans = async (req, res) => {
+  try {
+    console.log(
+      "🏃‍♂️ Consultando planes de entrenamiento desde tabla COMPRAS..."
+    );
+
+    const query = `
+      SELECT 
+        id,
+        email,
+        nombre,
+        apellido,
+        productos,
+        total,
+        fecha_compra,
+        estado,
+        metodo_pago
+      FROM compras
+      WHERE productos ILIKE '%10k%' 
+         OR productos ILIKE '%21k%'
+         OR productos ILIKE '%42k%'
+         OR productos ILIKE '%plan%'
+         OR productos ILIKE '%entrenamiento%'
+      ORDER BY fecha_compra DESC
+    `;
+
+    const result = await pool.query(query);
+
+    console.log(`✅ Encontrados ${result.rows.length} planes de entrenamiento`);
+
+    const trainingPlans = result.rows.map((compra) => {
+      // Parsear el JSON de productos para extraer info del plan
+      let planType = "Plan de Entrenamiento";
+      let planPrice = 0;
+
+      try {
+        const productos = JSON.parse(compra.productos);
+        if (Array.isArray(productos) && productos.length > 0) {
+          const product = productos[0];
+          if (product.name || product.nombre) {
+            const name = product.name || product.nombre;
+            if (name.toLowerCase().includes("10k")) {
+              planType = "Plan 10K";
+            } else if (name.toLowerCase().includes("21k")) {
+              planType = "Plan 21K";
+            } else if (name.toLowerCase().includes("42k")) {
+              planType = "Plan 42K";
+            } else {
+              planType = name;
+            }
+          }
+          planPrice = parseFloat(product.price || product.precio || 0);
+        }
+      } catch (e) {
+        console.log("Info de producto:", compra.productos);
+      }
+
+      // Calcular fecha de finalización (2 MESES desde la compra)
+      const fechaCompra = new Date(compra.fecha_compra);
+      const fechaFinalizacion = new Date(fechaCompra);
+      fechaFinalizacion.setMonth(fechaFinalizacion.getMonth() + 2);
+
+      return {
+        id: compra.id,
+        user: `${compra.nombre} ${compra.apellido}`,
+        email: compra.email,
+        plan: planType,
+        price: planPrice,
+        endDate: fechaFinalizacion.toLocaleDateString("es-ES"),
+        trainer: "Sin asignar", // Por defecto, admin puede cambiar
+        status: compra.estado === "completada" ? "activo" : "inactivo",
+        rawStatus: compra.estado,
+      };
+    });
+
+    res.json({
+      success: true,
+      plans: trainingPlans,
+      total: trainingPlans.length,
+    });
+  } catch (error) {
+    console.error("❌ Error obteniendo planes de entrenamiento:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener planes de entrenamiento",
+      error: error.message,
+    });
+  }
+};
+
+// ============================================
+// 🔄 ACTIVAR/DESACTIVAR PLAN DE ENTRENAMIENTO
+// ============================================
+const toggleTrainingPlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'activate' o 'deactivate'
+
+    console.log(
+      `🔄 ${
+        action === "activate" ? "Activando" : "Desactivando"
+      } plan de entrenamiento ID: ${id}`
+    );
+
+    const newStatus = action === "activate" ? "completada" : "cancelada";
+
+    const query = `
+      UPDATE compras 
+      SET estado = $1
+      WHERE id = $2
+      RETURNING id, nombre, email, estado
+    `;
+
+    const result = await pool.query(query, [newStatus, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Plan de entrenamiento no encontrado",
+      });
+    }
+
+    const plan = result.rows[0];
+
+    res.json({
+      success: true,
+      message: `Plan de entrenamiento ${
+        action === "activate" ? "activado" : "desactivado"
+      } exitosamente`,
+      plan: {
+        id: plan.id,
+        user: plan.nombre,
+        email: plan.email,
+        status: plan.estado,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando plan de entrenamiento:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar plan de entrenamiento",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
@@ -422,4 +571,6 @@ module.exports = {
   toggleMembership,
   getStoreOrders,
   toggleStoreOrder,
+  getTrainingPlans,
+  toggleTrainingPlan,
 };

@@ -24,6 +24,12 @@ router.get("/store-orders", adminController.getStoreOrders);
 // Marcar pedido como entregado/pendiente
 router.put("/store-orders/:id/toggle", adminController.toggleStoreOrder);
 
+// Obtener planes de entrenamiento
+router.get("/training-plans", adminController.getTrainingPlans);
+
+// Activar/Desactivar plan de entrenamiento
+router.put("/training-plans/:id/toggle", adminController.toggleTrainingPlan);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({
