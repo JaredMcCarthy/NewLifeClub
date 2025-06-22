@@ -837,7 +837,7 @@
                 <div>${order.user}</div>
                 <div>${order.email}</div>
                 <div class="products-cell">${order.productos}</div>
-                <div>L.${order.total}</div>
+                <div>L.${parseFloat(order.total).toFixed(2)}</div>
                 <div title="${order.direccion}">${
                 order.direccion.length > 20
                   ? order.direccion.substring(0, 20) + "..."
