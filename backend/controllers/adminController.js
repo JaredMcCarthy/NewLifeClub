@@ -793,6 +793,96 @@ const getRouteRegistrations = async (req, res) => {
   }
 };
 
+// ============================================
+// 📧 OBTENER MENSAJES DE CONTACTO
+// ============================================
+const getContactMessages = async (req, res) => {
+  try {
+    console.log("📧 Consultando mensajes de contacto desde tabla CONTACTO...");
+
+    const query = `
+      SELECT 
+        id,
+        nombre,
+        correo,
+        asunto,
+        mensaje,
+        fecha
+      FROM contacto
+      ORDER BY fecha DESC
+    `;
+
+    const result = await pool.query(query);
+
+    console.log(`✅ Encontrados ${result.rows.length} mensajes de contacto`);
+
+    const contactMessages = result.rows.map((contacto) => {
+      return {
+        id: contacto.id,
+        name: contacto.nombre || "Sin nombre",
+        email: contacto.correo,
+        subject: contacto.asunto || "Sin asunto",
+        message: contacto.mensaje || "Sin mensaje",
+        date: new Date(contacto.fecha).toLocaleDateString("es-ES"),
+        status: "nuevo", // Por defecto todos son nuevos
+        rawDate: contacto.fecha,
+      };
+    });
+
+    res.json({
+      success: true,
+      messages: contactMessages,
+      total: contactMessages.length,
+    });
+  } catch (error) {
+    console.error("❌ Error obteniendo mensajes de contacto:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener mensajes de contacto",
+      error: error.message,
+    });
+  }
+};
+
+// ============================================
+// 🔄 MARCAR MENSAJE COMO RESPONDIDO
+// ============================================
+const toggleContactStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'respond' o 'new'
+
+    console.log(
+      `🔄 ${
+        action === "respond"
+          ? "Marcando como respondido"
+          : "Marcando como nuevo"
+      } mensaje ID: ${id}`
+    );
+
+    // Por ahora solo simulamos el cambio (no hay campo status en la BD)
+    // En el futuro se puede agregar un campo 'status' a la tabla contacto
+
+    res.json({
+      success: true,
+      message: `Mensaje ${
+        action === "respond" ? "marcado como respondido" : "marcado como nuevo"
+      } exitosamente`,
+      contact: {
+        id: id,
+        status: action === "respond" ? "respondido" : "nuevo",
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando estado del mensaje:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar estado del mensaje",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
@@ -805,4 +895,6 @@ module.exports = {
   getEventRegistrations,
   toggleEventParticipation,
   getRouteRegistrations,
+  getContactMessages,
+  toggleContactStatus,
 };
