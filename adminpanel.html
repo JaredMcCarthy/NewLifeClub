@@ -578,10 +578,14 @@
             id="contacts-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="grid-template-columns: 1.3fr 2fr 1.5fr 2.5fr 1.2fr 1.3fr"
+            >
               <div>Nombre</div>
               <div>Email</div>
               <div>Asunto</div>
+              <div>Mensaje</div>
               <div>Fecha</div>
               <div>Estado</div>
             </div>
@@ -1433,6 +1437,145 @@
         }
       }
 
+      // ========================================
+      // 📧 CARGAR MENSAJES DE CONTACTO REALES
+      // ========================================
+      async function loadContactMessages() {
+        const tableBody = document.getElementById("contacts-table-body");
+
+        try {
+          console.log("🔄 Cargando mensajes de contacto reales...");
+          const response = await fetch(`${API_BASE_URL}/contact-messages`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar contactos");
+          }
+
+          console.log("✅ Mensajes de contacto cargados:", data);
+
+          if (data.messages.length === 0) {
+            tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+              📧 No hay mensajes de contacto
+            </div>
+          `;
+            return;
+          }
+
+          // Generar filas de la tabla
+          tableBody.innerHTML = data.messages
+            .map(
+              (message) => `
+          <div class="table-row" style="grid-template-columns: 1.3fr 2fr 1.5fr 2.5fr 1.2fr 1.3fr; min-height: 80px; align-items: center;">
+            <div style="font-weight: 500;">${message.name}</div>
+            <div style="color: #666;">${message.email}</div>
+            <div style="font-weight: 600; color: #2196F3;">${
+              message.subject
+            }</div>
+            <div style="max-height: 60px; overflow-y: auto; padding: 4px; background: #f5f5f5; border-radius: 4px; font-size: 0.9em; line-height: 1.3;">
+              ${
+                message.message.length > 100
+                  ? message.message.substring(0, 100) + "..."
+                  : message.message
+              }
+            </div>
+            <div style="color: #4CAF50; font-weight: 500;">${message.date}</div>
+            <div>
+              <select 
+                onchange="toggleContactStatus(${message.id}, this.value)"
+                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                       background: ${
+                         message.status === "nuevo" ? "#FFF3E0" : "#E8F5E8"
+                       }; 
+                       color: ${
+                         message.status === "nuevo" ? "#F57C00" : "#2E7D32"
+                       }; font-weight: 600;"
+              >
+                <option value="new" ${
+                  message.status === "nuevo" ? "selected" : ""
+                }>📩 Nuevo</option>
+                <option value="respond" ${
+                  message.status === "respondido" ? "selected" : ""
+                }>✅ Respondido</option>
+              </select>
+            </div>
+          </div>
+        `
+            )
+            .join("");
+        } catch (error) {
+          console.error("❌ Error cargando mensajes de contacto:", error);
+          tableBody.innerHTML = `
+          <div style="padding: 2rem; text-align: center; color: #f44336; grid-column: 1 / -1;">
+            ❌ Error al cargar contactos: ${error.message}
+          </div>
+        `;
+        }
+      }
+
+      // ========================================
+      // 🔄 MARCAR MENSAJE COMO RESPONDIDO/NUEVO
+      // ========================================
+      async function toggleContactStatus(id, action) {
+        try {
+          const actionText =
+            action === "respond"
+              ? "marcar como respondido"
+              : "marcar como nuevo";
+
+          if (
+            !confirm(`¿Estás seguro de que quieres ${actionText} este mensaje?`)
+          ) {
+            // Recargar para revertir el cambio visual del dropdown
+            loadContactMessages();
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/contact-messages/${id}/toggle`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ action: action }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || `Error al ${actionText}`);
+          }
+
+          console.log(`✅ ${actionText} exitoso:`, data);
+
+          // Recargar contactos para mostrar el cambio
+          loadContactMessages();
+
+          // Mostrar mensaje de éxito (opcional)
+          alert(
+            `✅ ${
+              actionText.charAt(0).toUpperCase() + actionText.slice(1)
+            } exitosamente`
+          );
+        } catch (error) {
+          console.error(
+            `❌ Error al ${
+              action === "respond"
+                ? "marcar como respondido"
+                : "marcar como nuevo"
+            }:`,
+            error
+          );
+          alert(`❌ Error: ${error.message}`);
+
+          // Recargar para revertir el cambio visual
+          loadContactMessages();
+        }
+      }
+
       // Función para cargar datos de cada sección
       function loadSectionData(sectionName) {
         switch (sectionName) {
@@ -1456,6 +1599,9 @@
             break;
           case "routes":
             loadRouteRegistrations();
+            break;
+          case "contacts":
+            loadContactMessages();
             break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"
@@ -1551,6 +1697,15 @@
             filterRoutesTable(searchTerm);
           });
         }
+
+        // 🔍 BÚSQUEDA EN TIEMPO REAL PARA CONTACTOS
+        const contactsSearchInput = document.getElementById("contacts-search");
+        if (contactsSearchInput) {
+          contactsSearchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterContactsTable(searchTerm);
+          });
+        }
       });
 
       function filterUsersTable(searchTerm) {
@@ -1611,6 +1766,20 @@
 
       function filterRoutesTable(searchTerm) {
         const tableBody = document.getElementById("routes-table-body");
+        const rows = tableBody.querySelectorAll(".table-row");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function filterContactsTable(searchTerm) {
+        const tableBody = document.getElementById("contacts-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {

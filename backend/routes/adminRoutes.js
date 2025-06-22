@@ -42,6 +42,12 @@ router.put(
 // Obtener registros de rutas
 router.get("/route-registrations", adminController.getRouteRegistrations);
 
+// Obtener mensajes de contacto
+router.get("/contact-messages", adminController.getContactMessages);
+
+// Marcar mensaje como respondido/nuevo
+router.put("/contact-messages/:id/toggle", adminController.toggleContactStatus);
+
 // Ruta de prueba para verificar conectividad
 router.get("/test", (req, res) => {
   res.json({
