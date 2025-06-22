@@ -16,14 +16,13 @@ const getUsers = async (req, res) => {
   try {
     console.log("📊 Consultando usuarios registrados...");
 
-    // Consulta SÚPER SIMPLE - solo la tabla usuarios
+    // Consulta EXACTA con las columnas que SÍ EXISTEN en Neon
     const query = `
       SELECT 
         id,
         nombre,
         correo,
-        fecha_registro,
-        status
+        fecha_registro
       FROM usuarios
       ORDER BY fecha_registro DESC
     `;
@@ -32,14 +31,14 @@ const getUsers = async (req, res) => {
 
     console.log(`✅ Encontrados ${result.rows.length} usuarios registrados`);
 
-    // Formatear datos SIMPLES para el frontend
+    // Formatear datos con las columnas REALES de Neon
     const users = result.rows.map((user) => ({
       id: user.id,
       name: user.nombre,
       email: user.correo,
       type: "Usuario Registrado", // Tipo fijo y simple
       joinDate: new Date(user.fecha_registro).toLocaleDateString("es-ES"),
-      status: user.status || "active",
+      status: "Activo", // Status fijo porque no existe la columna
     }));
 
     res.json({
