@@ -30,6 +30,9 @@ router.get("/training-plans", adminController.getTrainingPlans);
 // Activar/Desactivar plan de entrenamiento
 router.put("/training-plans/:id/toggle", adminController.toggleTrainingPlan);
 
+// Asignar entrenador a plan
+router.put("/training-plans/:id/assign-trainer", adminController.assignTrainer);
+
 // Obtener registros de eventos
 router.get("/event-registrations", adminController.getEventRegistrations);
 
