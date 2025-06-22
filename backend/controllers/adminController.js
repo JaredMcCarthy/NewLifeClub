@@ -487,33 +487,30 @@ const getTrainingPlans = async (req, res) => {
 
     const query = `
       SELECT 
-        c.id,
-        c.email,
-        c.nombre,
-        c.apellido,
-        c.productos,
-        c.total,
-        c.fecha_compra,
-        c.estado,
-        c.metodo_pago,
-        tp.trainer,
-        tp.custom_status
-      FROM compras c
-      LEFT JOIN training_plans tp ON c.id = tp.compra_id
-      WHERE (c.productos ILIKE '%10k%' 
-         OR c.productos ILIKE '%21k%'
-         OR c.productos ILIKE '%42k%'
-         OR c.productos ILIKE '%plan%'
-         OR c.productos ILIKE '%entrenamiento%')
-      AND NOT (c.productos ILIKE '%membership%' 
-               OR c.productos ILIKE '%membresia%'
-               OR c.productos ILIKE '%"membership"%'
-               OR c.productos ILIKE '%"membresia"%'
-               OR c.productos ILIKE '%camisa%'
-               OR c.productos ILIKE '%blusa%'
-               OR c.productos ILIKE '%hoodie%'
-               OR c.productos ILIKE '%top%')
-      ORDER BY c.fecha_compra DESC
+        id,
+        email,
+        nombre,
+        apellido,
+        productos,
+        total,
+        fecha_compra,
+        estado,
+        metodo_pago
+      FROM compras
+      WHERE (productos ILIKE '%10k%' 
+         OR productos ILIKE '%21k%'
+         OR productos ILIKE '%42k%'
+         OR productos ILIKE '%plan%'
+         OR productos ILIKE '%entrenamiento%')
+      AND NOT (productos ILIKE '%membership%' 
+               OR productos ILIKE '%membresia%'
+               OR productos ILIKE '%"membership"%'
+               OR productos ILIKE '%"membresia"%'
+               OR productos ILIKE '%camisa%'
+               OR productos ILIKE '%blusa%'
+               OR productos ILIKE '%hoodie%'
+               OR productos ILIKE '%top%')
+      ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
@@ -559,10 +556,8 @@ const getTrainingPlans = async (req, res) => {
         plan: planType,
         price: planPrice,
         endDate: fechaFinalizacion.toLocaleDateString("es-ES"),
-        trainer: compra.trainer || "Sin asignar", // Usar trainer guardado o defecto
-        status:
-          compra.custom_status ||
-          (compra.estado === "cancelada" ? "inactivo" : "activo"), // Usar status personalizado
+        trainer: "Sin asignar", // El frontend manejará esto con localStorage
+        status: compra.estado === "cancelada" ? "inactivo" : "activo", // Por defecto ACTIVO
         rawStatus: compra.estado,
       };
     });
@@ -633,51 +628,6 @@ const toggleTrainingPlan = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error al actualizar plan de entrenamiento",
-      error: error.message,
-    });
-  }
-};
-
-// ============================================
-// 👨‍🏫 ASIGNAR ENTRENADOR A PLAN
-// ============================================
-const assignTrainer = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { trainer } = req.body;
-
-    console.log(`👨‍🏫 Asignando entrenador "${trainer}" al plan ID: ${id}`);
-
-    // Crear o actualizar el registro en training_plans
-    const upsertQuery = `
-      INSERT INTO training_plans (compra_id, trainer, updated_at)
-      VALUES ($1, $2, NOW())
-      ON CONFLICT (compra_id) 
-      DO UPDATE SET 
-        trainer = EXCLUDED.trainer,
-        updated_at = NOW()
-      RETURNING *
-    `;
-
-    const result = await pool.query(upsertQuery, [id, trainer]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Error al asignar entrenador",
-      });
-    }
-
-    res.json({
-      success: true,
-      message: `Entrenador "${trainer}" asignado exitosamente`,
-      trainer: trainer,
-    });
-  } catch (error) {
-    console.error("❌ Error asignando entrenador:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error al asignar entrenador",
       error: error.message,
     });
   }
@@ -1001,7 +951,6 @@ module.exports = {
   toggleStoreOrder,
   getTrainingPlans,
   toggleTrainingPlan,
-  assignTrainer,
   getEventRegistrations,
   toggleEventParticipation,
   getRouteRegistrations,

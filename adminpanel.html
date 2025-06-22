@@ -1266,10 +1266,18 @@
             return;
           }
 
+          // Obtener entrenadores guardados del localStorage
+          const savedTrainers = JSON.parse(
+            localStorage.getItem("training_plan_trainers") || "{}"
+          );
+
           // Generar filas de la tabla
           tableBody.innerHTML = data.plans
-            .map(
-              (plan) => `
+            .map((plan) => {
+              // Usar entrenador guardado o "Sin asignar" por defecto
+              const currentTrainer = savedTrainers[plan.id] || "Sin asignar";
+
+              return `
             <div class="table-row" style="grid-template-columns: 1.5fr 2fr 1.2fr 1fr 1.5fr 1.5fr 1.5fr; min-height: 80px; align-items: center;">
               <div style="font-weight: 500;">${plan.user}</div>
               <div style="color: #666;">${plan.email}</div>
@@ -1284,16 +1292,16 @@
                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: white;"
                 >
                   <option value="Sin asignar" ${
-                    plan.trainer === "Sin asignar" ? "selected" : ""
+                    currentTrainer === "Sin asignar" ? "selected" : ""
                   }>Sin asignar</option>
                   <option value="Coach María" ${
-                    plan.trainer === "Coach María" ? "selected" : ""
+                    currentTrainer === "Coach María" ? "selected" : ""
                   }>Coach María</option>
                   <option value="Coach Carlos" ${
-                    plan.trainer === "Coach Carlos" ? "selected" : ""
+                    currentTrainer === "Coach Carlos" ? "selected" : ""
                   }>Coach Carlos</option>
                   <option value="Coach Ana" ${
-                    plan.trainer === "Coach Ana" ? "selected" : ""
+                    currentTrainer === "Coach Ana" ? "selected" : ""
                   }>Coach Ana</option>
                 </select>
               </div>
@@ -1317,8 +1325,8 @@
                 </select>
               </div>
             </div>
-          `
-            )
+          `;
+            })
             .join("");
         } catch (error) {
           console.error("❌ Error cargando planes de entrenamiento:", error);
@@ -1386,23 +1394,42 @@
       }
 
       // ========================================
-      // 👨‍🏫 ACTUALIZAR ENTRENADOR ASIGNADO
+      // 👨‍🏫 ACTUALIZAR ENTRENADOR ASIGNADO (GUARDADO EN LOCALSTORAGE)
       // ========================================
-      async function updateTrainer(planId, newTrainer) {
+      function updateTrainer(planId, newTrainer) {
         try {
           console.log(
-            `🔄 Actualizando entrenador para plan ${planId} a: ${newTrainer}`
+            `🔄 Guardando entrenador para plan ${planId}: ${newTrainer}`
           );
 
-          // Por ahora solo mostramos el cambio (en el futuro se puede agregar endpoint)
-          console.log(`✅ Entrenador actualizado a: ${newTrainer}`);
-          alert(`✅ Entrenador actualizado a: ${newTrainer}`);
-        } catch (error) {
-          console.error("❌ Error actualizando entrenador:", error);
-          alert(`❌ Error: ${error.message}`);
+          // Guardar en localStorage
+          const trainersKey = "training_plan_trainers";
+          let savedTrainers = JSON.parse(
+            localStorage.getItem(trainersKey) || "{}"
+          );
+          savedTrainers[planId] = newTrainer;
+          localStorage.setItem(trainersKey, JSON.stringify(savedTrainers));
 
-          // Recargar para revertir el cambio
-          loadTrainingPlans();
+          console.log(`✅ Entrenador guardado: ${newTrainer}`);
+
+          // Mostrar confirmación con pop-up
+          showPopup({
+            icon: "👨‍🏫",
+            title: "Entrenador Asignado",
+            message: `Entrenador "${newTrainer}" asignado exitosamente al plan`,
+            confirmText: "Entendido",
+            onConfirm: () => {},
+          });
+        } catch (error) {
+          console.error("❌ Error guardando entrenador:", error);
+          showPopup({
+            icon: "❌",
+            title: "Error",
+            message: `Error al asignar entrenador: ${error.message}`,
+            confirmText: "Entendido",
+            confirmClass: "danger",
+            onConfirm: () => {},
+          });
         }
       }
 
