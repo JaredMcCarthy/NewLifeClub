@@ -286,6 +286,111 @@
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
       }
 
+      /* ============================================ */
+      /* 🎨 ESTILOS DE POP-UPS DE CONFIRMACIÓN */
+      /* ============================================ */
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .popup-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .popup-content {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+      }
+
+      .popup-overlay.show .popup-content {
+        transform: scale(1);
+      }
+
+      .popup-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .popup-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #ffffff;
+      }
+
+      .popup-message {
+        color: #a0a0a0;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .popup-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .popup-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 100px;
+      }
+
+      .popup-btn.confirm {
+        background: linear-gradient(45deg, #22c55e, #16a34a);
+        color: white;
+      }
+
+      .popup-btn.confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      }
+
+      .popup-btn.cancel {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .popup-btn.cancel:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .popup-btn.danger {
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .popup-btn.danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
       @media (max-width: 768px) {
         .main-container {
           grid-template-columns: 1fr;
@@ -303,6 +408,15 @@
         .table-row {
           grid-template-columns: 1fr;
           gap: 0.5rem;
+        }
+
+        .popup-content {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
+
+        .popup-buttons {
+          flex-direction: column;
         }
       }
     </style>
@@ -615,6 +729,77 @@
         dashboardStats: {},
       };
 
+      // ========================================
+      // 🎨 SISTEMA DE POP-UPS DE CONFIRMACIÓN
+      // ========================================
+      function showPopup(config) {
+        const overlay = document.getElementById("popup-overlay");
+        const icon = document.getElementById("popup-icon");
+        const title = document.getElementById("popup-title");
+        const message = document.getElementById("popup-message");
+        const cancelBtn = document.getElementById("popup-cancel");
+        const confirmBtn = document.getElementById("popup-confirm");
+
+        // Configurar contenido
+        icon.textContent = config.icon || "❓";
+        title.textContent = config.title || "Confirmar Acción";
+        message.textContent = config.message || "¿Estás seguro?";
+
+        // Configurar botones
+        cancelBtn.textContent = config.cancelText || "Cancelar";
+        confirmBtn.textContent = config.confirmText || "Confirmar";
+
+        // Configurar clases de botón
+        confirmBtn.className = `popup-btn ${config.confirmClass || "confirm"}`;
+
+        // Mostrar popup
+        overlay.classList.add("show");
+
+        // Manejar eventos
+        const handleCancel = () => {
+          hidePopup();
+          if (config.onCancel) config.onCancel();
+        };
+
+        const handleConfirm = () => {
+          hidePopup();
+          if (config.onConfirm) config.onConfirm();
+        };
+
+        // Limpiar eventos anteriores
+        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+        // Obtener referencias nuevas después del clonado
+        const newCancelBtn = document.getElementById("popup-cancel");
+        const newConfirmBtn = document.getElementById("popup-confirm");
+
+        // Reconfigurar después del clonado
+        newCancelBtn.textContent = config.cancelText || "Cancelar";
+        newConfirmBtn.textContent = config.confirmText || "Confirmar";
+        newConfirmBtn.className = `popup-btn ${
+          config.confirmClass || "confirm"
+        }`;
+
+        // Agregar eventos
+        newCancelBtn.addEventListener("click", handleCancel);
+        newConfirmBtn.addEventListener("click", handleConfirm);
+
+        // Cerrar con ESC
+        const handleEscape = (e) => {
+          if (e.key === "Escape") {
+            hidePopup();
+            document.removeEventListener("keydown", handleEscape);
+          }
+        };
+        document.addEventListener("keydown", handleEscape);
+      }
+
+      function hidePopup() {
+        const overlay = document.getElementById("popup-overlay");
+        overlay.classList.remove("show");
+      }
+
       // Función para mostrar secciones
       function showSection(sectionName) {
         // Ocultar todas las secciones
@@ -797,7 +982,7 @@
                 <div><span class="status-badge ${statusClass}">${statusText}</span></div>
                 <div>${membership.expiresAt}</div>
                 <div>
-                  <button 
+                  <button
                     onclick="toggleMembership(${membership.id}, '${
                 membership.status === "activa" ? "deactivate" : "activate"
               }')"
@@ -883,15 +1068,15 @@
                 <div>${order.metodo_pago}</div>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
                   <span class="status-badge ${statusClass}">${statusText}</span>
-                  <select 
+                  <select
                     onchange="handleStatusChange(this, ${order.id})"
                     class="status-dropdown"
                     style="
-                      background: rgba(255,255,255,0.1); 
-                      color: white; 
-                      border: 1px solid rgba(255,255,255,0.2); 
-                      border-radius: 6px; 
-                      padding: 0.25rem 0.5rem; 
+                      background: rgba(255,255,255,0.1);
+                      color: white;
+                      border: 1px solid rgba(255,255,255,0.2);
+                      border-radius: 6px;
+                      padding: 0.25rem 0.5rem;
                       font-size: 0.8rem;
                       cursor: pointer;
                     "
@@ -936,51 +1121,73 @@
       // 🔄 MARCAR PEDIDO COMO ENTREGADO/PENDIENTE
       // ========================================
       async function toggleStoreOrder(id, action) {
-        try {
-          const actionText =
+        const actionText =
+          action === "deliver"
+            ? "marcar como entregado"
+            : "marcar como pendiente";
+
+        showPopup({
+          icon: action === "deliver" ? "📦" : "⏳",
+          title:
             action === "deliver"
-              ? "marcar como entregado"
-              : "marcar como pendiente";
+              ? "Marcar como Entregado"
+              : "Marcar como Pendiente",
+          message: `¿Estás seguro de que quieres ${actionText} este pedido?`,
+          confirmText:
+            action === "deliver" ? "Marcar Entregado" : "Marcar Pendiente",
+          confirmClass: "confirm",
+          onConfirm: async () => {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/store-orders/${id}/toggle`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ action: action }),
+                }
+              );
 
-          if (
-            !confirm(`¿Estás seguro de que quieres ${actionText} este pedido?`)
-          ) {
-            return;
-          }
+              const data = await response.json();
 
-          const response = await fetch(
-            `${API_BASE_URL}/store-orders/${id}/toggle`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ action: action }),
+              if (!response.ok) {
+                throw new Error(
+                  data.message || `Error al ${actionText} pedido`
+                );
+              }
+
+              console.log(`✅ Pedido ${actionText}:`, data);
+
+              // Recargar pedidos para mostrar el cambio
+              loadStoreOrders();
+
+              // Mostrar mensaje de éxito con pop-up
+              showPopup({
+                icon: "✅",
+                title: "Éxito",
+                message: `Pedido ${actionText} exitosamente`,
+                confirmText: "Entendido",
+                onConfirm: () => {},
+              });
+            } catch (error) {
+              console.error(
+                `❌ Error al ${
+                  action === "deliver" ? "entregar" : "marcar como pendiente"
+                } pedido:`,
+                error
+              );
+              showPopup({
+                icon: "❌",
+                title: "Error",
+                message: `Error: ${error.message}`,
+                confirmText: "Entendido",
+                confirmClass: "danger",
+                onConfirm: () => {},
+              });
             }
-          );
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.message || `Error al ${actionText} pedido`);
-          }
-
-          console.log(`✅ Pedido ${actionText}:`, data);
-
-          // Recargar pedidos para mostrar el cambio
-          loadStoreOrders();
-
-          // Mostrar mensaje de éxito (opcional)
-          alert(`✅ Pedido ${actionText} exitosamente`);
-        } catch (error) {
-          console.error(
-            `❌ Error al ${
-              action === "deliver" ? "entregar" : "marcar como pendiente"
-            } pedido:`,
-            error
-          );
-          alert(`❌ Error: ${error.message}`);
-        }
+          },
+        });
       }
 
       // ========================================
@@ -1072,7 +1279,7 @@
               )}</div>
               <div style="color: #FF9800;">${plan.endDate}</div>
               <div>
-                <select 
+                <select
                   onchange="updateTrainer(${plan.id}, this.value)"
                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: white;"
                 >
@@ -1091,12 +1298,12 @@
                 </select>
               </div>
               <div>
-                <select 
+                <select
                   onchange="toggleTrainingPlan(${plan.id}, this.value)"
-                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
                          background: ${
                            plan.status === "activo" ? "#E8F5E8" : "#FFF3E0"
-                         }; 
+                         };
                          color: ${
                            plan.status === "activo" ? "#2E7D32" : "#F57C00"
                          }; font-weight: 600;"
@@ -1240,16 +1447,16 @@
                 registration.eventDate
               }</div>
               <div>
-                <select 
+                <select
                   onchange="toggleEventParticipation(${
                     registration.id
                   }, this.value)"
-                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
                          background: ${
                            registration.status === "registrado"
                              ? "#E3F2FD"
                              : "#E8F5E8"
-                         }; 
+                         };
                          color: ${
                            registration.status === "registrado"
                              ? "#1976D2"
@@ -1407,7 +1614,7 @@
                 <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;
                              background: ${getDifficultyColor(
                                registration.difficulty
-                             )}; 
+                             )};
                              color: white;">
                   ${registration.difficulty}
                 </span>
@@ -1493,12 +1700,12 @@
             </div>
             <div style="color: #4CAF50; font-weight: 500;">${message.date}</div>
             <div>
-              <select 
+              <select
                 onchange="toggleContactStatus(${message.id}, this.value)"
-                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
                        background: ${
                          message.status === "nuevo" ? "#FFF3E0" : "#E8F5E8"
-                       }; 
+                       };
                        color: ${
                          message.status === "nuevo" ? "#F57C00" : "#2E7D32"
                        }; font-weight: 600;"
@@ -1631,14 +1838,21 @@
         }
       }
 
-      // Función de logout
+      // Función de logout con pop-up
       function logout() {
-        if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
-          // Limpiar sesiones
-          localStorage.removeItem("adminSession");
-          sessionStorage.removeItem("adminSession");
-          window.location.href = "adminlogin.html";
-        }
+        showPopup({
+          icon: "👋",
+          title: "Cerrar Sesión",
+          message: "¿Estás seguro de que quieres cerrar sesión?",
+          confirmText: "Cerrar Sesión",
+          confirmClass: "danger",
+          onConfirm: () => {
+            // Limpiar sesiones
+            localStorage.removeItem("adminSession");
+            sessionStorage.removeItem("adminSession");
+            window.location.href = "adminlogin.html";
+          },
+        });
       }
 
       // Verificar sesión de administrador
@@ -1803,5 +2017,24 @@
         });
       }
     </script>
+
+    <!-- ============================================ -->
+    <!-- 🎨 POP-UP DE CONFIRMACIÓN -->
+    <!-- ============================================ -->
+    <div id="popup-overlay" class="popup-overlay">
+      <div class="popup-content">
+        <div id="popup-icon" class="popup-icon">❓</div>
+        <h3 id="popup-title" class="popup-title">Confirmar Acción</h3>
+        <p id="popup-message" class="popup-message">
+          ¿Estás seguro de que quieres realizar esta acción?
+        </p>
+        <div class="popup-buttons">
+          <button id="popup-cancel" class="popup-btn cancel">Cancelar</button>
+          <button id="popup-confirm" class="popup-btn confirm">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
