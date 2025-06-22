@@ -164,10 +164,10 @@ const getMemberships = async (req, res) => {
         console.log("Info de producto:", compra.productos);
       }
 
-      // Calcular fecha de expiración (ejemplo: 1 año desde la compra)
+      // Calcular fecha de expiración (1 MES desde la compra)
       const fechaCompra = new Date(compra.fecha_compra);
       const fechaExpiracion = new Date(fechaCompra);
-      fechaExpiracion.setFullYear(fechaExpiracion.getFullYear() + 1);
+      fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 1);
 
       return {
         id: compra.id,
