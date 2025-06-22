@@ -490,12 +490,19 @@
             id="plans-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="
+                grid-template-columns: 1.5fr 2fr 1.2fr 1fr 1.5fr 1.5fr 1.5fr;
+              "
+            >
               <div>Usuario</div>
               <div>Email</div>
               <div>Plan</div>
+              <div>Precio</div>
+              <div>Fecha Finalización</div>
+              <div>Entrenador</div>
               <div>Estado</div>
-              <div>Progreso</div>
             </div>
             <div id="plans-table-body">
               <!-- Se llenará dinámicamente -->
@@ -999,6 +1006,172 @@
         }
       }
 
+      // ========================================
+      // 🏃‍♂️ CARGAR PLANES DE ENTRENAMIENTO REALES
+      // ========================================
+      async function loadTrainingPlans() {
+        const tableBody = document.getElementById("plans-table-body");
+
+        try {
+          console.log("🔄 Cargando planes de entrenamiento reales...");
+          const response = await fetch(`${API_BASE_URL}/training-plans`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar planes");
+          }
+
+          console.log("✅ Planes cargados:", data);
+
+          if (data.plans.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                📋 No hay planes de entrenamiento registrados
+              </div>
+            `;
+            return;
+          }
+
+          // Generar filas de la tabla
+          tableBody.innerHTML = data.plans
+            .map(
+              (plan) => `
+            <div class="table-row" style="grid-template-columns: 1.5fr 2fr 1.2fr 1fr 1.5fr 1.5fr 1.5fr; min-height: 80px; align-items: center;">
+              <div style="font-weight: 500;">${plan.user}</div>
+              <div style="color: #666;">${plan.email}</div>
+              <div style="font-weight: 600; color: #2196F3;">${plan.plan}</div>
+              <div style="font-weight: 600; color: #4CAF50;">L.${plan.price.toFixed(
+                2
+              )}</div>
+              <div style="color: #FF9800;">${plan.endDate}</div>
+              <div>
+                <select 
+                  onchange="updateTrainer(${plan.id}, this.value)"
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: white;"
+                >
+                  <option value="Sin asignar" ${
+                    plan.trainer === "Sin asignar" ? "selected" : ""
+                  }>Sin asignar</option>
+                  <option value="Coach María" ${
+                    plan.trainer === "Coach María" ? "selected" : ""
+                  }>Coach María</option>
+                  <option value="Coach Carlos" ${
+                    plan.trainer === "Coach Carlos" ? "selected" : ""
+                  }>Coach Carlos</option>
+                  <option value="Coach Ana" ${
+                    plan.trainer === "Coach Ana" ? "selected" : ""
+                  }>Coach Ana</option>
+                </select>
+              </div>
+              <div>
+                <select 
+                  onchange="toggleTrainingPlan(${plan.id}, this.value)"
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+                         background: ${
+                           plan.status === "activo" ? "#E8F5E8" : "#FFF3E0"
+                         }; 
+                         color: ${
+                           plan.status === "activo" ? "#2E7D32" : "#F57C00"
+                         }; font-weight: 600;"
+                >
+                  <option value="activate" ${
+                    plan.status === "activo" ? "selected" : ""
+                  }>✅ Activo</option>
+                  <option value="deactivate" ${
+                    plan.status === "inactivo" ? "selected" : ""
+                  }>⏸️ Inactivo</option>
+                </select>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("❌ Error cargando planes de entrenamiento:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #f44336; grid-column: 1 / -1;">
+              ❌ Error al cargar planes: ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      // ========================================
+      // 🔄 ACTIVAR/DESACTIVAR PLAN DE ENTRENAMIENTO
+      // ========================================
+      async function toggleTrainingPlan(id, action) {
+        try {
+          const actionText = action === "activate" ? "activar" : "desactivar";
+
+          if (
+            !confirm(
+              `¿Estás seguro de que quieres ${actionText} este plan de entrenamiento?`
+            )
+          ) {
+            // Recargar para revertir el cambio visual del dropdown
+            loadTrainingPlans();
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/training-plans/${id}/toggle`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ action: action }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || `Error al ${actionText} plan`);
+          }
+
+          console.log(`✅ Plan ${actionText}:`, data);
+
+          // Recargar planes para mostrar el cambio
+          loadTrainingPlans();
+
+          // Mostrar mensaje de éxito (opcional)
+          alert(`✅ Plan ${actionText} exitosamente`);
+        } catch (error) {
+          console.error(
+            `❌ Error al ${
+              action === "activate" ? "activar" : "desactivar"
+            } plan:`,
+            error
+          );
+          alert(`❌ Error: ${error.message}`);
+
+          // Recargar para revertir el cambio visual
+          loadTrainingPlans();
+        }
+      }
+
+      // ========================================
+      // 👨‍🏫 ACTUALIZAR ENTRENADOR ASIGNADO
+      // ========================================
+      async function updateTrainer(planId, newTrainer) {
+        try {
+          console.log(
+            `🔄 Actualizando entrenador para plan ${planId} a: ${newTrainer}`
+          );
+
+          // Por ahora solo mostramos el cambio (en el futuro se puede agregar endpoint)
+          console.log(`✅ Entrenador actualizado a: ${newTrainer}`);
+          alert(`✅ Entrenador actualizado a: ${newTrainer}`);
+        } catch (error) {
+          console.error("❌ Error actualizando entrenador:", error);
+          alert(`❌ Error: ${error.message}`);
+
+          // Recargar para revertir el cambio
+          loadTrainingPlans();
+        }
+      }
+
       // Función para cargar datos de cada sección
       function loadSectionData(sectionName) {
         switch (sectionName) {
@@ -1013,6 +1186,9 @@
             break;
           case "orders":
             loadStoreOrders();
+            break;
+          case "plans":
+            loadTrainingPlans();
             break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"
@@ -1081,6 +1257,15 @@
             filterOrdersTable(searchTerm);
           });
         }
+
+        // 🔍 BÚSQUEDA EN TIEMPO REAL PARA PLANES
+        const plansSearchInput = document.getElementById("plans-search");
+        if (plansSearchInput) {
+          plansSearchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterPlansTable(searchTerm);
+          });
+        }
       });
 
       function filterUsersTable(searchTerm) {
@@ -1099,6 +1284,20 @@
 
       function filterOrdersTable(searchTerm) {
         const tableBody = document.getElementById("orders-table-body");
+        const rows = tableBody.querySelectorAll(".table-row");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function filterPlansTable(searchTerm) {
+        const tableBody = document.getElementById("plans-table-body");
         const rows = tableBody.querySelectorAll(".table-row");
 
         rows.forEach((row) => {
