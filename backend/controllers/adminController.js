@@ -16,35 +16,30 @@ const getUsers = async (req, res) => {
   try {
     console.log("📊 Consultando usuarios registrados...");
 
-    // Consulta simplificada para obtener usuarios reales
+    // Consulta SÚPER SIMPLE - solo la tabla usuarios
     const query = `
       SELECT 
-        u.id,
-        u.nombre,
-        u.correo,
-        u.fecha_registro,
-        u.status as estado,
-        CASE 
-          WHEN c.email IS NOT NULL THEN 'Cliente Tienda'
-          ELSE 'Usuario Registrado'
-        END as tipo_usuario
-      FROM usuarios u
-      LEFT JOIN compras c ON u.correo = c.email
-      ORDER BY u.fecha_registro DESC
+        id,
+        nombre,
+        correo,
+        fecha_registro,
+        status
+      FROM usuarios
+      ORDER BY fecha_registro DESC
     `;
 
     const result = await pool.query(query);
 
     console.log(`✅ Encontrados ${result.rows.length} usuarios registrados`);
 
-    // Formatear datos para el frontend
+    // Formatear datos SIMPLES para el frontend
     const users = result.rows.map((user) => ({
       id: user.id,
       name: user.nombre,
       email: user.correo,
-      type: user.tipo_usuario,
+      type: "Usuario Registrado", // Tipo fijo y simple
       joinDate: new Date(user.fecha_registro).toLocaleDateString("es-ES"),
-      status: user.estado,
+      status: user.status || "active",
     }));
 
     res.json({
