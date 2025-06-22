@@ -165,7 +165,7 @@
         background: rgba(102, 126, 234, 0.1);
         padding: 1rem;
         display: grid;
-        grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
         gap: 1rem;
         font-weight: 600;
       }
@@ -173,7 +173,7 @@
       .table-row {
         padding: 1rem;
         display: grid;
-        grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
         gap: 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         transition: background 0.3s ease;
@@ -222,6 +222,36 @@
 
       .search-bar::placeholder {
         color: #888;
+      }
+
+      .toggle-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-btn.activate {
+        background: linear-gradient(45deg, #22c55e, #16a34a);
+        color: white;
+      }
+
+      .toggle-btn.activate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      }
+
+      .toggle-btn.deactivate {
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .toggle-btn.deactivate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
       }
 
       @media (max-width: 768px) {
@@ -377,6 +407,7 @@
               <div>Plan</div>
               <div>Estado</div>
               <div>Vence</div>
+              <div>Acción</div>
             </div>
             <div id="memberships-table-body">
               <!-- Se llenará dinámicamente -->
@@ -643,6 +674,133 @@
         }
       }
 
+      // ========================================
+      // 💪 CARGAR MEMBRESÍAS REALES DESDE NEON
+      // ========================================
+      async function loadMemberships() {
+        const tableBody = document.getElementById("memberships-table-body");
+
+        try {
+          console.log("🔄 Cargando membresías reales desde Neon...");
+          const response = await fetch(`${API_BASE_URL}/memberships`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Error al cargar membresías");
+          }
+
+          console.log("✅ Membresías cargadas:", data);
+
+          // Limpiar tabla
+          tableBody.innerHTML = "";
+
+          if (data.memberships.length === 0) {
+            tableBody.innerHTML = `
+              <div style="padding: 2rem; text-align: center; color: #888; grid-column: 1 / -1;">
+                📋 No hay membresías registradas aún.<br>
+                <small>Las membresías aparecerán aquí cuando los usuarios las compren.</small>
+              </div>
+            `;
+          } else {
+            // Mostrar membresías reales
+            data.memberships.forEach((membership) => {
+              const row = document.createElement("div");
+              row.className = "table-row";
+
+              const statusClass =
+                membership.status === "activa"
+                  ? "status-active"
+                  : "status-expired";
+              const statusText =
+                membership.status === "activa" ? "Activa" : "Inactiva";
+
+              row.innerHTML = `
+                <div>${membership.user}</div>
+                <div>${membership.email}</div>
+                <div>${membership.plan}</div>
+                <div><span class="status-badge ${statusClass}">${statusText}</span></div>
+                <div>${membership.expiresAt}</div>
+                <div>
+                  <button 
+                    onclick="toggleMembership(${membership.id}, '${
+                membership.status === "activa" ? "deactivate" : "activate"
+              }')"
+                    class="toggle-btn ${
+                      membership.status === "activa" ? "deactivate" : "activate"
+                    }"
+                  >
+                    ${
+                      membership.status === "activa"
+                        ? "❌ Desactivar"
+                        : "✅ Activar"
+                    }
+                  </button>
+                </div>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error("❌ Error cargando membresías:", error);
+          tableBody.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #ef4444; grid-column: 1 / -1;">
+              ❌ Error al cargar membresías: ${error.message}<br>
+              <small>Verifica la conexión con la base de datos.</small>
+            </div>
+          `;
+        }
+      }
+
+      // ========================================
+      // 🔄 ACTIVAR/DESACTIVAR MEMBRESÍA
+      // ========================================
+      async function toggleMembership(id, action) {
+        try {
+          const actionText = action === "activate" ? "activar" : "desactivar";
+
+          if (
+            !confirm(
+              `¿Estás seguro de que quieres ${actionText} esta membresía?`
+            )
+          ) {
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/memberships/${id}/toggle`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ action: action }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || `Error al ${actionText} membresía`);
+          }
+
+          console.log(`✅ Membresía ${actionText}da:`, data);
+
+          // Recargar membresías para mostrar el cambio
+          loadMemberships();
+
+          // Mostrar mensaje de éxito (opcional)
+          alert(`✅ Membresía ${actionText}da exitosamente`);
+        } catch (error) {
+          console.error(
+            `❌ Error al ${
+              action === "activate" ? "activar" : "desactivar"
+            } membresía:`,
+            error
+          );
+          alert(`❌ Error: ${error.message}`);
+        }
+      }
+
       // Función para cargar datos de cada sección
       function loadSectionData(sectionName) {
         switch (sectionName) {
@@ -651,6 +809,9 @@
             break;
           case "users":
             loadUsers();
+            break;
+          case "memberships":
+            loadMemberships();
             break;
           default:
             // Para otras secciones, mostrar mensaje de "próximamente"

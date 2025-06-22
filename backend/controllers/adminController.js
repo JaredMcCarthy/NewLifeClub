@@ -113,30 +113,34 @@ const getDashboardStats = async (req, res) => {
 // ============================================
 const getMemberships = async (req, res) => {
   try {
-    console.log("📊 Consultando suscripciones al newsletter...");
+    console.log("📊 Consultando membresías reales desde Neon...");
 
     const query = `
       SELECT 
-        n.id,
-        n.correo,
-        n.fecha_suscripcion,
-        u.nombre,
-        'Newsletter' as tipo,
-        'Activa' as estado
-      FROM newsletter n
-      LEFT JOIN usuarios u ON n.correo = u.correo
-      ORDER BY n.fecha_suscripcion DESC
+        id,
+        email,
+        nombre,
+        tipo_membresia,
+        estado_membresia,
+        fecha_inicio,
+        fecha_expiracion,
+        fecha_compra
+      FROM compras_membresias
+      ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
 
     const memberships = result.rows.map((membership) => ({
       id: membership.id,
-      user: membership.nombre || "Usuario Newsletter",
-      email: membership.correo,
-      plan: membership.tipo,
-      status: membership.estado,
-      expiresAt: "Permanente",
+      user: membership.nombre,
+      email: membership.email,
+      plan: membership.tipo_membresia || "Básica",
+      status: membership.estado_membresia || "activa",
+      expiresAt: membership.fecha_expiracion
+        ? new Date(membership.fecha_expiracion).toLocaleDateString("es-ES")
+        : "Sin fecha",
+      startDate: new Date(membership.fecha_inicio).toLocaleDateString("es-ES"),
     }));
 
     res.json({
@@ -154,8 +158,65 @@ const getMemberships = async (req, res) => {
   }
 };
 
+// ============================================
+// 🔄 ACTIVAR/DESACTIVAR MEMBRESÍA
+// ============================================
+const toggleMembership = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'activate' o 'deactivate'
+
+    console.log(
+      `🔄 ${
+        action === "activate" ? "Activando" : "Desactivando"
+      } membresía ID: ${id}`
+    );
+
+    const newStatus = action === "activate" ? "activa" : "inactiva";
+
+    const query = `
+      UPDATE compras_membresias 
+      SET estado_membresia = $1
+      WHERE id = $2
+      RETURNING id, nombre, email, estado_membresia
+    `;
+
+    const result = await pool.query(query, [newStatus, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Membresía no encontrada",
+      });
+    }
+
+    const membership = result.rows[0];
+
+    res.json({
+      success: true,
+      message: `Membresía ${
+        action === "activate" ? "activada" : "desactivada"
+      } exitosamente`,
+      membership: {
+        id: membership.id,
+        user: membership.nombre,
+        email: membership.email,
+        status: membership.estado_membresia,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando membresía:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar membresía",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getDashboardStats,
   getMemberships,
+  toggleMembership,
 };
