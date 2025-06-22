@@ -86,9 +86,8 @@ const getDashboardStats = async (req, res) => {
         WHERE estado = 'completada' 
         AND (productos ILIKE '%membership%' 
              OR productos ILIKE '%membresia%'
-             OR productos ILIKE '%premium%'
-             OR productos ILIKE '%basic%'
-             OR productos ILIKE '%vip%')
+             OR productos ILIKE '%"membership"%'
+             OR productos ILIKE '%"membresia"%')
       `),
     ]);
 
@@ -139,9 +138,8 @@ const getMemberships = async (req, res) => {
       FROM compras
       WHERE productos ILIKE '%membership%' 
          OR productos ILIKE '%membresia%'
-         OR productos ILIKE '%premium%'
-         OR productos ILIKE '%basic%'
-         OR productos ILIKE '%vip%'
+         OR productos ILIKE '%"membership"%'
+         OR productos ILIKE '%"membresia"%'
       ORDER BY fecha_compra DESC
     `;
 
@@ -288,9 +286,8 @@ const getStoreOrders = async (req, res) => {
       FROM compras
       WHERE NOT (productos ILIKE '%membership%' 
                  OR productos ILIKE '%membresia%'
-                 OR productos ILIKE '%premium%'
-                 OR productos ILIKE '%basic%'
-                 OR productos ILIKE '%vip%')
+                 OR productos ILIKE '%"membership"%'
+                 OR productos ILIKE '%"membresia"%')
       ORDER BY fecha_compra DESC
     `;
 
