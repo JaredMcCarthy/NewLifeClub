@@ -433,10 +433,16 @@
             id="memberships-search"
           />
           <div class="data-table">
-            <div class="table-header">
+            <div
+              class="table-header"
+              style="
+                grid-template-columns: 1.5fr 2fr 1.2fr 1fr 1.3fr 1.2fr 1.3fr;
+              "
+            >
               <div>Usuario</div>
               <div>Email</div>
               <div>Plan</div>
+              <div>Precio</div>
               <div>Estado</div>
               <div>Vence</div>
               <div>Acción</div>
@@ -779,10 +785,15 @@
               const statusText =
                 membership.status === "activa" ? "Activa" : "Inactiva";
 
+              row.style.gridTemplateColumns =
+                "1.5fr 2fr 1.2fr 1fr 1.3fr 1.2fr 1.3fr";
               row.innerHTML = `
                 <div>${membership.user}</div>
                 <div>${membership.email}</div>
                 <div>${membership.plan}</div>
+                <div style="font-weight: 600; color: #4CAF50;">L.${parseFloat(
+                  membership.price || 0
+                ).toFixed(2)}</div>
                 <div><span class="status-badge ${statusClass}">${statusText}</span></div>
                 <div>${membership.expiresAt}</div>
                 <div>

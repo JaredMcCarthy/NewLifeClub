@@ -63,7 +63,7 @@ const getDashboardStats = async (req, res) => {
   try {
     console.log("📊 Obteniendo estadísticas del dashboard...");
 
-    // Consultas simplificadas para estadísticas reales
+    // Consultas específicas para estadísticas reales con ingresos correctos
     const [
       usersResult,
       salesResult,
@@ -72,10 +72,11 @@ const getDashboardStats = async (req, res) => {
       contactResult,
       membershipsResult,
       trainingPlansResult,
+      revenueResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
       pool.query(
-        "SELECT COUNT(*) as count, COALESCE(SUM(total), 0) as total FROM compras"
+        "SELECT COUNT(*) as count FROM compras WHERE estado = 'completada'"
       ),
       pool.query(
         "SELECT COUNT(*) as count FROM event_registrations WHERE status = 'active'"
@@ -99,13 +100,18 @@ const getDashboardStats = async (req, res) => {
              OR productos ILIKE '%plan%'
              OR productos ILIKE '%entrenamiento%')
       `),
+      // Nueva consulta para calcular ingresos reales de todas las ventas completadas
+      pool.query(`
+        SELECT COALESCE(SUM(total), 0) as total_revenue FROM compras
+        WHERE estado = 'completada' AND total > 0
+      `),
     ]);
 
     const stats = {
       totalUsers: parseInt(usersResult.rows[0].count),
       activeMemberships: parseInt(membershipsResult.rows[0].count), // CONTEO REAL de membresías activas
       totalSales: parseInt(salesResult.rows[0].count),
-      totalRevenue: parseFloat(salesResult.rows[0].total || 0),
+      totalRevenue: parseFloat(revenueResult.rows[0].total_revenue || 0), // INGRESOS REALES de todas las ventas
       activeTrainingPlans: parseInt(trainingPlansResult.rows[0].count), // CONTEO REAL de planes activos
       pendingEvents: parseInt(eventsResult.rows[0].count),
       weeklyRoutes: 0, // Por ahora 0 hasta que tengas esa tabla
@@ -161,6 +167,7 @@ const getMemberships = async (req, res) => {
       // Parsear el JSON de productos para extraer info de membresía
       let planType = "Membresía";
       let productInfo = {};
+      let membershipPrice = 0;
 
       try {
         const productos = JSON.parse(compra.productos);
@@ -177,9 +184,15 @@ const getMemberships = async (req, res) => {
               planType = productInfo.name;
             }
           }
+          // Extraer precio del producto
+          membershipPrice = parseFloat(
+            productInfo.price || productInfo.precio || compra.total || 0
+          );
         }
       } catch (e) {
         console.log("Info de producto:", compra.productos);
+        // Si no se puede parsear, usar el total de la compra
+        membershipPrice = parseFloat(compra.total || 0);
       }
 
       // Calcular fecha de expiración (1 MES desde la compra)
@@ -192,6 +205,7 @@ const getMemberships = async (req, res) => {
         user: `${compra.nombre} ${compra.apellido}`,
         email: compra.email,
         plan: planType,
+        price: membershipPrice, // PRECIO de la membresía
         status: compra.estado === "completada" ? "activa" : "pendiente",
         expiresAt: fechaExpiracion.toLocaleDateString("es-ES"),
         startDate: fechaCompra.toLocaleDateString("es-ES"),
