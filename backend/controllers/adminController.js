@@ -181,7 +181,7 @@ const getMemberships = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 CONSULTA ESPECÍFICA: SOLO MEMBRESÍAS
+    // 🎯 FILTRO SIMPLE: SOLO membresías por source
     const query = `
       SELECT 
         id,
@@ -194,20 +194,7 @@ const getMemberships = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%"source":"membresias"%'
-        OR productos ILIKE '%"Membresía%'
-        OR productos ILIKE '%"name":"Membresia%'
-        OR productos ILIKE '%membership%'
-        OR productos ILIKE '%membresia%'
-        OR (
-          productos ILIKE '%member%' 
-          AND NOT productos ILIKE '%plan%'
-          AND NOT productos ILIKE '%10k%'
-          AND NOT productos ILIKE '%21k%'
-          AND NOT productos ILIKE '%42k%'
-        )
-      )
+      WHERE productos ILIKE '%"source":"membresias"%'
       ORDER BY fecha_compra DESC
     `;
 
@@ -394,7 +381,7 @@ const getStoreOrders = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 CONSULTA ESTRICTA: SOLO productos de TIENDA (productos físicos)
+    // 🎯 FILTRO SIMPLE: SOLO lo que NO sea membresías ni planes
     const query = `
       SELECT 
         id,
@@ -411,30 +398,8 @@ const getStoreOrders = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%camisa%' 
-        OR productos ILIKE '%blusa%'
-        OR productos ILIKE '%hoodie%'
-        OR productos ILIKE '%top%'
-        OR productos ILIKE '%ropa%'
-        OR productos ILIKE '%shirt%'
-        OR productos ILIKE '%"source":"tienda"%'
-        OR productos ILIKE '%mujer%'
-        OR productos ILIKE '%hombre%'
-        OR productos ILIKE '%unisex%'
-      )
-      AND NOT (
-        productos ILIKE '%membership%' 
-        OR productos ILIKE '%membresia%'
-        OR productos ILIKE '%"membresia"%'
-        OR productos ILIKE '%plan%'
-        OR productos ILIKE '%entrenamiento%'
-        OR productos ILIKE '%10k%'
-        OR productos ILIKE '%21k%'
-        OR productos ILIKE '%42k%'
-        OR productos ILIKE '%"source":"membresias"%'
-        OR productos ILIKE '%"source":"newlifepro"%'
-      )
+      WHERE productos NOT ILIKE '%"source":"membresias"%'
+        AND productos NOT ILIKE '%"source":"newlifepro"%'
       ORDER BY fecha_compra DESC
     `;
 
@@ -617,7 +582,7 @@ const getTrainingPlans = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 CONSULTA ESPECÍFICA: SOLO PLANES DE ENTRENAMIENTO
+    // 🎯 FILTRO SIMPLE: SOLO planes por source
     const query = `
       SELECT 
         id,
@@ -630,21 +595,7 @@ const getTrainingPlans = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%"source":"newlifepro"%'
-        OR productos ILIKE '%"Plan 10K%'
-        OR productos ILIKE '%"Plan 21K%'
-        OR productos ILIKE '%"Plan 42K%'
-        OR productos ILIKE '%"name":"Plan%'
-        OR productos ILIKE '%10k%'
-        OR productos ILIKE '%21k%'
-        OR productos ILIKE '%42k%'
-        OR (
-          productos ILIKE '%plan%' 
-          AND NOT productos ILIKE '%membership%'
-          AND NOT productos ILIKE '%membresia%'
-        )
-      )
+      WHERE productos ILIKE '%"source":"newlifepro"%'
       ORDER BY fecha_compra DESC
     `;
 
