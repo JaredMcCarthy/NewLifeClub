@@ -380,7 +380,7 @@ const getStoreOrders = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 TEMPORAL: MOSTRAR TODOS LOS DATOS SIN FILTROS
+    // 🎯 FILTRO SIMPLE: SOLO EXCLUIR MEMBRESÍAS Y PLANES DE PEDIDOS
     const query = `
       SELECT 
         id,
@@ -397,6 +397,8 @@ const getStoreOrders = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
+      WHERE productos NOT ILIKE '%Membresía%'
+        AND productos NOT ILIKE '%Plan%'
       ORDER BY fecha_compra DESC
     `;
 
