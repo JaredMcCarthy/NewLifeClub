@@ -588,32 +588,263 @@
         }
       }
 
+      /* ============================================ */
+      /* 📱 DISEÑO RESPONSIVE PARA MÓVILES */
+      /* ============================================ */
       @media (max-width: 768px) {
-        .main-container {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar {
-          display: none;
-        }
-
-        .stats-grid {
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        }
-
-        .table-header,
-        .table-row {
-          grid-template-columns: 1fr;
+        /* 📲 HEADER MÓVIL */
+        .admin-header {
+          padding: 0.8rem 1rem;
+          flex-direction: column;
           gap: 0.5rem;
         }
 
+        .admin-title {
+          font-size: 1.3rem;
+          margin: 0;
+        }
+
+        .logo {
+          width: 35px;
+          height: 35px;
+          font-size: 1rem;
+        }
+
+        .logout-btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.9rem;
+        }
+
+        /* 🏗️ LAYOUT PRINCIPAL MÓVIL */
+        .main-container {
+          grid-template-columns: 1fr;
+          padding: 0;
+          gap: 0;
+        }
+
+        /* 📱 MENÚ DESPLEGABLE MÓVIL */
+        .sidebar {
+          display: block;
+          position: fixed;
+          top: 140px; /* Después del header */
+          left: 0;
+          right: 0;
+          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+          border-radius: 0;
+          padding: 0;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          z-index: 100;
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease;
+        }
+
+        .sidebar.mobile-open {
+          max-height: 400px;
+        }
+
+        .nav-item {
+          padding: 1rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          font-size: 0.95rem;
+        }
+
+        .nav-item:last-child {
+          border-bottom: none;
+        }
+
+        /* 📱 BOTÓN HAMBURGUESA */
+        .mobile-menu-btn {
+          display: block;
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(45deg, #667eea, #764ba2);
+          border: none;
+          border-radius: 8px;
+          color: white;
+          font-size: 1.2rem;
+          padding: 0.8rem;
+          cursor: pointer;
+          z-index: 101;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 📊 ÁREA DE CONTENIDO MÓVIL */
+        .content-area {
+          padding: 1rem;
+          margin-top: 140px; /* Espacio para header fijo */
+        }
+
+        .section-title {
+          font-size: 1.4rem;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+
+        /* 📊 TARJETAS DEL DASHBOARD MÓVIL */
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.8rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+          padding: 1rem;
+          min-height: auto;
+        }
+
+        .stat-number {
+          font-size: 1.5rem;
+          margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+          font-size: 0.75rem;
+          line-height: 1.2;
+          text-align: center;
+        }
+
+        /* 🔍 BARRA DE BÚSQUEDA MÓVIL */
+        .search-bar {
+          font-size: 0.9rem;
+          padding: 0.8rem;
+          margin-bottom: 1rem;
+        }
+
+        /* 📋 TABLAS RESPONSIVE */
+        .data-table {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .table-header {
+          display: none; /* Ocultar headers en móvil */
+        }
+
+        .table-row {
+          display: block;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
+          padding: 1rem;
+          margin-bottom: 0.8rem;
+          position: relative;
+        }
+
+        .table-row > div {
+          display: block;
+          padding: 0.3rem 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          position: relative;
+          padding-left: 100px;
+        }
+
+        .table-row > div:last-child {
+          border-bottom: none;
+        }
+
+        /* Labels para cada campo en móvil */
+        .table-row > div:before {
+          content: attr(data-label);
+          position: absolute;
+          left: 0;
+          top: 0.3rem;
+          font-weight: 600;
+          color: #3b82f6;
+          font-size: 0.8rem;
+          width: 90px;
+        }
+
+        /* 🎨 POPUPS MÓVIL */
         .popup-content {
           margin: 1rem;
           padding: 1.5rem;
+          max-width: 90%;
+          width: auto;
+        }
+
+        .popup-title {
+          font-size: 1.4rem;
+        }
+
+        .popup-message {
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
         }
 
         .popup-buttons {
           flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        .popup-btn {
+          width: 100%;
+          padding: 0.8rem;
+          font-size: 0.9rem;
+        }
+
+        /* 🔘 BOTONES Y CONTROLES MÓVIL */
+        .toggle-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+
+        select {
+          padding: 0.5rem !important;
+          font-size: 0.85rem !important;
+        }
+
+        /* 📱 UTILIDADES MÓVIL */
+        .mobile-only {
+          display: block !important;
+        }
+
+        .desktop-only {
+          display: none !important;
+        }
+
+        /* 📊 AJUSTES ESPECÍFICOS PARA DASHBOARD */
+        #dashboard-section .stats-grid {
+          grid-template-columns: 1fr;
+          gap: 0.6rem;
+        }
+
+        #dashboard-section .stat-card {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 0.8rem;
+          text-align: left;
+        }
+
+        #dashboard-section .stat-number {
+          font-size: 1.8rem;
+          margin: 0;
+          min-width: 80px;
+        }
+
+        #dashboard-section .stat-label {
+          font-size: 0.85rem;
+          text-align: left;
+          line-height: 1.3;
+        }
+      }
+
+      /* 🎯 ESTILOS ESPECÍFICOS SOLO PARA DESKTOP */
+      @media (min-width: 769px) {
+        .mobile-menu-btn {
+          display: none;
+        }
+
+        .mobile-only {
+          display: none !important;
         }
       }
     </style>
@@ -627,6 +858,11 @@
       </div>
       <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
     </header>
+
+    <!-- 📱 Botón Menú Móvil -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+      <span id="menu-icon">☰</span>
+    </button>
 
     <!-- Main Container -->
     <div class="main-container">
@@ -1141,11 +1377,11 @@
               const row = document.createElement("div");
               row.className = "table-row";
               row.innerHTML = `
-                <div>${user.name}</div>
-                <div>${user.email}</div>
-                <div>${user.type}</div>
-                <div>${user.joinDate}</div>
-                <div><span class="status-badge status-active">${user.status}</span></div>
+                <div data-label="Nombre:">${user.name}</div>
+                <div data-label="Email:">${user.email}</div>
+                <div data-label="Tipo:">${user.type}</div>
+                <div data-label="Registro:">${user.joinDate}</div>
+                <div data-label="Estado:"><span class="status-badge status-active">${user.status}</span></div>
               `;
               tableBody.appendChild(row);
             });
@@ -1204,15 +1440,15 @@
               row.style.gridTemplateColumns =
                 "1.5fr 2fr 1.2fr 1fr 1.3fr 1.2fr 1.3fr";
               row.innerHTML = `
-                <div>${membership.user}</div>
-                <div>${membership.email}</div>
-                <div>${membership.plan}</div>
-                <div style="font-weight: 600; color: #4CAF50;">L.${parseFloat(
+                <div data-label="Usuario:">${membership.user}</div>
+                <div data-label="Email:">${membership.email}</div>
+                <div data-label="Plan:">${membership.plan}</div>
+                <div data-label="Precio:" style="font-weight: 600; color: #4CAF50;">L.${parseFloat(
                   membership.price || 0
                 ).toFixed(2)}</div>
-                <div><span class="status-badge ${statusClass}">${statusText}</span></div>
-                <div>${membership.expiresAt}</div>
-                <div>
+                <div data-label="Estado:"><span class="status-badge ${statusClass}">${statusText}</span></div>
+                <div data-label="Vence:">${membership.expiresAt}</div>
+                <div data-label="Acción:">
                   <button
                     onclick="toggleMembership(${membership.id}, '${
                 membership.status === "activa" ? "deactivate" : "activate"
@@ -1284,20 +1520,24 @@
                 order.status === "entregado" ? "Entregado" : "Pendiente";
 
               row.innerHTML = `
-                <div>${order.user}</div>
-                <div>${order.email}</div>
-                <div class="products-cell">${order.productos}</div>
-                <div>L.${parseFloat(order.total).toFixed(2)}</div>
-                <div title="${order.direccion}">${
+                <div data-label="Usuario:">${order.user}</div>
+                <div data-label="Email:">${order.email}</div>
+                <div data-label="Productos:" class="products-cell">${
+                  order.productos
+                }</div>
+                <div data-label="Total:">L.${parseFloat(order.total).toFixed(
+                  2
+                )}</div>
+                <div data-label="Dirección:" title="${order.direccion}">${
                 order.direccion.length > 20
                   ? order.direccion.substring(0, 20) + "..."
                   : order.direccion
               }</div>
-                <div>${order.ciudad}</div>
-                <div>${order.departamento}</div>
-                <div>${order.telefono}</div>
-                <div>${order.metodo_pago}</div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+                <div data-label="Ciudad:">${order.ciudad}</div>
+                <div data-label="Depto:">${order.departamento}</div>
+                <div data-label="Teléfono:">${order.telefono}</div>
+                <div data-label="Pago:">${order.metodo_pago}</div>
+                <div data-label="Estado:" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
                   <span class="status-badge ${statusClass}">${statusText}</span>
                   <select
                     onchange="handleStatusChange(this, ${order.id})"
@@ -1538,14 +1778,20 @@
 
               return `
             <div class="table-row" style="grid-template-columns: 1.5fr 2fr 1.2fr 1fr 1.5fr 1.5fr 1.5fr; min-height: 80px; align-items: center;">
-              <div style="font-weight: 500;">${plan.user}</div>
-              <div style="color: #666;">${plan.email}</div>
-              <div style="font-weight: 600; color: #2196F3;">${plan.plan}</div>
-              <div style="font-weight: 600; color: #4CAF50;">L.${plan.price.toFixed(
+              <div data-label="Usuario:" style="font-weight: 500;">${
+                plan.user
+              }</div>
+              <div data-label="Email:" style="color: #666;">${plan.email}</div>
+              <div data-label="Plan:" style="font-weight: 600; color: #2196F3;">${
+                plan.plan
+              }</div>
+              <div data-label="Precio:" style="font-weight: 600; color: #4CAF50;">L.${plan.price.toFixed(
                 2
               )}</div>
-              <div style="color: #FF9800;">${plan.endDate}</div>
-              <div>
+              <div data-label="Termina:" style="color: #FF9800;">${
+                plan.endDate
+              }</div>
+              <div data-label="Entrenador:">
                 <select
                   onchange="updateTrainer(${plan.id}, this.value)"
                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: white;"
@@ -1564,7 +1810,7 @@
                   }>Coach Ana</option>
                 </select>
               </div>
-              <div>
+              <div data-label="Estado:">
                 <select
                   onchange="toggleTrainingPlan(${plan.id}, this.value)"
                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
@@ -1745,16 +1991,22 @@
             .map(
               (registration) => `
             <div class="table-row" style="grid-template-columns: 1.5fr 2fr 2fr 1.2fr 1.5fr 1.3fr; min-height: 80px; align-items: center;">
-              <div style="font-weight: 500;">${registration.participant}</div>
-              <div style="color: #666;">${registration.email}</div>
-              <div style="font-weight: 600; color: #2196F3;">${
+              <div data-label="Participante:" style="font-weight: 500;">${
+                registration.participant
+              }</div>
+              <div data-label="Email:" style="color: #666;">${
+                registration.email
+              }</div>
+              <div data-label="Evento:" style="font-weight: 600; color: #2196F3;">${
                 registration.event
               }</div>
-              <div style="color: #FF9800;">${registration.phone}</div>
-              <div style="color: #4CAF50; font-weight: 500;">${
+              <div data-label="Teléfono:" style="color: #FF9800;">${
+                registration.phone
+              }</div>
+              <div data-label="Fecha:" style="color: #4CAF50; font-weight: 500;">${
                 registration.eventDate
               }</div>
-              <div>
+              <div data-label="Estado:">
                 <select
                   onchange="toggleEventParticipation(${
                     registration.id
@@ -1880,19 +2132,25 @@
             .map(
               (registration) => `
             <div class="table-row" style="grid-template-columns: 1.3fr 1.8fr 1.5fr 1.2fr 1.3fr 1.5fr 1fr 0.8fr; min-height: 80px; align-items: center;">
-              <div style="font-weight: 500;">${registration.participant}</div>
-              <div style="color: #666;">${registration.email}</div>
-              <div style="font-weight: 600; color: #2196F3;">${
+              <div data-label="Participante:" style="font-weight: 500;">${
+                registration.participant
+              }</div>
+              <div data-label="Email:" style="color: #666;">${
+                registration.email
+              }</div>
+              <div data-label="Ruta:" style="font-weight: 600; color: #2196F3;">${
                 registration.route
               }</div>
-              <div style="color: #FF9800;">${registration.phone}</div>
-              <div style="color: #4CAF50; font-weight: 500;">${
+              <div data-label="Teléfono:" style="color: #FF9800;">${
+                registration.phone
+              }</div>
+              <div data-label="Día/Hora:" style="color: #4CAF50; font-weight: 500;">${
                 registration.dayTime
               }</div>
-              <div style="color: #9C27B0; font-size: 0.9em;">${
+              <div data-label="Ubicación:" style="color: #9C27B0; font-size: 0.9em;">${
                 registration.location
               }</div>
-              <div>
+              <div data-label="Dificultad:">
                 <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;
                              background: ${getDifficultyColor(
                                registration.difficulty
@@ -1901,7 +2159,7 @@
                   ${registration.difficulty}
                 </span>
               </div>
-              <div style="text-align: center; font-weight: 600; color: #FF5722;">
+              <div data-label="Personas:" style="text-align: center; font-weight: 600; color: #FF5722;">
                 ${registration.participants}
               </div>
             </div>
@@ -1977,20 +2235,24 @@
 
               return `
           <div class="table-row" style="grid-template-columns: 1.3fr 2fr 1.5fr 2.5fr 1.2fr 1.3fr; min-height: 80px; align-items: center;">
-            <div style="font-weight: 500;">${message.name}</div>
-            <div style="color: #666;">${message.email}</div>
-            <div style="font-weight: 600; color: #2196F3;">${
+            <div data-label="Nombre:" style="font-weight: 500;">${
+              message.name
+            }</div>
+            <div data-label="Email:" style="color: #666;">${message.email}</div>
+            <div data-label="Asunto:" style="font-weight: 600; color: #2196F3;">${
               message.subject
             }</div>
-            <div style="max-height: 60px; overflow-y: auto; padding: 8px; background: #2c2c2c; border-radius: 4px; font-size: 0.9em; line-height: 1.4; color: #ffffff; border: 1px solid #444;">
+            <div data-label="Mensaje:" style="max-height: 60px; overflow-y: auto; padding: 8px; background: #2c2c2c; border-radius: 4px; font-size: 0.9em; line-height: 1.4; color: #ffffff; border: 1px solid #444;">
               ${
                 message.message.length > 100
                   ? message.message.substring(0, 100) + "..."
                   : message.message
               }
             </div>
-            <div style="color: #4CAF50; font-weight: 500;">${message.date}</div>
-            <div>
+            <div data-label="Fecha:" style="color: #4CAF50; font-weight: 500;">${
+              message.date
+            }</div>
+            <div data-label="Estado:">
               <select
                 onchange="toggleContactStatus(${message.id}, this.value)"
                 style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
@@ -2276,6 +2538,37 @@
           }
         });
       }
+
+      // ========================================
+      // 📱 FUNCIONES DEL MENÚ MÓVIL
+      // ========================================
+      function toggleMobileMenu() {
+        const sidebar = document.querySelector(".sidebar");
+        const menuIcon = document.getElementById("menu-icon");
+
+        if (sidebar.classList.contains("mobile-open")) {
+          sidebar.classList.remove("mobile-open");
+          menuIcon.textContent = "☰";
+        } else {
+          sidebar.classList.add("mobile-open");
+          menuIcon.textContent = "✕";
+        }
+      }
+
+      // Sobrescribir showSection para cerrar menú móvil
+      const originalShowSection = showSection;
+      showSection = function (sectionName) {
+        // Ejecutar función original
+        originalShowSection(sectionName);
+
+        // Cerrar menú móvil
+        const sidebar = document.querySelector(".sidebar");
+        const menuIcon = document.getElementById("menu-icon");
+        if (sidebar.classList.contains("mobile-open")) {
+          sidebar.classList.remove("mobile-open");
+          menuIcon.textContent = "☰";
+        }
+      };
     </script>
 
     <!-- ============================================ -->
