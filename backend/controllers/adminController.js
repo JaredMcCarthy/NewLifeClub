@@ -166,6 +166,22 @@ const getMemberships = async (req, res) => {
   try {
     console.log("📊 Consultando membresías desde tabla COMPRAS...");
 
+    // 🔍 CONSULTA DE DIAGNÓSTICO: Ver TODOS los datos primero
+    const diagnosticQuery = `
+      SELECT 
+        id, email, nombre, apellido, productos, total, fecha_compra, estado, metodo_pago
+      FROM compras
+      ORDER BY fecha_compra DESC
+      LIMIT 10
+    `;
+
+    const diagnosticResult = await pool.query(diagnosticQuery);
+    console.log(
+      "🔍 DIAGNÓSTICO MEMBRESÍAS - Últimas 10 compras en tabla:",
+      diagnosticResult.rows
+    );
+
+    // 🎯 CONSULTA MEJORADA: Filtro más específico para MEMBRESÍAS
     const query = `
       SELECT 
         id,
@@ -178,25 +194,59 @@ const getMemberships = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (productos ILIKE '%membership%' 
-         OR productos ILIKE '%membresia%'
-         OR productos ILIKE '%"membership"%'
-         OR productos ILIKE '%"membresia"%')
-      AND NOT (productos ILIKE '%10k%'
-               OR productos ILIKE '%21k%'
-               OR productos ILIKE '%42k%'
-               OR productos ILIKE '%plan%'
-               OR productos ILIKE '%entrenamiento%'
-               OR productos ILIKE '%camisa%'
-               OR productos ILIKE '%blusa%'
-               OR productos ILIKE '%hoodie%'
-               OR productos ILIKE '%top%')
+      WHERE (
+        productos ILIKE '%membership%' 
+        OR productos ILIKE '%membresia%'
+        OR productos ILIKE '%"membership"%'
+        OR productos ILIKE '%"membresia"%'
+        OR productos ILIKE '%member%'
+        OR productos ILIKE '%pro%'
+        OR productos ILIKE '%premium%'
+        OR productos ILIKE '%basic%'
+        OR productos ILIKE '%vip%'
+      )
+      AND NOT (
+        productos ILIKE '%10k%'
+        OR productos ILIKE '%21k%'
+        OR productos ILIKE '%42k%'
+        OR productos ILIKE '%plan%'
+        OR productos ILIKE '%entrenamiento%'
+        OR productos ILIKE '%camisa%'
+        OR productos ILIKE '%blusa%'
+        OR productos ILIKE '%hoodie%'
+        OR productos ILIKE '%top%'
+        OR productos ILIKE '%shirt%'
+        OR productos ILIKE '%ropa%'
+      )
       ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
 
-    console.log(`✅ Encontradas ${result.rows.length} compras de membresías`);
+    console.log(
+      `✅ Encontradas ${result.rows.length} compras de membresías DESPUÉS del filtro`
+    );
+
+    // 🔍 LOG DE DIAGNÓSTICO: Mostrar algunos ejemplos
+    if (result.rows.length > 0) {
+      console.log("🔍 EJEMPLO de membresías encontradas:");
+      result.rows.slice(0, 3).forEach((compra, index) => {
+        console.log(
+          `   ${index + 1}. ID: ${compra.id}, Usuario: ${compra.nombre} ${
+            compra.apellido
+          }, Productos: ${compra.productos.substring(0, 100)}...`
+        );
+      });
+    } else {
+      console.log(
+        "⚠️ NO se encontraron compras de membresías. Posibles causas:"
+      );
+      console.log("   - No hay compras de membresías aún");
+      console.log(
+        "   - Los productos tienen nombres diferentes a los esperados"
+      );
+      console.log("   - El estado de las compras es diferente");
+    }
 
     const memberships = result.rows.map((compra) => {
       // Parsear el JSON de productos para extraer info de membresía
@@ -206,6 +256,11 @@ const getMemberships = async (req, res) => {
 
       try {
         const productos = JSON.parse(compra.productos);
+        console.log(
+          `🔍 Procesando productos de membresía para compra ID ${compra.id}:`,
+          productos
+        );
+
         if (Array.isArray(productos) && productos.length > 0) {
           productInfo = productos[0];
           if (productInfo.name) {
@@ -215,6 +270,8 @@ const getMemberships = async (req, res) => {
               planType = "Básica";
             } else if (productInfo.name.toLowerCase().includes("vip")) {
               planType = "VIP";
+            } else if (productInfo.name.toLowerCase().includes("pro")) {
+              planType = "Pro";
             } else {
               planType = productInfo.name;
             }
@@ -225,7 +282,12 @@ const getMemberships = async (req, res) => {
           );
         }
       } catch (e) {
-        console.log("Info de producto:", compra.productos);
+        console.log(
+          "❌ Error parseando productos de membresía para compra ID",
+          compra.id,
+          ":",
+          compra.productos
+        );
         // Si no se puede parsear, usar el total de la compra
         membershipPrice = parseFloat(compra.total || 0);
       }
@@ -327,6 +389,22 @@ const getStoreOrders = async (req, res) => {
   try {
     console.log("🛒 Consultando pedidos de tienda desde tabla COMPRAS...");
 
+    // 🔍 CONSULTA DE DIAGNÓSTICO: Ver TODOS los datos primero
+    const diagnosticQuery = `
+      SELECT 
+        id, email, nombre, apellido, productos, total, fecha_compra, estado, metodo_pago
+      FROM compras
+      ORDER BY fecha_compra DESC
+      LIMIT 10
+    `;
+
+    const diagnosticResult = await pool.query(diagnosticQuery);
+    console.log(
+      "🔍 DIAGNÓSTICO - Últimas 10 compras en tabla:",
+      diagnosticResult.rows
+    );
+
+    // 🎯 CONSULTA MEJORADA: Filtro más específico para productos de TIENDA
     const query = `
       SELECT 
         id,
@@ -343,21 +421,53 @@ const getStoreOrders = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE NOT (productos ILIKE '%membership%' 
-                 OR productos ILIKE '%membresia%'
-                 OR productos ILIKE '%"membership"%'
-                 OR productos ILIKE '%"membresia"%'
-                 OR productos ILIKE '%10k%'
-                 OR productos ILIKE '%21k%'
-                 OR productos ILIKE '%42k%'
-                 OR productos ILIKE '%plan%'
-                 OR productos ILIKE '%entrenamiento%')
+      WHERE (
+        productos ILIKE '%camisa%' 
+        OR productos ILIKE '%blusa%'
+        OR productos ILIKE '%hoodie%'
+        OR productos ILIKE '%top%'
+        OR productos ILIKE '%ropa%'
+        OR productos ILIKE '%shirt%'
+        OR productos ILIKE '%tienda%'
+        OR (
+          productos NOT ILIKE '%membership%' 
+          AND productos NOT ILIKE '%membresia%'
+          AND productos NOT ILIKE '%"membership"%'
+          AND productos NOT ILIKE '%"membresia"%'
+          AND productos NOT ILIKE '%10k%'
+          AND productos NOT ILIKE '%21k%'
+          AND productos NOT ILIKE '%42k%'
+          AND productos NOT ILIKE '%plan%'
+          AND productos NOT ILIKE '%entrenamiento%'
+        )
+      )
       ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
 
-    console.log(`✅ Encontrados ${result.rows.length} pedidos de tienda`);
+    console.log(
+      `✅ Encontrados ${result.rows.length} pedidos de tienda DESPUÉS del filtro`
+    );
+
+    // 🔍 LOG DE DIAGNÓSTICO: Mostrar algunos ejemplos
+    if (result.rows.length > 0) {
+      console.log("🔍 EJEMPLO de pedidos encontrados:");
+      result.rows.slice(0, 3).forEach((compra, index) => {
+        console.log(
+          `   ${index + 1}. ID: ${compra.id}, Usuario: ${compra.nombre} ${
+            compra.apellido
+          }, Productos: ${compra.productos.substring(0, 100)}...`
+        );
+      });
+    } else {
+      console.log("⚠️ NO se encontraron pedidos de tienda. Posibles causas:");
+      console.log("   - No hay compras de productos de tienda aún");
+      console.log(
+        "   - Los productos tienen nombres diferentes a los esperados"
+      );
+      console.log("   - El estado de las compras es diferente");
+    }
 
     const storeOrders = result.rows.map((compra) => {
       // Parsear el JSON de productos para extraer info de productos físicos
@@ -366,6 +476,11 @@ const getStoreOrders = async (req, res) => {
 
       try {
         const productos = JSON.parse(compra.productos);
+        console.log(
+          `🔍 Procesando productos para compra ID ${compra.id}:`,
+          productos
+        );
+
         if (Array.isArray(productos) && productos.length > 0) {
           // Crear lista de productos con formato mejorado y calcular total
           productsList = productos
@@ -382,8 +497,13 @@ const getStoreOrders = async (req, res) => {
             .join("<br>");
         }
       } catch (e) {
-        console.log("Info de producto:", compra.productos);
-        productsList = "Ver detalles";
+        console.log(
+          "❌ Error parseando productos para compra ID",
+          compra.id,
+          ":",
+          compra.productos
+        );
+        productsList = "Error al cargar productos";
       }
 
       // Usar el total de la BD, pero si es 0 o null, usar el calculado
@@ -488,6 +608,22 @@ const getTrainingPlans = async (req, res) => {
       "🏃‍♂️ Consultando planes de entrenamiento desde tabla COMPRAS..."
     );
 
+    // 🔍 CONSULTA DE DIAGNÓSTICO: Ver TODOS los datos primero
+    const diagnosticQuery = `
+      SELECT 
+        id, email, nombre, apellido, productos, total, fecha_compra, estado, metodo_pago
+      FROM compras
+      ORDER BY fecha_compra DESC
+      LIMIT 10
+    `;
+
+    const diagnosticResult = await pool.query(diagnosticQuery);
+    console.log(
+      "🔍 DIAGNÓSTICO PLANES - Últimas 10 compras en tabla:",
+      diagnosticResult.rows
+    );
+
+    // 🎯 CONSULTA MEJORADA: Filtro más específico para PLANES DE ENTRENAMIENTO
     const query = `
       SELECT 
         id,
@@ -500,25 +636,63 @@ const getTrainingPlans = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (productos ILIKE '%10k%' 
-         OR productos ILIKE '%21k%'
-         OR productos ILIKE '%42k%'
-         OR productos ILIKE '%plan%'
-         OR productos ILIKE '%entrenamiento%')
-      AND NOT (productos ILIKE '%membership%' 
-               OR productos ILIKE '%membresia%'
-               OR productos ILIKE '%"membership"%'
-               OR productos ILIKE '%"membresia"%'
-               OR productos ILIKE '%camisa%'
-               OR productos ILIKE '%blusa%'
-               OR productos ILIKE '%hoodie%'
-               OR productos ILIKE '%top%')
+      WHERE (
+        productos ILIKE '%10k%' 
+        OR productos ILIKE '%21k%'
+        OR productos ILIKE '%42k%'
+        OR productos ILIKE '%plan%'
+        OR productos ILIKE '%entrenamiento%'
+        OR productos ILIKE '%training%'
+        OR productos ILIKE '%plan 10k%'
+        OR productos ILIKE '%plan 21k%'
+        OR productos ILIKE '%plan 42k%'
+      )
+      AND NOT (
+        productos ILIKE '%membership%' 
+        OR productos ILIKE '%membresia%'
+        OR productos ILIKE '%"membership"%'
+        OR productos ILIKE '%"membresia"%'
+        OR productos ILIKE '%member%'
+        OR productos ILIKE '%pro%'
+        OR productos ILIKE '%premium%'
+        OR productos ILIKE '%basic%'
+        OR productos ILIKE '%vip%'
+        OR productos ILIKE '%camisa%'
+        OR productos ILIKE '%blusa%'
+        OR productos ILIKE '%hoodie%'
+        OR productos ILIKE '%top%'
+        OR productos ILIKE '%shirt%'
+        OR productos ILIKE '%ropa%'
+      )
       ORDER BY fecha_compra DESC
     `;
 
     const result = await pool.query(query);
 
-    console.log(`✅ Encontrados ${result.rows.length} planes de entrenamiento`);
+    console.log(
+      `✅ Encontrados ${result.rows.length} planes de entrenamiento DESPUÉS del filtro`
+    );
+
+    // 🔍 LOG DE DIAGNÓSTICO: Mostrar algunos ejemplos
+    if (result.rows.length > 0) {
+      console.log("🔍 EJEMPLO de planes de entrenamiento encontrados:");
+      result.rows.slice(0, 3).forEach((compra, index) => {
+        console.log(
+          `   ${index + 1}. ID: ${compra.id}, Usuario: ${compra.nombre} ${
+            compra.apellido
+          }, Productos: ${compra.productos.substring(0, 100)}...`
+        );
+      });
+    } else {
+      console.log(
+        "⚠️ NO se encontraron planes de entrenamiento. Posibles causas:"
+      );
+      console.log("   - No hay compras de planes aún");
+      console.log(
+        "   - Los productos tienen nombres diferentes a los esperados"
+      );
+      console.log("   - El estado de las compras es diferente");
+    }
 
     const trainingPlans = result.rows.map((compra) => {
       // Parsear el JSON de productos para extraer info del plan
@@ -527,6 +701,11 @@ const getTrainingPlans = async (req, res) => {
 
       try {
         const productos = JSON.parse(compra.productos);
+        console.log(
+          `🔍 Procesando productos de plan para compra ID ${compra.id}:`,
+          productos
+        );
+
         if (Array.isArray(productos) && productos.length > 0) {
           const product = productos[0];
           if (product.name || product.nombre) {
@@ -537,6 +716,8 @@ const getTrainingPlans = async (req, res) => {
               planType = "Plan 21K";
             } else if (name.toLowerCase().includes("42k")) {
               planType = "Plan 42K";
+            } else if (name.toLowerCase().includes("plan")) {
+              planType = name; // Usar el nombre completo si contiene "plan"
             } else {
               planType = name;
             }
@@ -544,7 +725,13 @@ const getTrainingPlans = async (req, res) => {
           planPrice = parseFloat(product.price || product.precio || 0);
         }
       } catch (e) {
-        console.log("Info de producto:", compra.productos);
+        console.log(
+          "❌ Error parseando productos de plan para compra ID",
+          compra.id,
+          ":",
+          compra.productos
+        );
+        planPrice = parseFloat(compra.total || 0);
       }
 
       // Calcular fecha de finalización (2 MESES desde la compra)
