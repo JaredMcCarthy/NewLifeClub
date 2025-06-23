@@ -120,14 +120,16 @@ const getDashboardStats = async (req, res) => {
       `),
       // RUTAS SEMANALES - Conteo real de la tabla rutas_registros
       pool.query("SELECT COUNT(*) as count FROM rutas_registros"),
-      // INGRESOS TOTALES - Consulta mejorada para calcular correctamente
+      // INGRESOS TOTALES - Consulta segura para manejar valores vacíos
       pool.query(`
-        SELECT COALESCE(SUM(CAST(total AS DECIMAL)), 0) as total_revenue 
+        SELECT COALESCE(SUM(
+          CASE 
+            WHEN total ~ '^[0-9]+\.?[0-9]*$' THEN CAST(total AS DECIMAL)
+            ELSE 0
+          END
+        ), 0) as total_revenue 
         FROM compras
-        WHERE estado = 'completada' 
-        AND total IS NOT NULL 
-        AND total != '' 
-        AND CAST(total AS DECIMAL) > 0
+        WHERE estado = 'completada'
       `),
     ]);
 
