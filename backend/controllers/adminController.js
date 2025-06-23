@@ -181,7 +181,7 @@ const getMemberships = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 FILTRO EXACTO: SOLO MEMBRESÍAS DIGITALES
+    // 🎯 TEMPORAL: MOSTRAR TODOS LOS DATOS SIN FILTROS
     const query = `
       SELECT 
         id,
@@ -194,18 +194,6 @@ const getMemberships = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%Membresía%'
-        OR productos ILIKE '%Membership%'
-      )
-      AND productos NOT ILIKE '%Plan%'
-      AND productos NOT ILIKE '%10K%'
-      AND productos NOT ILIKE '%21K%'
-      AND productos NOT ILIKE '%42K%'
-      AND productos NOT ILIKE '%Blusa%'
-      AND productos NOT ILIKE '%Top%'
-      AND productos NOT ILIKE '%Hoodie%'
-      AND productos NOT ILIKE '%Camisa%'
       ORDER BY fecha_compra DESC
     `;
 
@@ -392,7 +380,7 @@ const getStoreOrders = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 FILTRO EXACTO: SOLO PRODUCTOS FÍSICOS DE TIENDA
+    // 🎯 TEMPORAL: MOSTRAR TODOS LOS DATOS SIN FILTROS
     const query = `
       SELECT 
         id,
@@ -409,20 +397,6 @@ const getStoreOrders = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%Blusa%'
-        OR productos ILIKE '%Top%'
-        OR productos ILIKE '%Hoodie%'
-        OR productos ILIKE '%Camisa%'
-        OR productos ILIKE '%Sudadera%'
-        OR productos ILIKE '%Pantalón%'
-        OR productos ILIKE '%Short%'
-        OR productos ILIKE '%Camiseta%'
-        OR productos ILIKE '%Polo%'
-      )
-      AND productos NOT ILIKE '%Membresía%'
-      AND productos NOT ILIKE '%Membership%'
-      AND productos NOT ILIKE '%Plan%'
       ORDER BY fecha_compra DESC
     `;
 
@@ -605,7 +579,7 @@ const getTrainingPlans = async (req, res) => {
       diagnosticResult.rows
     );
 
-    // 🎯 FILTRO EXACTO: SOLO PLANES DE ENTRENAMIENTO DIGITALES
+    // 🎯 TEMPORAL: MOSTRAR TODOS LOS DATOS SIN FILTROS
     const query = `
       SELECT 
         id,
@@ -618,19 +592,6 @@ const getTrainingPlans = async (req, res) => {
         estado,
         metodo_pago
       FROM compras
-      WHERE (
-        productos ILIKE '%Plan%'
-        OR productos ILIKE '%10K%'
-        OR productos ILIKE '%21K%'
-        OR productos ILIKE '%42K%'
-        OR productos ILIKE '%Entrenamiento%'
-      )
-      AND productos NOT ILIKE '%Membresía%'
-      AND productos NOT ILIKE '%Membership%'
-      AND productos NOT ILIKE '%Blusa%'
-      AND productos NOT ILIKE '%Top%'
-      AND productos NOT ILIKE '%Hoodie%'
-      AND productos NOT ILIKE '%Camisa%'
       ORDER BY fecha_compra DESC
     `;
 
