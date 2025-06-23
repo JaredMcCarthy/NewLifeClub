@@ -702,11 +702,11 @@
             </div>
             <div class="stat-card">
               <div class="stat-number">🔄</div>
-              <div class="stat-label">Eventos Pendientes</div>
+              <div class="stat-label">Personas Registradas al evento</div>
             </div>
             <div class="stat-card">
               <div class="stat-number">🔄</div>
-              <div class="stat-label">Rutas Semanales</div>
+              <div class="stat-label">Personas Registradas a la ruta</div>
             </div>
           </div>
         </div>
@@ -1047,7 +1047,11 @@
             activeMemberships:
               membershipsData.memberships?.filter((m) => m.status === "activa")
                 .length || 0,
-            totalSales: ordersData.orders?.length || 0,
+            totalSales:
+              ordersData.orders?.reduce(
+                (sum, order) => sum + parseFloat(order.total || 0),
+                0
+              ) || 0,
             activeTrainingPlans:
               plansData.plans?.filter((p) => p.status === "activo").length || 0,
             pendingEvents: eventsData.registrations?.length || 0,
@@ -1085,7 +1089,7 @@
             <div class="stat-label">Membresías Activas</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">${stats.totalSales}</div>
+            <div class="stat-number">L.${stats.totalSales.toFixed(2)}</div>
             <div class="stat-label">Ventas Totales</div>
           </div>
           <div class="stat-card">
@@ -1094,11 +1098,11 @@
           </div>
           <div class="stat-card">
             <div class="stat-number">${stats.pendingEvents}</div>
-            <div class="stat-label">Eventos Pendientes</div>
+            <div class="stat-label">Personas Registradas al evento</div>
           </div>
           <div class="stat-card">
             <div class="stat-number">${stats.weeklyRoutes}</div>
-            <div class="stat-label">Rutas Semanales</div>
+            <div class="stat-label">Personas Registradas a la ruta</div>
           </div>
         `;
       }
@@ -1420,51 +1424,79 @@
       // ========================================
       // 🔄 ACTIVAR/DESACTIVAR MEMBRESÍA
       // ========================================
+      // 🔄 ACTIVAR/DESACTIVAR MEMBRESÍA (CON POPUPS BONITOS)
+      // ========================================
       async function toggleMembership(id, action) {
-        try {
-          const actionText = action === "activate" ? "activar" : "desactivar";
+        const actionText = action === "activate" ? "activar" : "desactivar";
+        const statusIcon = action === "activate" ? "💪" : "⏸️";
+        const statusTitle =
+          action === "activate" ? "Activar Membresía" : "Desactivar Membresía";
 
-          if (
-            !confirm(
-              `¿Estás seguro de que quieres ${actionText} esta membresía?`
-            )
-          ) {
-            return;
-          }
+        // Mostrar popup de confirmación bonito
+        showPopup({
+          icon: statusIcon,
+          title: statusTitle,
+          message: `¿Estás seguro de que quieres ${actionText} esta membresía?`,
+          confirmText: actionText.charAt(0).toUpperCase() + actionText.slice(1),
+          confirmClass: action === "activate" ? "confirm" : "danger",
+          onConfirm: async () => {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/memberships/${id}/toggle`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ action: action }),
+                }
+              );
 
-          const response = await fetch(
-            `${API_BASE_URL}/memberships/${id}/toggle`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ action: action }),
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(
+                  data.message || `Error al ${actionText} membresía`
+                );
+              }
+
+              console.log(`✅ Membresía ${actionText}da:`, data);
+
+              // Recargar membresías para mostrar el cambio
+              loadMemberships();
+
+              // Mostrar mensaje de éxito con popup bonito
+              showPopup({
+                icon: "🎉",
+                title: "Membresía Actualizada",
+                message: `Membresía ${actionText}da exitosamente`,
+                confirmText: "Entendido",
+                onConfirm: () => {},
+              });
+            } catch (error) {
+              console.error(
+                `❌ Error al ${
+                  action === "activate" ? "activar" : "desactivar"
+                } membresía:`,
+                error
+              );
+
+              // Mostrar error con popup bonito
+              showPopup({
+                icon: "❌",
+                title: "Error",
+                message: `Error: ${error.message}`,
+                confirmText: "Entendido",
+                confirmClass: "danger",
+                onConfirm: () => {},
+              });
             }
-          );
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.message || `Error al ${actionText} membresía`);
-          }
-
-          console.log(`✅ Membresía ${actionText}da:`, data);
-
-          // Recargar membresías para mostrar el cambio
-          loadMemberships();
-
-          // Mostrar mensaje de éxito (opcional)
-          alert(`✅ Membresía ${actionText}da exitosamente`);
-        } catch (error) {
-          console.error(
-            `❌ Error al ${
-              action === "activate" ? "activar" : "desactivar"
-            } membresía:`,
-            error
-          );
-          alert(`❌ Error: ${error.message}`);
-        }
+          },
+          onCancel: () => {
+            // Recargar para revertir el cambio visual del dropdown
+            loadMemberships();
+          },
+        });
       }
 
       // ========================================
@@ -1569,55 +1601,77 @@
       // 🔄 ACTIVAR/DESACTIVAR PLAN DE ENTRENAMIENTO
       // ========================================
       async function toggleTrainingPlan(id, action) {
-        try {
-          const actionText = action === "activate" ? "activar" : "desactivar";
+        const actionText = action === "activate" ? "activar" : "desactivar";
+        const statusIcon = action === "activate" ? "✅" : "❌";
+        const statusTitle =
+          action === "activate" ? "Activar Plan" : "Desactivar Plan";
 
-          if (
-            !confirm(
-              `¿Estás seguro de que quieres ${actionText} este plan de entrenamiento?`
-            )
-          ) {
+        // Mostrar popup de confirmación bonito
+        showPopup({
+          icon: statusIcon,
+          title: statusTitle,
+          message: `¿Estás seguro de que quieres ${actionText} este plan de entrenamiento?`,
+          confirmText: actionText.charAt(0).toUpperCase() + actionText.slice(1),
+          confirmClass: action === "activate" ? "confirm" : "danger",
+          onConfirm: async () => {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/training-plans/${id}/toggle`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ action: action }),
+                }
+              );
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.message || `Error al ${actionText} plan`);
+              }
+
+              console.log(`✅ Plan ${actionText}:`, data);
+
+              // Recargar planes para mostrar el cambio
+              loadTrainingPlans();
+
+              // Mostrar mensaje de éxito con popup bonito
+              showPopup({
+                icon: "🎉",
+                title: "Plan Actualizado",
+                message: `Plan ${actionText} exitosamente`,
+                confirmText: "Entendido",
+                onConfirm: () => {},
+              });
+            } catch (error) {
+              console.error(
+                `❌ Error al ${
+                  action === "activate" ? "activar" : "desactivar"
+                } plan:`,
+                error
+              );
+
+              // Mostrar error con popup bonito
+              showPopup({
+                icon: "❌",
+                title: "Error",
+                message: `Error: ${error.message}`,
+                confirmText: "Entendido",
+                confirmClass: "danger",
+                onConfirm: () => {},
+              });
+
+              // Recargar para revertir el cambio visual
+              loadTrainingPlans();
+            }
+          },
+          onCancel: () => {
             // Recargar para revertir el cambio visual del dropdown
             loadTrainingPlans();
-            return;
-          }
-
-          const response = await fetch(
-            `${API_BASE_URL}/training-plans/${id}/toggle`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ action: action }),
-            }
-          );
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.message || `Error al ${actionText} plan`);
-          }
-
-          console.log(`✅ Plan ${actionText}:`, data);
-
-          // Recargar planes para mostrar el cambio
-          loadTrainingPlans();
-
-          // Mostrar mensaje de éxito (opcional)
-          alert(`✅ Plan ${actionText} exitosamente`);
-        } catch (error) {
-          console.error(
-            `❌ Error al ${
-              action === "activate" ? "activar" : "desactivar"
-            } plan:`,
-            error
-          );
-          alert(`❌ Error: ${error.message}`);
-
-          // Recargar para revertir el cambio visual
-          loadTrainingPlans();
-        }
+          },
+        });
       }
 
       // ========================================
@@ -1740,24 +1794,11 @@
       }
 
       // ========================================
-      // 🔄 MARCAR PARTICIPACIÓN EN EVENTO
+      // 🔄 MARCAR PARTICIPACIÓN EN EVENTO (SIN POPUPS - DIRECTO)
       // ========================================
       async function toggleEventParticipation(id, action) {
         try {
-          const actionText =
-            action === "participate"
-              ? "marcar participación"
-              : "marcar como registrado";
-
-          if (
-            !confirm(
-              `¿Estás seguro de que quieres ${actionText} para este evento?`
-            )
-          ) {
-            // Recargar para revertir el cambio visual del dropdown
-            loadEventRegistrations();
-            return;
-          }
+          console.log(`🔄 Cambiando estado del evento ${id} a:`, action);
 
           const response = await fetch(
             `${API_BASE_URL}/event-registrations/${id}/toggle`,
@@ -1773,30 +1814,17 @@
           const data = await response.json();
 
           if (!response.ok) {
-            throw new Error(data.message || `Error al ${actionText}`);
+            throw new Error(
+              data.message || `Error al cambiar estado del evento`
+            );
           }
 
-          console.log(`✅ ${actionText} exitoso:`, data);
+          console.log(`✅ Estado del evento cambiado exitosamente:`, data);
 
           // Recargar eventos para mostrar el cambio
           loadEventRegistrations();
-
-          // Mostrar mensaje de éxito (opcional)
-          alert(
-            `✅ ${
-              actionText.charAt(0).toUpperCase() + actionText.slice(1)
-            } exitosamente`
-          );
         } catch (error) {
-          console.error(
-            `❌ Error al ${
-              action === "participate"
-                ? "marcar participación"
-                : "marcar como registrado"
-            }:`,
-            error
-          );
-          alert(`❌ Error: ${error.message}`);
+          console.error(`❌ Error al cambiar estado del evento:`, error);
 
           // Recargar para revertir el cambio visual
           loadEventRegistrations();
@@ -1935,10 +1963,19 @@
             return;
           }
 
+          // Obtener estados guardados en localStorage
+          const contactStatusKey = "contact_message_status";
+          const savedStatus = JSON.parse(
+            localStorage.getItem(contactStatusKey) || "{}"
+          );
+
           // Generar filas de la tabla
           tableBody.innerHTML = data.messages
-            .map(
-              (message) => `
+            .map((message) => {
+              // Usar estado guardado en localStorage o el por defecto del backend
+              const actualStatus = savedStatus[message.id] || message.status;
+
+              return `
           <div class="table-row" style="grid-template-columns: 1.3fr 2fr 1.5fr 2.5fr 1.2fr 1.3fr; min-height: 80px; align-items: center;">
             <div style="font-weight: 500;">${message.name}</div>
             <div style="color: #666;">${message.email}</div>
@@ -1958,23 +1995,23 @@
                 onchange="toggleContactStatus(${message.id}, this.value)"
                 style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
                        background: ${
-                         message.status === "nuevo" ? "#FFF3E0" : "#E8F5E8"
+                         actualStatus === "nuevo" ? "#FFF3E0" : "#E8F5E8"
                        };
                        color: ${
-                         message.status === "nuevo" ? "#F57C00" : "#2E7D32"
+                         actualStatus === "nuevo" ? "#F57C00" : "#2E7D32"
                        }; font-weight: 600;"
               >
                 <option value="new" ${
-                  message.status === "nuevo" ? "selected" : ""
+                  actualStatus === "nuevo" ? "selected" : ""
                 }>📩 Nuevo</option>
                 <option value="respond" ${
-                  message.status === "respondido" ? "selected" : ""
+                  actualStatus === "respondido" ? "selected" : ""
                 }>✅ Respondido</option>
               </select>
             </div>
           </div>
-        `
-            )
+        `;
+            })
             .join("");
         } catch (error) {
           console.error("❌ Error cargando mensajes de contacto:", error);
@@ -1987,61 +2024,30 @@
       }
 
       // ========================================
-      // 🔄 MARCAR MENSAJE COMO RESPONDIDO/NUEVO
+      // 🔄 MARCAR MENSAJE COMO RESPONDIDO/NUEVO (GUARDADO EN LOCALSTORAGE)
       // ========================================
       async function toggleContactStatus(id, action) {
         try {
-          const actionText =
-            action === "respond"
-              ? "marcar como respondido"
-              : "marcar como nuevo";
+          console.log(`🔄 Cambiando estado del mensaje ${id} a:`, action);
 
-          if (
-            !confirm(`¿Estás seguro de que quieres ${actionText} este mensaje?`)
-          ) {
-            // Recargar para revertir el cambio visual del dropdown
-            loadContactMessages();
-            return;
-          }
-
-          const response = await fetch(
-            `${API_BASE_URL}/contact-messages/${id}/toggle`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ action: action }),
-            }
+          // Guardar estado en localStorage para referencia del admin
+          const contactStatusKey = "contact_message_status";
+          let savedStatus = JSON.parse(
+            localStorage.getItem(contactStatusKey) || "{}"
           );
 
-          const data = await response.json();
+          const newStatus = action === "respond" ? "respondido" : "nuevo";
+          savedStatus[id] = newStatus;
+          localStorage.setItem(contactStatusKey, JSON.stringify(savedStatus));
 
-          if (!response.ok) {
-            throw new Error(data.message || `Error al ${actionText}`);
-          }
+          console.log(
+            `✅ Estado guardado localmente: ${newStatus} para mensaje ${id}`
+          );
 
-          console.log(`✅ ${actionText} exitoso:`, data);
-
-          // Recargar contactos para mostrar el cambio
+          // Recargar contactos para mostrar el cambio (ahora usará localStorage)
           loadContactMessages();
-
-          // Mostrar mensaje de éxito (opcional)
-          alert(
-            `✅ ${
-              actionText.charAt(0).toUpperCase() + actionText.slice(1)
-            } exitosamente`
-          );
         } catch (error) {
-          console.error(
-            `❌ Error al ${
-              action === "respond"
-                ? "marcar como respondido"
-                : "marcar como nuevo"
-            }:`,
-            error
-          );
-          alert(`❌ Error: ${error.message}`);
+          console.error(`❌ Error al cambiar estado del mensaje:`, error);
 
           // Recargar para revertir el cambio visual
           loadContactMessages();

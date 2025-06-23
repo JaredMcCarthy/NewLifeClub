@@ -76,9 +76,17 @@ const getDashboardStats = async (req, res) => {
       revenueResult,
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) as count FROM usuarios"),
-      pool.query(
-        "SELECT COUNT(*) as count FROM compras WHERE estado = 'completada'"
-      ),
+      // VENTAS TOTALES - SUMA DE INGRESOS EN LEMPIRAS
+      pool.query(`
+        SELECT COALESCE(SUM(
+          CASE 
+            WHEN total ~ '^[0-9]+\.?[0-9]*$' THEN CAST(total AS DECIMAL)
+            ELSE 0
+          END
+        ), 0) as count 
+        FROM compras
+        WHERE estado = 'completada'
+      `),
       pool.query("SELECT COUNT(*) as count FROM event_registrations"),
       pool.query("SELECT COUNT(*) as count FROM newsletter"),
       pool.query("SELECT COUNT(*) as count FROM contacto"),
@@ -136,7 +144,7 @@ const getDashboardStats = async (req, res) => {
     const stats = {
       totalUsers: parseInt(usersResult.rows[0].count),
       activeMemberships: parseInt(membershipsResult.rows[0].count), // CONTEO REAL de membresías activas
-      totalSales: parseInt(salesResult.rows[0].count),
+      totalSales: parseFloat(salesResult.rows[0].count || 0), // SUMA TOTAL DE INGRESOS EN LEMPIRAS
       totalRevenue: parseFloat(revenueResult.rows[0].total_revenue || 0), // INGRESOS REALES de todas las ventas
       activeTrainingPlans: parseInt(trainingPlansResult.rows[0].count), // CONTEO REAL de planes activos
       pendingEvents: parseInt(eventsResult.rows[0].count),
