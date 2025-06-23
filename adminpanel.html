@@ -826,20 +826,52 @@
       async function loadDashboardStats() {
         try {
           console.log("🔄 Cargando estadísticas del dashboard...");
-          const response = await fetch(`${API_BASE_URL}/dashboard-stats`);
-          const data = await response.json();
 
-          if (!response.ok) {
-            throw new Error(data.message || "Error al cargar estadísticas");
-          }
+          // Cargar datos de las APIs que YA FUNCIONAN
+          const [
+            usersData,
+            membershipsData,
+            ordersData,
+            plansData,
+            eventsData,
+            routesData,
+          ] = await Promise.all([
+            fetch(`${API_BASE_URL}/users`).then((r) => r.json()),
+            fetch(`${API_BASE_URL}/memberships`).then((r) => r.json()),
+            fetch(`${API_BASE_URL}/store-orders`).then((r) => r.json()),
+            fetch(`${API_BASE_URL}/training-plans`).then((r) => r.json()),
+            fetch(`${API_BASE_URL}/event-registrations`).then((r) => r.json()),
+            fetch(`${API_BASE_URL}/route-registrations`).then((r) => r.json()),
+          ]);
 
-          console.log("✅ Estadísticas cargadas:", data);
-          realData.dashboardStats = data.stats;
+          // Construir estadísticas a partir de los datos que YA FUNCIONAN
+          const stats = {
+            totalUsers: usersData.users?.length || 0,
+            activeMemberships:
+              membershipsData.memberships?.filter((m) => m.status === "activa")
+                .length || 0,
+            totalSales: ordersData.orders?.length || 0,
+            activeTrainingPlans:
+              plansData.plans?.filter((p) => p.status === "activo").length || 0,
+            pendingEvents: eventsData.registrations?.length || 0,
+            weeklyRoutes: routesData.registrations?.length || 0,
+          };
+
+          console.log("✅ Estadísticas cargadas desde APIs existentes:", stats);
 
           // Actualizar las estadísticas en el dashboard
-          updateDashboardUI(data.stats);
+          updateDashboardUI(stats);
         } catch (error) {
           console.error("❌ Error cargando estadísticas:", error);
+          // Mostrar valores por defecto en caso de error
+          updateDashboardUI({
+            totalUsers: 0,
+            activeMemberships: 0,
+            totalSales: 0,
+            activeTrainingPlans: 0,
+            pendingEvents: 0,
+            weeklyRoutes: 0,
+          });
         }
       }
 
