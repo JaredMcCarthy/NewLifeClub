@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentUserEmail = localStorage.getItem("userEmail");
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  // ========== VALIDACIÓN MEJORADA - NO POPUP INNECESARIO ==========
   if (!currentUserEmail || !isLoggedIn) {
     console.warn("⚠️ No hay usuario loggeado válido");
     // Solo redirigir en móvil y solo si realmente no está loggeado
